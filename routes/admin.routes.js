@@ -10,8 +10,8 @@ router.get('/dashboard', requireAuth, requireAdmin, adminController.dashboard);
 
 
 
-router.get('/', (req, res) => {
-  res.render('home', {title: "home"}); 
+router.get('/', requireAuth, requireAdmin, (req, res) => {
+  res.render('adminPanel', {title: "home"}); 
 });
 
 
