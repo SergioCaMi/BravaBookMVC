@@ -50,6 +50,8 @@ export const login = async (req, res) => {
       title: "home",
       error: "Credenciales incorrectas",
     });
+
+   
   }
   req.session.userId = user._id;
   console.log(user.name);
@@ -71,6 +73,15 @@ export const dashboard = async (req, res) => {
   res.render("dashboard", { title: "home", user });
 };
 
+// Home
 export const getHome = async (req, res) => {
   res.render("home", { title: "home", error: undefined });
+};
+// ContactUs
+export const getContactUs = async (req, res) => {
+  res.render("contactUs", { title: "contact", error: undefined });
+};
+// AboutUs
+export const getAboutUs = async (req, res) => {
+  res.render("aboutUs", { title: "about", error: undefined });
 };

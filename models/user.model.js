@@ -5,8 +5,15 @@ const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  role: { type: String, enum: ['user', 'admin'], default: 'user' }
+  role: { type: String, enum: ['user', 'admin'], default: 'user' },
+    bio: String,
+  avatar: {
+    type: String, // guardaremos el nombre de archivo
+    default: 'default.png' // una imagen por defecto si no sube ninguna
+  }
+
 });
+
 
 // Encriptar antes de guardar
 userSchema.pre('save', async function (next) {

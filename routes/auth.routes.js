@@ -16,7 +16,12 @@ router.get('/logout', authController.logout);
 router.get('/dashboard', requireAuth, authController.dashboard);
 
 // Rutas para todos
+// Home
 router.get('/', authController.getHome);
+// ContactUs
+router.get('/contact', authController.getContactUs);
+// AboutUs
+router.get('/about', authController.getAboutUs);
 
 
 

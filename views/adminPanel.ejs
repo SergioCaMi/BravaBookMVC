@@ -1,0 +1,51 @@
+<%- include("partials/header", { title: title }) %>
+<div class="d-flex justify-content-center my-5 ">
+  <div class=" row g-4 justify-content-center w-100" style="max-width: 900px; margin: auto;">
+    
+<div class="col-md-4">
+      <div class="card h-100 shadow-sm">
+        <img src="/createNew.jpg" class="card-img-top" alt="Crear nuevo apartamento" style="height: 200px; object-fit: cover;">
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">Crear nuevo apartamento</h5>
+          <p class="card-text">Añade un nuevo apartamento al sistema.</p>
+          <a href="/admin/apartment/new" class="btn btn-primary mt-auto">Crear nuevo apartamento</a>
+        </div>
+      </div>
+    </div>
+
+<div class="col-md-4">
+      <div class="card h-100 shadow-sm">
+        <img src="/edit.jpg" class="card-img-top" alt="Editar apartamento" style="height: 200px; object-fit: cover;">
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">Listado y edición de apartamentos</h5>
+          <p class="card-text">Lista todos los apartamentos del sistema y permite su edición.</p>
+          <a href="admin/apartments" class="btn btn-primary mt-auto">Ver apartamentos</a>
+        </div>
+      </div>
+    </div>
+    <!-- <div class="col-md-6 col-lg-5">
+      <div class="card h-100 shadow-sm">
+        <img src="/apartmentsList.jpg" class="card-img-top" alt="Crear nuevo apartamento" style="height: 200px; object-fit: cover;">
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">Listado y edición de apartamentos</h5>
+          <p class="card-text">Lista todos los apartamentos del sistema.</p>
+          <a href="admin/apartments" class="btn btn-primary mt-auto">Lista de apartamentos</a>
+        </div>
+      </div>
+    </div> -->
+
+<div class="col-md-4">
+      <div class="card h-100 shadow-sm">
+        <img src="/reservationsList.jpg" class="card-img-top" alt="Editar apartamento" style="height: 200px; object-fit: cover;">
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">Listado de reservas</h5>
+          <p class="card-text">Lista todas las reservas del sistema.</p>
+          <a href="admin/reservations" class="btn btn-primary mt-auto">Lista de reservas</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+    <%- include("partials/footer") %>

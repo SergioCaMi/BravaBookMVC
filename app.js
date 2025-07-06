@@ -9,7 +9,6 @@ import User from './models/user.model.js';
 // Rutas
 import authRoutes from './routes/auth.routes.js';
 import adminRoutes from './routes/admin.routes.js';
-import userRoutes from './routes/user.routes.js';
 
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -61,7 +60,6 @@ app.use(async (req, res, next) => {
 // Rutas
 app.use('/', authRoutes);
 app.use('/admin', adminRoutes);
-app.use('/user', userRoutes);
 
 
 // --- Middlewares ---
