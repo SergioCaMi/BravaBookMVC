@@ -8,8 +8,8 @@ const userSchema = new mongoose.Schema({
   role: { type: String, enum: ['user', 'admin'], default: 'user' },
     bio: String,
   avatar: {
-    type: String, // guardaremos el nombre de archivo
-    default: 'default.png' // una imagen por defecto si no sube ninguna
+    type: String,
+    default: 'default.jpg'
   }
 
 });
