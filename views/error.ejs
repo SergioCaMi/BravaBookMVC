@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Error 404 - Página no encontrada</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: url('https://images.unsplash.com/photo-1663293761219-d8c9e5eef4c1?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')  no-repeat center center fixed;
+  background-size: cover; /* 👈 Esto hace que la imagen cubra toda la pantalla */
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+}
+    .container {
+      text-align: center;
+      animation: fadeIn 1s ease-in-out;
+      max-width: 90%;
+      padding: 20px;
+      background-color: rgba(0, 0, 0, 0.5); 
+      border-radius: 15px;
+    }
+
+    h1 {
+      font-size: 7rem;
+      margin-bottom: 0.2em;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    p {
+      font-size: 1.5rem;
+      margin-bottom: 1em;
+    }
+
+    a {
+      text-decoration: none;
+      background: #fff;
+      color: #2c5364;
+      padding: 0.8em 1.5em;
+      border-radius: 30px;
+      font-weight: bold;
+      transition: background 0.3s, transform 0.3s;
+      display: inline-block;
+    }
+
+    a:hover {
+      background: #e0e0e0;
+      transform: scale(1.05);
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.85;
+        transform: scale(1.05);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Error <%= status %></h1>
+    <p><%= message %></p>
+    <a href="/">Volver a la página principal</a>
+  </div>
+</body>
+
+</html>
