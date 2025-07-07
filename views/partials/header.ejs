@@ -62,18 +62,22 @@
                         <% if (currentUser ) { %>
 
                             <li class="nav-item">
+
                                 <% if (currentUser.role==="admin" ) { %>
 
-                                    <a class="nav-link <%= title === 'admin' ? 'active bg-danger text-white m-3' : 'bg-danger text-white m-3' %>"
+                                    <a class="nav-link <%= title === 'admin' ? 'active  m-3' : ' m-3' %>"
                                         href="admin/dashboard">
-                                        <%= currentUser.name %>
+                                        <img src="/uploads/<%= currentUser.avatar %>" class="rounded-circle"
+                                            style="width: 50px; height: 50px; object-fit: cover;" alt="Avatar">
                                     </a>
+
                                     <% } else { %>
-                                        <a class="nav-link <%= title === 'admin' ? 'active bg-danger text-white m-3' : 'bg-danger text-white m-3' %>"
+                                        <a class="nav-link <%= title === 'admin' ? 'active m-3' : ' m-3' %>"
                                             href="/dashboard">
-                                            <%= currentUser.name %>
+                                            <img src="/uploads/<%= currentUser.avatar %>" class="rounded-circle"
+                                                style="width: 50px; height: 50px; object-fit: cover;" alt="Avatar">
                                         </a>
-                                        <% } %> 
+                                        <% } %>
                             </li>
                             <% } %>
 

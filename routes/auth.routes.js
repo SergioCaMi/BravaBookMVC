@@ -33,8 +33,14 @@ router.get('/about', authController.getAboutUs);
 
 // Editar profile
 router.get('/profile/edit', requireAuth, authController.getEditProfile);
-router.post('/profile/update', upload.single('avatar'),  requireAuth,  authController.postUpdateProfile);
+// router.post('/profile/update', upload.single('avatar'),  requireAuth,  authController.postUpdateProfile);
 
+router.post(
+  '/profile/update',
+  upload.single('avatar'),
+  requireAuth,
+  authController.postUpdateProfile
+);
 
 export default router;
 

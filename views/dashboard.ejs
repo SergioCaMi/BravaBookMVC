@@ -1,72 +1,82 @@
 <%- include("partials/header") %>
 
-<body>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">BravaBook Dashboard</a>
+        <div class="ms-auto">
+          <a href="/logout" class="btn btn-outline-light">Cerrar sesión</a>
+        </div>
+      </div>
+    </nav>
+
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">BravaBook Dashboard</a>
-      <div class="ms-auto">
-        <a href="/logout" class="btn btn-outline-light">Cerrar sesión</a>
+      <div class="row">
+        <!-- Aside - Menú lateral -->
+        <aside class="col-md-3 col-lg-2 d-flex flex-column p-4 bg-light border-end">
+          <h5 class="mb-3">Menú</h5>
+          <ul class="nav nav-pills flex-column">
+            <li class="nav-item"><a href="#" class="nav-link active">Perfil</a></li>
+            <li class="nav-item"><a href="#" class="nav-link">Reservas</a></li>
+            <li class="nav-item"><a href="#" class="nav-link">Configuración</a></li>
+          </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="col-md-9 col-lg-10 p-4">
+          <div class="row align-items-center mb-4">
+            <div class="col-auto">
+              <img src="/uploads/<%= user.avatar %>" alt="Avatar de <%= user.name %>"
+                class="img-thumbnail rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
+
+            </div>
+            <div class="col">
+              <h2>
+                <%= user.name %>
+              </h2>
+              <p class="text-muted">
+                <%= user.role==='admin' ? 'Administrador' : 'Usuario estándar' %>
+              </p>
+              <a href="/profile/edit" class="btn btn-primary">Editar perfil</a>
+            </div>
+          </div>
+
+          <!-- Datos del modelo -->
+          <div class="card shadow-sm mb-4">
+            <div class="card-body">
+              <h5 class="card-title">Datos de cuenta</h5>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item"><strong>Email:</strong>
+                  <%= user.email %>
+                </li>
+                <li class="list-group-item"><strong>Rol:</strong>
+                  <%= user.role || 'Usuario' %>
+                </li>
+                <li class="list-group-item"><strong>Bio:</strong>
+                  <%= user.bio || 'Sin información' %>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Contenido dinámico por rol -->
+          <% if (user.role==='user' ) { %>
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <h5 class="card-title">Tus reservas</h5>
+                <p class="card-text">Aquí aparecerán tus próximas reservas.</p>
+              </div>
+            </div>
+            <% } else { %>
+              <div class="card shadow-sm">
+                <div class="card-body">
+                  <h5 class="card-title">Apartamentos creados</h5>
+                  <p class="card-text">Aquí aparecerán los apartamentos que hayas creado como administrador.</p>
+                </div>
+              </div>
+              <% } %>
+        </main>
       </div>
     </div>
-  </nav>
 
-  <div class="container-fluid">
-    <div class="row">
-      <!-- Aside - Menú lateral -->
-      <aside class="col-md-3 col-lg-2 d-flex flex-column p-4 bg-light border-end">
-        <h5 class="mb-3">Menú</h5>
-        <ul class="nav nav-pills flex-column">
-          <li class="nav-item"><a href="#" class="nav-link active">Perfil</a></li>
-          <li class="nav-item"><a href="#" class="nav-link">Reservas</a></li>
-          <li class="nav-item"><a href="#" class="nav-link">Configuración</a></li>
-        </ul>
-      </aside>
-
-      <!-- Main Content -->
-      <main class="col-md-9 col-lg-10 p-4">
-        <div class="row align-items-center mb-4">
-          <div class="col-auto">
-            <img src="/uploads/avatars/<%= user.avatar %>" alt="Avatar" class="rounded-circle img-thumbnail" width="100">
-          </div>
-          <div class="col">
-            <h2><%= user.name %></h2>
-            <p class="text-muted">
-              <%= user.role === 'admin' ? 'Administrador' : 'Usuario estándar' %>
-            </p>
-            <a href="/profile/edit" class="btn btn-primary">Editar perfil</a>
-          </div>
-        </div>
-
-        <!-- Datos del modelo -->
-        <div class="card shadow-sm mb-4">
-          <div class="card-body">
-            <h5 class="card-title">Datos de cuenta</h5>
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item"><strong>Email:</strong> <%= user.email %></li>
-              <li class="list-group-item"><strong>Rol:</strong> <%= user.role || 'Usuario' %></li>
-              <li class="list-group-item"><strong>Bio:</strong> <%= user.bio || 'Sin información' %></li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- Contenido dinámico por rol -->
-        <% if (user.role === 'user') { %>
-          <div class="card shadow-sm">
-            <div class="card-body">
-              <h5 class="card-title">Tus reservas</h5>
-              <p class="card-text">Aquí aparecerán tus próximas reservas.</p>
-            </div>
-          </div>
-        <% } else { %>
-          <div class="card shadow-sm">
-            <div class="card-body">
-              <h5 class="card-title">Apartamentos creados</h5>
-              <p class="card-text">Aquí aparecerán los apartamentos que hayas creado como administrador.</p>
-            </div>
-          </div>
-        <% } %>
-      </main>
-    </div>
-  </div>
-
-<%- include("partials/footer") %>
+    <%- include("partials/footer") %>

@@ -1,47 +1,49 @@
 <%- include("partials/header") %>
 
-<body>
-  <div class="container mt-5">
-    <h2 class="mb-4">Editar perfil</h2>
-    
-    <!-- Mostrar errores si los hay -->
-    <% if (error) { %>
-      <div class="alert alert-danger"><%= error %></div>
-    <% } %>
+    <body>
+        <div class="container mt-5">
+            <h2 class="mb-4">Editar perfil</h2>
 
-    <form action="/profile/update" method="POST" enctype="multipart/form-data">
-        <div class="mb-3 text-center">
-    <img src="/uploads/avatars/<%= user.avatar %>"
-         alt="Vista previa del avatar"
-         width="100"
-         class="rounded-circle img-thumbnail">
-    <p>Avatar</p>
-</div>
-      <div class="mb-3">
-        <label for="avatar" class="form-label">Cambiar avatar</label>
-        <input type="file" name="avatar" id="avatar" class="form-control" accept="image/*">
-      </div>
+            <!-- Mostrar errores si los hay -->
+            <% if (error) { %>
+                <div class="alert alert-danger">
+                    <%= error %>
+                </div>
+                <% } %>
 
-      <div class="mb-3">
-        <label for="name" class="form-label">Nombre</label>
-        <input type="text" name="name" id="name" class="form-control" value="<%= user.name %>" required>
-      </div>
+                    <form action="/profile/update" method="POST" enctype="multipart/form-data">
+                        <div class="mb-3 text-center">
+                            <img src="/uploads/avatars/<%= user.avatar %>" alt="Vista previa del avatar" width="100"
+                                class="rounded-circle img-thumbnail">
+                            <p>Avatar</p>
+                        </div>
+                        <div class="mb-3">
+                            <label for="avatar" class="form-label">Cambiar avatar</label>
+                            <input type="file" name="avatar" id="avatar" class="form-control" accept="image/*">
+                        </div>
 
-      <div class="mb-3">
-        <label for="email" class="form-label">Correo electrónico</label>
-        <input type="email" name="email" id="email" class="form-control" value="<%= user.email %>" required>
-      </div>
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nombre</label>
+                            <input type="text" name="name" id="name" class="form-control" value="<%= user.name %>"
+                                required>
+                        </div>
 
-      <div class="mb-3">
-        <label for="bio" class="form-label">Biografía</label>
-        <textarea name="bio" id="bio" class="form-control" rows="4"><%= user.bio || '' %></textarea>
-      </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Correo electrónico</label>
+                            <input type="email" name="email" id="email" class="form-control" value="<%= user.email %>"
+                                required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="bio" class="form-label">Biografía</label>
+                            <textarea name="bio" id="bio" class="form-control" rows="4"><%= user.bio || '' %></textarea>
+                        </div>
 
 
 
-      <button type="submit" class="btn btn-success my-5">Guardar cambios</button>
-    </form>
-  </div>
-</body>
+                        <button type="submit" class="btn btn-success my-5">Guardar cambios</button>
+                    </form>
+        </div>
+    </body>
 
-<%- include("partials/footer") %>
+    <%- include("partials/footer") %>
