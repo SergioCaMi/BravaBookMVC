@@ -1,4 +1,6 @@
 import User from "../models/user.model.js";
+import Apartment from "../models/apartment.model.js";
+import Reservation from "../models/reservation.model.js";
 
 // DashBoard
 export const dashboard = async (req, res) => {

@@ -1,6 +1,8 @@
 import path from 'path';
 
 import User from "../models/user.model.js";
+import Apartment from "../models/apartment.model.js";
+import Reservation from "../models/reservation.model.js";
 
 // Registro
 export const register = async (req, res) => {
@@ -73,10 +75,6 @@ export const dashboard = async (req, res) => {
   res.render("dashboard", { title: "home", user });
 };
 
-// Home
-export const getHome = async (req, res) => {
-  res.render("home", { title: "home", error: undefined });
-};
 // ContactUs
 export const getContactUs = async (req, res) => {
   res.render("contactUs", { title: "contact", error: undefined });
@@ -86,6 +84,8 @@ export const getAboutUs = async (req, res) => {
   res.render("aboutUs", { title: "about", error: undefined });
 };
 
+
+// Users
 // GET Editar profile
 export const getEditProfile = async (req, res) => {
   try {
@@ -139,4 +139,27 @@ export const postUpdateProfile = async (req, res) => {
   }
 };
 
+// Apartments
 // Mostrar todos los apartamentos
+export const getAllApartments = async (req, res) => {
+    try {
+            const apartments = await Apartment.find({});
+            res.status(200).json({ apartments });
+
+    }   catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+  // res.render("home", { title: "home", error: undefined });
+};
+
+// Devolver un unico apartamento
+export const getApartmentById = async (req, res) => {
+    const { id } = req.params;
+    try {
+            const apartments = await Apartment.find({ _id: id });
+            res.status(200).json({ apartments });
+
+    }   catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};

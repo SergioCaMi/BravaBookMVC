@@ -22,9 +22,6 @@ router.get('/logout', authController.logout);
 // Dashboard
 router.get('/dashboard', requireAuth, authController.dashboard);
 
-// Home
-router.get('/', authController.getHome);
-
 // ContactUs
 router.get('/contact', authController.getContactUs);
 
@@ -33,9 +30,17 @@ router.get('/about', authController.getAboutUs);
 
 // Editar profile
 router.get('/profile/edit', requireAuth, authController.getEditProfile);
-// router.post('/profile/update', upload.single('avatar'),  requireAuth,  authController.postUpdateProfile);
-
 router.post('/profile/update', upload.single('avatar'), requireAuth, authController.postUpdateProfile);
+
+
+// Apartments
+
+// GET All Apartments
+router.get('/', authController.getAllApartments);
+
+// GET Apartment By Id
+router.get('/apartments/:id', authController.getApartmentById);
+
 
 export default router;
 

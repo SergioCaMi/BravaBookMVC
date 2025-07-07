@@ -27,7 +27,7 @@ const __dirname = dirname(__filename);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// --- Sesiones ---
+// --- Sesiones --- (Guardaremos las sesiones en MongoDB para hacerlas persistentes)
 app.use(session({
   secret: process.env.SESSION_SECRET || 'clave-super-secreta',
   resave: false,
