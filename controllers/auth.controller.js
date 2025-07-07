@@ -1,3 +1,5 @@
+import path from 'path';
+
 import User from "../models/user.model.js";
 
 // Registro
@@ -27,7 +29,7 @@ export const register = async (req, res) => {
     await user.save();
     console.log("Usuario guardado:", user);
     req.session.userId = user._id;
-      res.redirect("/dashboard");
+    res.redirect("/dashboard");
 
     // res.render("home", { title: "home", error: undefined, user});
   } catch (err) {
@@ -50,8 +52,6 @@ export const login = async (req, res) => {
       title: "home",
       error: "Credenciales incorrectas",
     });
-
-   
   }
   req.session.userId = user._id;
   console.log(user.name);
@@ -84,4 +84,57 @@ export const getContactUs = async (req, res) => {
 // AboutUs
 export const getAboutUs = async (req, res) => {
   res.render("aboutUs", { title: "about", error: undefined });
+};
+
+// Editar profile
+export const getEditProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.session.userId);
+    if (!user) {
+      return res.redirect('/login');
+    }
+    res.status(200).render("editProfile.ejs", { title: "home", user , error:undefined});
+  } catch (err) {
+    res.status(500).render("error.ejs", {
+      message: "Error interno del servidor",
+      status: 404,
+    });
+  }
+};
+
+
+export const postUpdateProfile = async (req, res) => {
+  try {
+    const { name, email, bio } = req.body;
+
+    if (!name || !email) {
+      return res.status(400).render('editProfile', {
+        title: 'Editar perfil',
+        user: req.user,
+        error: 'Nombre y correo son obligatorios.',
+      });
+    }
+
+    const updates = { name, email, bio };
+
+    if (req.file) {
+      const userEmail = email;
+      const userBaseName = userEmail.split('@')[0];
+      const avatarPath = path.join('usuarios', userBaseName, 'avatar.jpg');
+
+      updates.avatar = avatarPath;
+    }
+
+    await User.findByIdAndUpdate(req.session.userId, updates);
+
+    res.redirect('/dashboard');
+
+  } catch (err) {
+    console.error('Error al actualizar perfil:', err);
+    res.status(500).render('editProfile', {
+      title: 'Editar perfil',
+      user: req.user,
+      error: 'Hubo un error al guardar los cambios.',
+    });
+  }
 };
