@@ -86,7 +86,7 @@ export const getAboutUs = async (req, res) => {
   res.render("aboutUs", { title: "about", error: undefined });
 };
 
-// Editar profile
+// GET Editar profile
 export const getEditProfile = async (req, res) => {
   try {
     const user = await User.findById(req.session.userId);
@@ -102,7 +102,7 @@ export const getEditProfile = async (req, res) => {
   }
 };
 
-
+// POST Editar profile
 export const postUpdateProfile = async (req, res) => {
   try {
     const { name, email, bio } = req.body;
@@ -138,3 +138,5 @@ export const postUpdateProfile = async (req, res) => {
     });
   }
 };
+
+// Mostrar todos los apartamentos
