@@ -1,0 +1,193 @@
+<%- include("partials/header") %>
+
+    <a href="#" onclick="window.history.back()" class="row justify-content-start ">
+        <img src="/img/back.png" alt="Volver atrás" style="max-width: 70px; height: auto;" class="m-3">
+    </a>
+
+    <main class="container my-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-header">
+                <ul class="nav nav-tabs card-header-tabs" id="apartmentTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="photos-tab" data-bs-toggle="tab" data-bs-target="#photos"
+                            type="button" role="tab" aria-controls="photos" aria-selected="true">
+                            Fotos y Descripción
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="details-tab" data-bs-toggle="tab" data-bs-target="#details"
+                            type="button" role="tab" aria-controls="details" aria-selected="false">
+                            Detalles
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="location-tab" data-bs-toggle="tab" data-bs-target="#location"
+                            type="button" role="tab" aria-controls="location" aria-selected="false">
+                            Mapa
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="reservation-tab" data-bs-toggle="tab" data-bs-target="#reservation"
+                            type="button" role="tab" aria-controls="reservation" aria-selected="false">
+                            Reserva
+                        </button>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="card-body tab-content" id="apartmentTabContent">
+                <div class="tab-pane fade show active" id="photos" role="tabpanel" aria-labelledby="photos-tab">
+                    <% if (apartments) { %>
+                        <div id="apartmentCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                <% apartments.photos.forEach((photo, index)=> { %>
+                                    <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+                                        <img src="<%= photo.url %>" class="d-block w-100" alt="<%= photo.description %>"
+                                            style="object-fit: cover; height: 500px;">
+                                        <div class="carousel-caption d-none d-md-block">
+                                            <p>
+                                                <%= photo.description %>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <% }) %>
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#apartmentCarousel"
+                                data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Anterior</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#apartmentCarousel"
+                                data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Siguiente</span>
+                            </button>
+                        </div>
+
+                        <h3>
+                            <%= apartments.title %>
+                        </h3>
+                        <p>
+                            <%= apartments.description %>
+                        </p>
+                        <% } else { %>
+                            <p class="alert alert-warning">No hay apartamentos disponibles.</p>
+                            <% } %>
+                </div>
+                <div class="tab-pane fade" id="details" role="tabpanel" aria-labelledby="details-tab">
+                    <% if (apartments) { %>
+                        <ul class="list-group mb-4">
+                            <li class="list-group-item"><strong>Habitaciones:</strong>
+                                <%= apartments.rooms %>
+                            </li>
+                            <li class="list-group-item"><strong>Baños:</strong>
+                                <%= apartments.bathrooms %>
+                            </li>
+                            <li class="list-group-item"><strong>Precio por noche:</strong>
+                                <%= apartments.price %> €
+                            </li>
+                            <li class="list-group-item"><strong>Máximo de huéspedes:</strong>
+                                <%= apartments.maxGuests %>
+                            </li>
+                            <li class="list-group-item"><strong>Metros cuadrados:</strong>
+                                <%= apartments.squareMeters %> m²
+                            </li>
+                        </ul>
+
+                        <p class="mb-2"><strong>Servicios:</strong></p>
+
+                        <ul class="list-inline mb-4">
+                            <% if (apartments.services.airConditioning) { %>
+                                <i class="bi bi-snow text-black me-1" data-bs-toggle="tooltip"
+                                    title="Aire Acondicionado"></i>
+                                <% } %>
+                                    <% if (apartments.services.heating) { %>
+                                        <i class="bi bi-fire text-black me-1" data-bs-toggle="tooltip"
+                                            title="Calefacción"></i>
+                                        <% } %>
+                                            <% if (apartments.services.accessibility) { %>
+                                                <i class="bi bi-person-wheelchair text-black me-1"
+                                                    data-bs-toggle="tooltip" title="Accesibilidad"></i>
+                                                <% } %>
+                                                    <% if (apartments.services.television) { %>
+                                                        <i class="bi bi-tv text-black me-1" data-bs-toggle="tooltip"
+                                                            title="Televisión"></i>
+                                                        <% } %>
+                                                            <% if (apartments.services.kitchen) { %>
+                                                                <i class="bi bi-cup-hot text-black me-1"
+                                                                    data-bs-toggle="tooltip" title="Cocina"></i>
+                                                                <% } %>
+                                                                    <% if (apartments.services.internet) { %>
+                                                                        <i class="bi bi-wifi text-black me-1"
+                                                                            data-bs-toggle="tooltip"
+                                                                            title="Internet"></i>
+                                                                        <% } %>
+                        </ul>
+                        <p><strong>Ubicación:</strong>
+                            <%= apartments.location.municipality.nm %>, <%= apartments.location.province.nm %>
+                        </p>
+                        <% } else { %>
+                            <p class="alert alert-warning">No hay apartamentos disponibles.</p>
+                            <% } %>
+                </div>
+
+                <div class="tab-pane fade" id="location" role="tabpanel" aria-labelledby="location-tab">
+                    <% if (apartments) { %>
+                        <h5>Ubicación en el mapa</h5>
+                        <div style="width: 100%; height: 400px;">
+                            <iframe width="100%" height="400" frameborder="0" scrolling="no" marginheight="0"
+                                marginwidth="0"
+                                src="https://maps.google.com/maps?q=<%= encodeURIComponent(apartments.location.municipality + ', ' + apartments.location.province) %>&t=&z=13&ie=UTF8&iwloc=&output=embed">
+                            </iframe>
+                        </div>
+                        <% } else { %>
+                            <p class="alert alert-warning">No hay datos de ubicación disponibles.</p>
+                            <% } %>
+                </div>
+                <div class="tab-pane fade" id="reservation" role="tabpanel" aria-labelledby="reservation-tab">
+                    <% if (apartments) { %>
+                        <h5>Formulario de Reserva</h5>
+                        <form action="/reservations/new-reservation" method="POST">
+                            <input type="hidden" name="apartmentId" value="<%= apartments._id %>">
+
+                            <div class="mb-3">
+                                <label for="guestName" class="form-label">Nombre completo del huésped</label>
+                                <input type="text" class="form-control" id="guestName" name="guestName" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="guestEmail" class="form-label">Correo electrónico</label>
+                                <input type="email" class="form-control" id="guestEmail" name="guestEmail" required>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="startDate" class="form-label">Fecha de entrada</label>
+                                    <input type="date" class="form-control" id="startDate" name="startDate" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="endDate" class="form-label">Fecha de salida</label>
+                                    <input type="date" class="form-control" id="endDate" name="endDate" required>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Confirmar Reserva</button>
+                        </form>
+                        <% } else { %>
+                            <p class="alert alert-warning">No se puede realizar una reserva sin datos del apartamento.
+                            </p>
+                            <% } %>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // ********** ToolTips **********
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            })
+        });
+    </script>
+    <%- include("partials/footer") %>

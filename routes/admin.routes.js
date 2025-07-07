@@ -5,7 +5,7 @@ import * as adminController from '../controllers/admin.controller.js';
 import {upload} from '../middlewares/uploadMiddleware.js';
 const router = Router();
 
-//  ********** ADMIN ********** 
+//  ******************** USERS ******************** 
 
 // Dashboard
 router.get('/dashboard', requireAuth, requireAdmin, adminController.dashboard);
@@ -20,4 +20,14 @@ router.get('/', requireAuth, requireAdmin, (req, res) => {
 router.get('/profile/edit', requireAuth, requireAdmin, adminController.getEditProfile);
 router.post('/profile/update', requireAuth, requireAdmin, adminController.postUpdateProfile);
 
+// Ver todos los usuarios
+router.get('/users', requireAuth, requireAdmin, adminController.getUsers);
+
+
+//  ******************** RESERVAS ******************** 
+
+// Ver todas las reservas
+router.get('/reservations', requireAuth, requireAdmin, adminController.getReservations);
+
 export default router;
+

@@ -2,6 +2,9 @@ import User from "../models/user.model.js";
 import Apartment from "../models/apartment.model.js";
 import Reservation from "../models/reservation.model.js";
 
+
+// ******************** Usuarios ********************
+
 // DashBoard
 export const dashboard = async (req, res) => {
   console.log("Dashboard");
@@ -11,14 +14,14 @@ export const dashboard = async (req, res) => {
 };
 
 
-// Editar profile
+// GET Edit Profile
 export const getEditProfile = async (req, res) => {
   const { id } = req.params;
   console.log(id)
   res.render("aboutUs", { title: "about", error: undefined });
 };
 
-
+// POST Edit Profile
 export const postUpdateProfile = async (req, res) => {
   try {
     const { name, email, bio } = req.body;
@@ -64,6 +67,53 @@ export const postUpdateProfile = async (req, res) => {
       title: 'Editar perfil',
       user: req.user,
       error: 'Hubo un error al guardar los cambios. Inténtalo de nuevo.',
+    });
+  }
+};
+
+// GET Users
+export const getUsers = async (req, res) => {
+  try {
+    const users = await User.find({role: "user"}).sort({ name: 1 });
+    
+  res.render("users.ejs", { title: "admin", error: undefined , users});
+  } catch (error) {
+    console.error("Error al obtener usuarios:", error);
+    res.status(404).render("error.ejs", {
+      message: "Error interno del servidor",
+      status: 404,
+    });
+  }
+};
+
+
+// ******************** Apartamentos ********************
+
+// GET Add Apartment
+export const getAddApartment = async (req, res) => {
+  res.render("addApartment.ejs", { title: "admin", error: undefined });
+};
+
+// POST Add Apartment
+export const postAddApartment = async (req, res) => {
+  const { id } = req.params;
+  console.log(id)
+  res.render("aboutUs", { title: "about", error: undefined });
+};
+
+
+// ******************** Reservas ********************
+// GET Reservation
+export const getReservations = async (req, res) => {
+  try {
+    const reservations = await Reservation.find({});
+    
+  res.render("reservations.ejs", { title: "admin", error: undefined , reservations});
+  } catch (error) {
+    console.error("Error al obtener reservas:", error);
+    res.status(404).render("error.ejs", {
+      message: "Error interno del servidor",
+      status: 404,
     });
   }
 };

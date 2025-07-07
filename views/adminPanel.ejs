@@ -1,46 +1,73 @@
-<%- include("partials/header", { title: title }) %>
-<div class="d-flex justify-content-center my-5 ">
-  <div class=" row g-4 justify-content-center w-100" style="max-width: 900px; margin: auto;">
-    
-<div class="col-md-4">
-      <div class="card h-100 shadow-sm">
-        <img src="/createNew.jpg" class="card-img-top" alt="Crear nuevo apartamento" style="height: 200px; object-fit: cover;">
+<%- include("partials/header", { title }) %>
+
+<!-- Navbar del admin -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm mb-4">
+  <div class="container d-flex justify-content-between align-items-center">
+    <div class="d-flex align-items-center">
+      <img src="/uploads/<%= currentUser.avatar %>" alt="Avatar de <%= currentUser.name %>"
+        class="img-thumbnail rounded-circle me-3 shadow" style="width: 60px; height: 60px; object-fit: cover;">
+      <div>
+        <h6 class="mb-0 fw-bold text-primary"><%= currentUser.name %></h6>
+        <small class="text-uppercase text-muted"><%= currentUser.role %></small><br>
+        <small class="text-muted"><%= currentUser.email %></small>
+      </div>
+    </div>
+    <span class="navbar-text fw-semibold text-secondary d-none d-md-inline">Panel de Administración</span>
+  </div>
+</nav>
+
+<!-- Panel de acciones -->
+<div class="container">
+  <div class="row row-cols-1 row-cols-md-2 g-4 justify-content-center">
+
+    <!-- Listado de usuarios -->
+    <div class="col">
+      <div class="card border-0 shadow rounded-4 h-100">
+        <img src="/img/usersList.jpg" class="card-img-top rounded-top-4" alt="Listado de usuarios"
+          style="height: 200px; object-fit: cover;">
         <div class="card-body d-flex flex-column">
-          <h5 class="card-title">Crear nuevo apartamento</h5>
-          <p class="card-text">Añade un nuevo apartamento al sistema.</p>
-          <a href="/admin/apartment/new" class="btn btn-primary mt-auto">Crear nuevo apartamento</a>
+          <h5 class="card-title text-dark fw-semibold">Listado de usuarios</h5>
+          <p class="card-text text-muted small">Listado y edición de usuarios.</p>
+          <a href="/admin/users" class="btn btn-outline-primary mt-auto w-100">Ver usuarios</a>
         </div>
       </div>
     </div>
 
-<div class="col-md-4">
-      <div class="card h-100 shadow-sm">
-        <img src="/edit.jpg" class="card-img-top" alt="Editar apartamento" style="height: 200px; object-fit: cover;">
+    <!-- Crear nuevo apartamento -->
+    <div class="col">
+      <div class="card border-0 shadow rounded-4 h-100">
+        <img src="/img/createNew.jpg" class="card-img-top rounded-top-4" alt="Crear nuevo apartamento"
+          style="height: 200px; object-fit: cover;">
         <div class="card-body d-flex flex-column">
-          <h5 class="card-title">Listado y edición de apartamentos</h5>
-          <p class="card-text">Lista todos los apartamentos del sistema y permite su edición.</p>
-          <a href="admin/apartments" class="btn btn-primary mt-auto">Ver apartamentos</a>
+          <h5 class="card-title text-dark fw-semibold">Crear nuevo apartamento</h5>
+          <p class="card-text text-muted small">Añade un nuevo apartamento al sistema.</p>
+          <a href="/admin/apartment/new" class="btn btn-outline-primary mt-auto w-100">Crear apartamento</a>
         </div>
       </div>
     </div>
-    <!-- <div class="col-md-6 col-lg-5">
-      <div class="card h-100 shadow-sm">
-        <img src="/apartmentsList.jpg" class="card-img-top" alt="Crear nuevo apartamento" style="height: 200px; object-fit: cover;">
+
+    <!-- Editar apartamentos -->
+    <div class="col">
+      <div class="card border-0 shadow rounded-4 h-100">
+        <img src="/img/edit.jpg" class="card-img-top rounded-top-4" alt="Editar apartamentos"
+          style="height: 200px; object-fit: cover;">
         <div class="card-body d-flex flex-column">
-          <h5 class="card-title">Listado y edición de apartamentos</h5>
-          <p class="card-text">Lista todos los apartamentos del sistema.</p>
-          <a href="admin/apartments" class="btn btn-primary mt-auto">Lista de apartamentos</a>
+          <h5 class="card-title text-dark fw-semibold">Listado y edición de apartamentos</h5>
+          <p class="card-text text-muted small">Consulta y gestiona todos los apartamentos disponibles.</p>
+          <a href="/admin/apartments" class="btn btn-outline-primary mt-auto w-100">Ver apartamentos</a>
         </div>
       </div>
-    </div> -->
+    </div>
 
-<div class="col-md-4">
-      <div class="card h-100 shadow-sm">
-        <img src="/reservationsList.jpg" class="card-img-top" alt="Editar apartamento" style="height: 200px; object-fit: cover;">
+    <!-- Listado de reservas -->
+    <div class="col">
+      <div class="card border-0 shadow rounded-4 h-100">
+        <img src="/img/reservationsList.jpg" class="card-img-top rounded-top-4" alt="Listado de reservas"
+          style="height: 200px; object-fit: cover;">
         <div class="card-body d-flex flex-column">
-          <h5 class="card-title">Listado de reservas</h5>
-          <p class="card-text">Lista todas las reservas del sistema.</p>
-          <a href="admin/reservations" class="btn btn-primary mt-auto">Lista de reservas</a>
+          <h5 class="card-title text-dark fw-semibold">Listado de reservas</h5>
+          <p class="card-text text-muted small">Revisa todas las reservas realizadas por los usuarios.</p>
+          <a href="/admin/reservations" class="btn btn-outline-primary mt-auto w-100">Ver reservas</a>
         </div>
       </div>
     </div>
@@ -48,4 +75,4 @@
   </div>
 </div>
 
-    <%- include("partials/footer") %>
+<%- include("partials/footer") %>

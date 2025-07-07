@@ -30,6 +30,7 @@
                   <th>Nombre</th>
                   <th>Email</th>
                   <th>Rol</th>
+                  <th>Biografía</th>
                 </tr>
               </thead>
               <tbody>
@@ -37,9 +38,8 @@
                   <tr>
                     <td><%= (i * chunkSize) + index + 1 %></td>
                     <td>
-                      <img src="/uploads/<%= user.avatar %>" alt="Avatar de <%= user.name %>"
-                        class="img-thumbnail rounded-circle"
-                        style="width: 150px; height: 150px; object-fit: cover;">
+                      <img src="/uploads/<%= user.avatar %>" alt="Avatar" class="rounded-circle shadow-sm"
+                        style="width: 50px; height: 50px; object-fit: cover;">
                     </td>
                     <td><strong><%= user.name %></strong></td>
                     <td><%= user.email %></td>
@@ -48,6 +48,7 @@
                         <%= user.role %>
                       </span>
                     </td>
+                    <td><%= user.bio || '-' %></td>
                   </tr>
                 <% }) %>
               </tbody>
@@ -68,7 +69,7 @@
       </button>
     </div>
 
-    <!-- Indicadores de páginas -->
+    <!-- Indicadores opcionales -->
     <div class="d-flex justify-content-center mt-3">
       <div class="carousel-indicators position-static">
         <% for (let i = 0; i < totalPages; i++) { %>

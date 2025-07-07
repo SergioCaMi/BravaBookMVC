@@ -1,0 +1,100 @@
+<%- include("partials/header", { title }) %>
+    <a href="#" onclick="window.history.back()" class="row justify-content-start ">
+        <img src="/img/back.png" alt="Volver atrás" style="max-width: 70px; height: auto;" class="m-3">
+    </a>
+
+<div class="container my-5">
+  <div class="bg-white p-4 shadow rounded-4">
+    <h2 class="text-center text-primary fw-bold mb-4">Reservas - Vista por Páginas</h2>
+
+    <% if (reservations && reservations.length > 0) { 
+         const chunkSize = 20;
+         const totalPages = Math.ceil(reservations.length / chunkSize);
+    %>
+
+    <div id="reservationsCarousel" class="carousel slide">
+      <div class="carousel-inner">
+
+        <% for (let i = 0; i < totalPages; i++) { 
+            const currentChunk = reservations.slice(i * chunkSize, (i + 1) * chunkSize);
+        %>
+        <div class="carousel-item <%= i === 0 ? 'active' : '' %>">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle text-center mb-0">
+              <thead class="table-dark">
+                <tr>
+                  <th>#</th>
+                  <th>Huésped</th>
+                  <th>Email</th>
+                  <th>Apartamento</th>
+                  <th>Usuario</th>
+                  <th>Fechas</th>
+                  <th>Total (€)</th>
+                  <th>Estado</th>
+                  <th>Pagado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% currentChunk.forEach((reservation, index) => { %>
+                  <tr class="<%= new Date(reservation.endDate) < new Date() ? 'table-light' : 'table-success' %>">
+                    <td><%= (i * chunkSize) + index + 1 %></td>
+                    <td><strong><%= reservation.guestName %></strong></td>
+                    <td><%= reservation.guestEmail %></td>
+                    <td>
+                      <% if (reservation.apartment?.title) { %>
+                        <a href="/apartments/<%= reservation.apartment._id %>"><%= reservation.apartment.title %></a>
+                      <% } else { %><em>No disponible</em><% } %>
+                    </td>
+                    <td><%= reservation.user?.name || 'Desconocido' %></td>
+                    <td>
+                      <%= new Date(reservation.startDate).toLocaleDateString() %> –
+                      <%= new Date(reservation.endDate).toLocaleDateString() %>
+                    </td>
+                    <td><span class="badge bg-secondary">€ <%= reservation.totalPrice.toFixed(2) %></span></td>
+                    <td>
+                      <span class="badge <%= reservation.status === 'confirmed' ? 'bg-success' : 'bg-danger' %>">
+                        <%= reservation.status %>
+                      </span>
+                    </td>
+                    <td>
+                      <% if (reservation.paid) { %>
+                        <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                      <% } else { %>
+                        <i class="bi bi-x-circle-fill text-danger fs-5"></i>
+                      <% } %>
+                    </td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <% } %>
+      </div>
+
+      <!-- Controles del carrusel -->
+      <button class="carousel-control-prev" type="button" data-bs-target="#reservationsCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#reservationsCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+      </button>
+
+      <!-- Indicadores -->
+    <div class="d-flex justify-content-center gap-3 mt-4">
+  <button class="btn btn-outline-primary" type="button" data-bs-target="#reservationsCarousel" data-bs-slide="prev">
+    <i class="bi bi-chevron-left me-1"></i> Anterior
+  </button>
+  <button class="btn btn-outline-primary" type="button" data-bs-target="#reservationsCarousel" data-bs-slide="next">
+    Siguiente <i class="bi bi-chevron-right ms-1"></i>
+  </button>
+</div>
+    </div>
+
+    <% } else { %>
+      <div class="alert alert-info text-center">No hay reservas disponibles.</div>
+    <% } %>
+  </div>
+</div>
+
+<%- include("partials/footer") %>

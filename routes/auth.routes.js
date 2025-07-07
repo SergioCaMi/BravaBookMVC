@@ -38,9 +38,11 @@ router.post('/profile/update', upload.single('avatar'), requireAuth, authControl
 // GET All Apartments
 router.get('/', authController.getAllApartments);
 
-// GET Apartment By Id
-router.get('/apartments/:id', authController.getApartmentById);
+// GET Apartment Search
+router.get('/apartments/search', authController.getApartmentSearch);
 
+// GET Apartment By Id=> :id => Siempre al final
+router.get('/apartments/:id', authController.getApartmentById);
 
 export default router;
 
