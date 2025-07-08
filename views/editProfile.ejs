@@ -4,13 +4,7 @@
         <div class="container mt-5">
             <h2 class="mb-4">Editar perfil</h2>
 
-            <!-- Mostrar errores si los hay -->
-            <% if (error) { %>
-                <div class="alert alert-danger">
-                    <%= error %>
-                </div>
-                <% } %>
-
+<%- include("partials/mensajes") %>
                     <form action="/profile/update" method="POST" enctype="multipart/form-data">
                         <div class="mb-3 text-center">
                             <img src="/uploads/avatars/<%= user.avatar %>" alt="Vista previa del avatar" width="100"

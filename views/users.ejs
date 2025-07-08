@@ -8,12 +8,7 @@
   <div class="bg-white p-4 shadow rounded-4">
     <h2 class="text-center text-primary fw-bold mb-4">Usuarios Registrados</h2>
 
-    <% if (users && users.length > 0) { 
-         const chunkSize = 20;
-         const totalPages = Math.ceil(users.length / chunkSize);
-         const currentPage = 0; 
-    %>
-
+<%- include("partials/mensajes") %>
     <!-- Carrusel de usuarios -->
     <div id="usersCarousel" class="carousel slide" data-bs-interval="false">
       <div class="carousel-inner">

@@ -51,11 +51,14 @@ export const login = async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
   if (!user || !(await user.comparePassword(password))) {
-    return res.render("login", {
-      title: "home",
-      error: "Credenciales incorrectas",
-    });
+    req.flash("error_msg", "Credenciales incorrectas.");
+    return res.redirect("/login");
+    // return res.render("login", {
+    //   title: "home",
+    //   error: "Credenciales incorrectas",
+    // });
   }
+
   req.session.userId = user._id;
   console.log(user.name);
   res.redirect("/dashboard");
@@ -67,8 +70,6 @@ export const logout = (req, res) => {
 
   req.session.destroy(() => res.redirect("/"));
 };
-
-
 
 // DashBoard
 export const dashboard = async (req, res) => {
@@ -145,25 +146,28 @@ export const postUpdateProfile = async (req, res) => {
 // GET All Apartments
 export const getAllApartments = async (req, res) => {
   try {
-const apartments = await Apartment.find({ active: true }).sort({ price: -1 }).limit(30);
+    const apartments = await Apartment.find({ active: true })
+      .sort({ price: -1 })
+      .limit(30);
     res.render("home", { title: "home", error: undefined, apartments });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-
 // GET All Apartments
 export const getSeeApartments = async (req, res) => {
   try {
     const apartments = await Apartment.find({ active: true });
-    res.render("seeApartments", { title: "home", error: undefined, apartments , totalPages: Math.ceil(apartments.length / 12), currentPage: 0});
+    res.render("seeApartments", {
+      title: "home",
+      error: undefined,
+      apartments,
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
-
-
 
 // GET Apartment Search
 export const getApartmentSearch = async (req, res) => {
@@ -318,14 +322,13 @@ export const getApartmentById = async (req, res) => {
     });
   }
 
-
   try {
-    const apartments = await Apartment.findById( id );
-  res.render("detailApartment.ejs", {
-    title: "home",
-    error: undefined,
-    apartments,
-  });
+    const apartments = await Apartment.findById(id);
+    res.render("detailApartment.ejs", {
+      title: "home",
+      error: undefined,
+      apartments,
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

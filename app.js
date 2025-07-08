@@ -57,10 +57,20 @@ app.use(async (req, res, next) => {
 });
 
 
+
+// Mensajes en sesiones
+import flash from 'connect-flash';
+app.use(flash());
+
+app.use((req, res, next) => {
+  res.locals.success_msg = req.flash('success_msg');
+  res.locals.error_msg = req.flash('error_msg');
+  next();
+});
+
 // Rutas
 app.use('/', authRoutes);
 app.use('/admin', adminRoutes);
-
 
 // --- Middlewares ---
 app.use(express.urlencoded({ extended: true }));

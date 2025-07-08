@@ -2,7 +2,6 @@ import User from "../models/user.model.js";
 import Apartment from "../models/apartment.model.js";
 import Reservation from "../models/reservation.model.js";
 
-
 // ******************** Usuarios ********************
 
 // DashBoard
@@ -13,11 +12,10 @@ export const dashboard = async (req, res) => {
   res.render("dashboard", { title: "admin", user });
 };
 
-
 // GET Edit Profile
 export const getEditProfile = async (req, res) => {
   const { id } = req.params;
-  console.log(id)
+  console.log(id);
   res.render("aboutUs", { title: "about", error: undefined });
 };
 
@@ -28,10 +26,10 @@ export const postUpdateProfile = async (req, res) => {
 
     // Validación básica
     if (!name || !email) {
-      return res.status(400).render('editProfile', {
-        title: 'Editar perfil',
+      return res.status(400).render("editProfile", {
+        title: "Editar perfil",
         user: req.user,
-        error: 'Nombre y correo electrónico son obligatorios.',
+        error: "Nombre y correo electrónico son obligatorios.",
       });
     }
 
@@ -42,10 +40,10 @@ export const postUpdateProfile = async (req, res) => {
       const currentUser = await User.findById(req.session.userId);
 
       // Borrar avatar anterior si no es el por defecto
-      if (currentUser.avatar && currentUser.avatar !== 'default.jpg') {
+      if (currentUser.avatar && currentUser.avatar !== "default.jpg") {
         const oldAvatarPath = path.join(
           process.cwd(),
-          'public/uploads/avatars',
+          "public/uploads/avatars",
           currentUser.avatar
         );
 
@@ -59,14 +57,13 @@ export const postUpdateProfile = async (req, res) => {
 
     await User.findByIdAndUpdate(req.session.userId, updates);
 
-    res.redirect('/dashboard');
-
+    res.redirect("/dashboard");
   } catch (err) {
-    console.error('Error al actualizar el perfil:', err);
-    res.status(500).render('editProfile', {
-      title: 'Editar perfil',
+    console.error("Error al actualizar el perfil:", err);
+    res.status(500).render("editProfile", {
+      title: "Editar perfil",
       user: req.user,
-      error: 'Hubo un error al guardar los cambios. Inténtalo de nuevo.',
+      error: "Hubo un error al guardar los cambios. Inténtalo de nuevo.",
     });
   }
 };
@@ -75,8 +72,8 @@ export const postUpdateProfile = async (req, res) => {
 export const getUsers = async (req, res) => {
   try {
     const users = await User.find({}).sort({ name: 1 });
-    
-  res.render("users.ejs", { title: "admin", error: undefined , users});
+
+    res.render("users.ejs", { title: "admin", error: undefined, users });
   } catch (error) {
     console.error("Error al obtener usuarios:", error);
     res.status(404).render("error.ejs", {
@@ -85,7 +82,6 @@ export const getUsers = async (req, res) => {
     });
   }
 };
-
 
 // ******************** Apartamentos ********************
 
@@ -97,7 +93,7 @@ export const getNewApartment = async (req, res) => {
 // POST New Apartment
 export const postNewApartment = async (req, res) => {
   console.log(req.body);
- 
+
   try {
     const {
       title,
@@ -138,28 +134,28 @@ export const postNewApartment = async (req, res) => {
     };
 
     //  *** Localización ***
-const location = {
-  province: {
-    id: req.body.location?.province?.id
-      ? Number(req.body.location.province.id)
-      : 0,
-    nm: req.body.location?.province?.nm || "No especificado"
-  },
-  municipality: {
-    id: req.body.location?.municipality?.id
-      ? Number(req.body.location.municipality.id)
-      : 0,
-    nm: req.body.location?.municipality?.nm || "No especificado"
-  },
-  gpsCoordinates: {
-    lat: req.body.location?.gpsCoordinates?.lat
-      ? Number(req.body.location.gpsCoordinates.lat)
-      : 0,
-    lng: req.body.location?.gpsCoordinates?.lng
-      ? Number(req.body.location.gpsCoordinates.lng)
-      : 0
-  }
-};
+    const location = {
+      province: {
+        id: req.body.location?.province?.id
+          ? Number(req.body.location.province.id)
+          : 0,
+        nm: req.body.location?.province?.nm || "No especificado",
+      },
+      municipality: {
+        id: req.body.location?.municipality?.id
+          ? Number(req.body.location.municipality.id)
+          : 0,
+        nm: req.body.location?.municipality?.nm || "No especificado",
+      },
+      gpsCoordinates: {
+        lat: req.body.location?.gpsCoordinates?.lat
+          ? Number(req.body.location.gpsCoordinates.lat)
+          : 0,
+        lng: req.body.location?.gpsCoordinates?.lng
+          ? Number(req.body.location.gpsCoordinates.lng)
+          : 0,
+      },
+    };
 
     //  *** Camas por habitación ***
     let bedsPerRoom = [];
@@ -183,28 +179,32 @@ const location = {
       services,
       location,
       active: true,
-      createdBy: req.body.createdBy
+      createdBy: req.body.createdBy,
     });
 
-    await newApartment.save(); 
-//  res.status(201).json({ apartment: newApartment });
-       res.render("addApartment.ejs", { title: "admin", error: undefined reservations});
-
-    // res.redirect("/admin");
-
+    await newApartment.save();
+    //  res.status(201).json({ apartment: newApartment });
+    req.flash("success_msg", "El apartamento se ha creado satisfactoriamente.");
+    res.redirect("/admin");
   } catch (error) {
+    req.flash('error_msg', 'Hubo un error al crear el apartamento.');
     console.error("Error:", error.message);
+        res.redirect('/admin')
+
   }
 };
-
 
 // ******************** Reservas ********************
 // GET Reservation
 export const getReservations = async (req, res) => {
   try {
     const reservations = await Reservation.find({});
-    
-  res.render("reservations.ejs", { title: "admin", error: undefined , reservations});
+
+    res.render("reservations.ejs", {
+      title: "admin",
+      error: undefined,
+      reservations,
+    });
   } catch (error) {
     console.error("Error al obtener reservas:", error);
     res.status(404).render("error.ejs", {

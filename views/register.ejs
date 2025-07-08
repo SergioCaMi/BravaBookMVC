@@ -7,12 +7,7 @@
         <div class="card-body">
           <h3 class="card-title text-center mb-4">Registrarse</h3>
 
-          <% if (error) { %>
-            <div class="alert alert-danger" role="alert">
-              <%= error %>
-            </div>
-          <% } %>
-
+<%- include("partials/mensajes") %>
           
 
           <form action="/register" method="POST">
