@@ -97,8 +97,7 @@ export const getNewApartment = async (req, res) => {
 // POST New Apartment
 export const postNewApartment = async (req, res) => {
   console.log(req.body);
-    const errors = validationResult(req);
-  
+ 
   try {
     const {
       title,
@@ -139,18 +138,28 @@ export const postNewApartment = async (req, res) => {
     };
 
     //  *** Localización ***
-    const location = {
-      province: req.body.location?.province || "No especificado",
-      city: req.body.location?.city || "No especificado",
-      gpsCoordinates: {
-        lat: req.body.location?.gpsCoordinates?.lat
-          ? Number(req.body.location.gpsCoordinates.lat)
-          : 0,
-        lng: req.body.location?.gpsCoordinates?.lng
-          ? Number(req.body.location.gpsCoordinates.lng)
-          : 0,
-      },
-    };
+const location = {
+  province: {
+    id: req.body.location?.province?.id
+      ? Number(req.body.location.province.id)
+      : 0,
+    nm: req.body.location?.province?.nm || "No especificado"
+  },
+  municipality: {
+    id: req.body.location?.municipality?.id
+      ? Number(req.body.location.municipality.id)
+      : 0,
+    nm: req.body.location?.municipality?.nm || "No especificado"
+  },
+  gpsCoordinates: {
+    lat: req.body.location?.gpsCoordinates?.lat
+      ? Number(req.body.location.gpsCoordinates.lat)
+      : 0,
+    lng: req.body.location?.gpsCoordinates?.lng
+      ? Number(req.body.location.gpsCoordinates.lng)
+      : 0
+  }
+};
 
     //  *** Camas por habitación ***
     let bedsPerRoom = [];
@@ -159,7 +168,6 @@ export const postNewApartment = async (req, res) => {
         .map((num) => parseInt(num, 10))
         .filter((num) => !isNaN(num) && num >= 0);
     }
-
     // *** Crear la nueva instancia ***
     const newApartment = new Apartment({
       title,
@@ -175,23 +183,17 @@ export const postNewApartment = async (req, res) => {
       services,
       location,
       active: true,
+      createdBy: req.body.createdBy
     });
 
-    await newApartment.save();
-    console.log("desde POST /admin/apartment hasta home.ejs");
-    // const renderData = getRenderObject(
-    //   "",
-    //   [],
-    //   [],
-    //   req,
-    //   null,
-    //   undefined,
-    //   1,
-    //   "admin"
-    // );
-    res.redirect("/admin");
+    await newApartment.save(); 
+//  res.status(201).json({ apartment: newApartment });
+       res.render("addApartment.ejs", { title: "admin", error: undefined reservations});
+
+    // res.redirect("/admin");
+
   } catch (error) {
-    console.error("Error:", error);
+    console.error("Error:", error.message);
   }
 };
 

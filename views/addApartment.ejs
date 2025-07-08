@@ -2,12 +2,14 @@
     <a href="#" onclick="window.history.back()" class="row justify-content-start ">
         <img src="/img/back.png" alt="Volver atrás" style="max-width: 70px; height: auto;" class="m-3">
     </a>
+<p>Usuario: <%= currentUser ? currentUser.id : 'No logueado' %></p>
 
 <div class="container my-5">
   <div class="bg-white p-5 shadow rounded-4">
     <h2 class="mb-4 text-center text-primary fw-bold">Nuevo Apartamento</h2>
 
-    <form id="apartmentForm" class="needs-validation" novalidate method="post" action="/admin/apartment">
+    <!-- <form id="apartmentForm" class="needs-validation" novalidate method="post" action="/admin/apartment"> -->
+    <form id="apartmentForm"  method="post" action="/admin/apartment/new">
       <!-- Título y descripción -->
       <div class="row g-4 mb-4">
         <div class="col-md-6">
@@ -139,6 +141,8 @@
     <input type="number" step="any" name="location[gpsCoordinates][lng]" class="form-control" />
   </div>
 </div>
+<input type="hidden" name="createdBy" value="<%= currentUser.id %>">
+
       <!-- Botón enviar -->
       <div class="d-grid">
         <button type="submit" class="btn btn-primary btn-lg">Añadir apartamento</button>

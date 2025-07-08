@@ -33,8 +33,8 @@ router.get('/reservations', requireAuth, requireAdmin, adminController.getReserv
 // GET new Apartment
 router.get("/apartment/new", requireAuth, requireAdmin, adminController.getNewApartment);
 // POST new Apartment
-router.post("/apartment/new", requireAuth, requireAdmin, adminController.postNewApartment);
-
+// router.post("/apartment/new", requireAuth, requireAdmin, adminController.postNewApartment);
+router.post("/apartment/new", adminController.postNewApartment);
 
 export default router;
 
