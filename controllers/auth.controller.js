@@ -68,6 +68,8 @@ export const logout = (req, res) => {
   req.session.destroy(() => res.redirect("/"));
 };
 
+
+
 // DashBoard
 export const dashboard = async (req, res) => {
   console.log("Dashboard");
@@ -143,13 +145,25 @@ export const postUpdateProfile = async (req, res) => {
 // GET All Apartments
 export const getAllApartments = async (req, res) => {
   try {
-    const apartments = await Apartment.find({ active: true }).limit(20);
-    // res.status(200).json({ apartments });
+const apartments = await Apartment.find({ active: true }).sort({ price: -1 }).limit(30);
     res.render("home", { title: "home", error: undefined, apartments });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+
+
+// GET All Apartments
+export const getSeeApartments = async (req, res) => {
+  try {
+    const apartments = await Apartment.find({ active: true });
+    res.render("seeApartments", { title: "home", error: undefined, apartments , totalPages: Math.ceil(apartments.length / 12), currentPage: 0});
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
 
 // GET Apartment Search
 export const getApartmentSearch = async (req, res) => {

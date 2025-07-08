@@ -74,7 +74,7 @@ export const postUpdateProfile = async (req, res) => {
 // GET Users
 export const getUsers = async (req, res) => {
   try {
-    const users = await User.find({role: "user"}).sort({ name: 1 });
+    const users = await User.find({}).sort({ name: 1 });
     
   res.render("users.ejs", { title: "admin", error: undefined , users});
   } catch (error) {
@@ -89,16 +89,110 @@ export const getUsers = async (req, res) => {
 
 // ******************** Apartamentos ********************
 
-// GET Add Apartment
-export const getAddApartment = async (req, res) => {
+// GET New Apartment
+export const getNewApartment = async (req, res) => {
   res.render("addApartment.ejs", { title: "admin", error: undefined });
 };
 
-// POST Add Apartment
-export const postAddApartment = async (req, res) => {
-  const { id } = req.params;
-  console.log(id)
-  res.render("aboutUs", { title: "about", error: undefined });
+// POST New Apartment
+export const postNewApartment = async (req, res) => {
+  console.log(req.body);
+    const errors = validationResult(req);
+  
+  try {
+    const {
+      title,
+      description,
+      rooms,
+      bathrooms,
+      price,
+      maxGuests,
+      squareMeters,
+    } = req.body;
+
+    // *** Normas ***
+    const rules = Array.isArray(req.body.rules)
+      ? req.body.rules.map((r) => r.trim()).filter((r) => r.length > 0)
+      : [];
+
+    // *** Fotos ***
+    const photos = Array.isArray(req.body.photos)
+      ? req.body.photos
+          .filter((photo) => photo.url?.trim())
+          .map((photo, index) => ({
+            ...photo,
+            url: photo.url.trim(),
+            description: photo.description || "",
+            isMain: String(index) === String(req.body.mainPhotoIndex),
+          }))
+      : [];
+
+    //  *** Servicios ***
+    // existe el servicio? es igual a 'on'? true/false
+    const services = {
+      airConditioning: req.body.services?.airConditioning === "on",
+      heating: req.body.services?.heating === "on",
+      accessibility: req.body.services?.accessibility === "on",
+      television: req.body.services?.television === "on",
+      kitchen: req.body.services?.kitchen === "on",
+      internet: req.body.services?.internet === "on",
+    };
+
+    //  *** Localización ***
+    const location = {
+      province: req.body.location?.province || "No especificado",
+      city: req.body.location?.city || "No especificado",
+      gpsCoordinates: {
+        lat: req.body.location?.gpsCoordinates?.lat
+          ? Number(req.body.location.gpsCoordinates.lat)
+          : 0,
+        lng: req.body.location?.gpsCoordinates?.lng
+          ? Number(req.body.location.gpsCoordinates.lng)
+          : 0,
+      },
+    };
+
+    //  *** Camas por habitación ***
+    let bedsPerRoom = [];
+    if (Array.isArray(req.body.bedsPerRoom)) {
+      bedsPerRoom = req.body.bedsPerRoom
+        .map((num) => parseInt(num, 10))
+        .filter((num) => !isNaN(num) && num >= 0);
+    }
+
+    // *** Crear la nueva instancia ***
+    const newApartment = new Apartment({
+      title,
+      description,
+      rules,
+      rooms: Number(rooms),
+      bedsPerRoom,
+      bathrooms: Number(bathrooms),
+      photos,
+      price: Number(price),
+      maxGuests: Number(maxGuests),
+      squareMeters: Number(squareMeters),
+      services,
+      location,
+      active: true,
+    });
+
+    await newApartment.save();
+    console.log("desde POST /admin/apartment hasta home.ejs");
+    // const renderData = getRenderObject(
+    //   "",
+    //   [],
+    //   [],
+    //   req,
+    //   null,
+    //   undefined,
+    //   1,
+    //   "admin"
+    // );
+    res.redirect("/admin");
+  } catch (error) {
+    console.error("Error:", error);
+  }
 };
 
 
