@@ -67,16 +67,17 @@ export const login = async (req, res) => {
 // LogOut
 export const logout = (req, res) => {
   console.log("LogOut");
-
   req.session.destroy(() => res.redirect("/"));
 };
 
 // DashBoard
 export const dashboard = async (req, res) => {
   console.log("Dashboard");
-
   const user = await User.findById(req.session.userId);
-  res.render("dashboard", { title: "home", user });
+  const reservations = await Reservation.find({ user: req.session.userId }).limit(10);
+  const apartments = await Apartment.find({ createdBy: req.session.userId }).limit(50);
+  
+  res.render("dashboard", { title: "home", user, reservations, apartments });
 };
 
 // ContactUs
@@ -328,6 +329,29 @@ export const getApartmentById = async (req, res) => {
       title: "home",
       error: undefined,
       apartments,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// GET Reservations By Id (:id => Debe ir al final)
+export const getReservationsById = async (req, res) => {
+  const { id } = req.params;
+  console.log(id);
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).render("error", {
+      message: "ID inválido",
+      status: 400,
+    });
+  }
+
+  try {
+  const reservations = await Reservation.find({ user: req.session.userId });
+    res.render("userReservations.ejs", {
+      title: "home",
+      error: undefined,
+      reservations,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });

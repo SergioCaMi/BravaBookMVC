@@ -29,12 +29,16 @@ router.get('/users', requireAuth, requireAdmin, adminController.getUsers);
 // Ver todas las reservas
 router.get('/reservations', requireAuth, requireAdmin, adminController.getReservations);
 
+// router.get('/reservation', requireAuth, requireAdmin, adminController.getReservations);
+
 //  ******************** APARTAMENTOS ******************** 
 // GET new Apartment
 router.get("/apartment/new", requireAuth, requireAdmin, adminController.getNewApartment);
 // POST new Apartment
 // router.post("/apartment/new", requireAuth, requireAdmin, adminController.postNewApartment);
 router.post("/apartment/new", adminController.postNewApartment);
+
+
 
 export default router;
 

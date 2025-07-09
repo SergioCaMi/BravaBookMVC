@@ -6,7 +6,7 @@ import {upload} from '../middlewares/uploadMiddleware.js';
 
 const router = Router();
 
-// ********** USSER  ********** 
+// ********** USER  ********** 
 
 // Register
 router.get('/register', (req, res) => res.render('register', {title: "home"}));
@@ -41,11 +41,21 @@ router.get('/', authController.getAllApartments);
 // GET Apartment Search
 router.get('/apartments/search', authController.getApartmentSearch);
 
-// GET Apartment By Id=> :id => Siempre al final
-router.get('/apartments/:id', authController.getApartmentById);
 
 // GET see Apartments
 router.get('/seeApartments', authController.getSeeApartments);
+
+//  ******************** RESERVAS ******************** 
+
+
+
+
+//  ******************** PARAMS ******************** 
+// GET Apartment By Id=> :id => Siempre al final
+router.get('/apartments/:id', authController.getApartmentById);
+
+// GET Reservation By Id=> :id => Siempre al final
+router.get('/reservation/:id', requireAuth, authController.getReservationsById);
 
 
 export default router;

@@ -1,7 +1,6 @@
   let provinces = [];
   let cities = [];
 
-  // Cargar datos al iniciar
   window.addEventListener('DOMContentLoaded', async () => {
     const [provinceRes, cityRes] = await Promise.all([
       fetch('/data/province.json'),
@@ -27,7 +26,7 @@
       provinceSelect.appendChild(option);
     });
 
-    // Evento: cambiar provincia
+    // Cambia provincia
     provinceSelect.addEventListener('change', () => {
       const selectedProvinceId = provinceSelect.value;
       const selectedProvince = provinces.find(p => p.id === selectedProvinceId);
@@ -36,7 +35,7 @@
       provinceIdInput.value = selectedProvince?.id || '';
       provinceNameInput.value = selectedProvince?.nm || '';
 
-      // Limpiar municipios anteriores
+      // Limpiar municipios 
       municipalitySelect.innerHTML = '<option value="">-- Selecciona un municipio --</option>';
       municipalityIdInput.value = '';
       municipalityNameInput.value = '';
@@ -53,7 +52,7 @@
       }
     });
 
-    // Evento: cambiar municipio
+    // Cambia municipio
     municipalitySelect.addEventListener('change', () => {
       const selectedCityId = municipalitySelect.value;
       const selectedCity = cities.find(c => c.id === selectedCityId);

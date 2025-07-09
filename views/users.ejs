@@ -3,114 +3,117 @@
 <a href="#" onclick="window.history.back()" class="row justify-content-start">
   <img src="/img/back.png" alt="Volver atrás" style="max-width: 70px; height: auto;" class="m-3">
 </a>
-
-<div class="container my-5">
-  <div class="bg-white p-4 shadow rounded-4">
-    <h2 class="text-center text-primary fw-bold mb-4">Usuarios Registrados</h2>
-
 <%- include("partials/mensajes") %>
-    <!-- Carrusel de usuarios -->
-    <div id="usersCarousel" class="carousel slide" data-bs-interval="false">
-      <div class="carousel-inner">
 
-        <% for (let i = 0; i < totalPages; i++) {
-             const currentChunk = users.slice(i * chunkSize, (i + 1) * chunkSize);
-        %>
-<div class="carousel-item <%= i === 0 ? 'active' : '' %>">
-  <div class="table-responsive">
-    <table class="table table-hover align-middle text-center mb-0">
-      <thead class="table-dark">
-        <tr>
-          <th>#</th>
-          <th>Avatar</th>
-          <th>Nombre</th>
-          <th>Email</th>
-          <th>Rol</th>
-          <% if (currentUser && currentUser.role === 'admin') { %>
-            <th>Acciones</th>
+<div class="container-fluid my-5 mx-6">
+  <div class="bg-white p-4 shadow rounded-4">
+    <h2 class="text-center text-primary fw-bold mb-4">Usuarios registrados</h2>
+
+    <% if (users && users.length > 0) {
+      const chunkSize = 20;
+      const totalPages = Math.ceil(users.length / chunkSize);
+      const currentPage = 0;
+    %>
+
+      <div id="usersCarousel" class="carousel slide" data-bs-interval="false">
+        <div class="carousel-inner">
+
+          <% for (let i = 0; i < totalPages; i++) {
+            const currentChunk = users.slice(i * chunkSize, (i + 1) * chunkSize); %>
+            <div class="carousel-item <%= i === 0 ? 'active' : '' %>">
+              <div class="table-responsive">
+                <table class="table table-hover align-middle text-center mb-0">
+                  <thead class="table-dark">
+                    <tr>
+                      <th>#</th>
+                      <th>Avatar</th>
+                      <th>Nombre</th>
+                      <th>Email</th>
+                      <th>Rol</th>
+                      <% if (currentUser && currentUser.role === 'admin') { %>
+                        <th>Acciones</th>
+                      <% } %>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% currentChunk.forEach((user, index) => { %>
+                      <tr>
+                        <td><%= (i * chunkSize) + index + 1 %></td>
+                        <td>
+                          <img src="/uploads/<%= user.avatar %>" alt="Avatar" class="rounded-circle shadow-sm"
+                               style="width: 50px; height: 50px; object-fit: cover;">
+                        </td>
+                        <td><strong><%= user.name %></strong></td>
+                        <td><%= user.email %></td>
+                        <td>
+                          <span class="badge <%= user.role === 'admin' ? 'bg-primary' : 'bg-secondary' %>">
+                            <%= user.role %>
+                          </span>
+                        </td>
+
+                        <% if (currentUser && currentUser.role === 'admin') { %>
+                          <td>
+                            <div class="d-flex justify-content-center gap-2">
+                              <a href="/user/edit/<%= user._id %>" class="btn btn-warning btn-sm">
+                                <i class="bi bi-pencil-square"></i>
+                              </a>
+
+                              <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                      data-bs-target="#deleteUserModal-<%= user._id %>">
+                                <i class="bi bi-trash3"></i>
+                              </button>
+                            </div>
+
+                            <!-- Modal Confirmación de Eliminación -->
+                            <div class="modal fade" id="deleteUserModal-<%= user._id %>" tabindex="-1"
+                                 aria-labelledby="deleteUserModalLabel-<%= user._id %>" aria-hidden="true">
+                              <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                  <div class="modal-header bg-danger text-white">
+                                    <h5 class="modal-title" id="deleteUserModalLabel-<%= user._id %>">
+                                      Confirmar eliminación
+                                    </h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                  </div>
+                                  <div class="modal-body">
+                                    ¿Estás seguro de que deseas eliminar a <strong><%= user.name %></strong>?
+                                    Esta acción no se puede deshacer.
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                    <form action="/user/delete/<%= user._id %>" method="POST">
+                                      <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+                                    </form>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                        <% } %>
+                      </tr>
+                    <% }) %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
           <% } %>
-        </tr>
-      </thead>
-      <tbody>
-        <% currentChunk.forEach((user, index) => { %>
-          <tr>
-            <td><%= (i * chunkSize) + index + 1 %></td>
-            <td>
-              <img src="/uploads/<%= user.avatar %>" alt="Avatar" class="rounded-circle shadow-sm"
-                   style="width: 50px; height: 50px; object-fit: cover;">
-            </td>
-            <td><strong><%= user.name %></strong></td>
-            <td><%= user.email %></td>
-            <td>
-              <span class="badge <%= user.role === 'admin' ? 'bg-primary' : 'bg-secondary' %>">
-                <%= user.role %>
-              </span>
-            </td>
-
-            <% if (currentUser && currentUser.role === 'admin') { %>
-              <td>
-                <div class="d-flex justify-content-center gap-2">
-                  <!-- Botón Editar -->
-                  <a href="/user/edit/<%= user._id %>" class="btn btn-warning btn-sm">
-                    <i class="bi bi-pencil-square"></i>
-                  </a>
-
-                  <!-- Botón Eliminar -->
-                  <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                          data-bs-target="#deleteUserModal-<%= user._id %>">
-                    <i class="bi bi-trash3"></i>
-                  </button>
-                </div>
-
-                <!-- Modal Confirmación de Eliminación -->
-                <div class="modal fade" id="deleteUserModal-<%= user._id %>" tabindex="-1"
-                     aria-labelledby="deleteUserModalLabel-<%= user._id %>" aria-hidden="true">
-                  <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                      <div class="modal-header bg-danger text-white">
-                        <h5 class="modal-title" id="deleteUserModalLabel-<%= user._id %>">
-                          Confirmar eliminación
-                        </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                      </div>
-                      <div class="modal-body">
-                        ¿Estás seguro de que deseas eliminar a <strong><%= user.name %></strong>?
-                        Esta acción no se puede deshacer.
-                      </div>
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <form action="/user/delete/<%= user._id %>" method="POST">
-                          <button type="submit" class="btn btn-danger">Sí, eliminar</button>
-                        </form>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </td>
-            <% } %>
-          </tr>
-        <% }) %>
-      </tbody>
-    </table>
-  </div>
-</div>
-
-        <% } %>
+        </div>
       </div>
-    </div>
 
-    <!-- Controles de paginación personalizados -->
-<div class="d-flex justify-content-center gap-3 mt-4">
-  <button id="jumpBackBtn" class="btn btn-outline-secondary">&laquo; -5</button>
-  <button id="prevPageBtn" class="btn btn-outline-primary">Anterior</button>
+      <!-- Controles paginación -->
+      <div class="d-flex justify-content-center gap-3 mt-4">
+        <button id="jumpBackBtn" class="btn btn-outline-secondary">&laquo; -5</button>
+        <button id="prevPageBtn" class="btn btn-outline-primary">Anterior</button>
 
-  <% for (let i = 0; i < totalPages; i++) { %>
-    <button class="btn btn-outline-primary page-btn" data-index="<%= i %>"><%= i + 1 %></button>
-  <% } %>
+        <% for (let i = 0; i < totalPages; i++) { %>
+          <button class="btn btn-outline-primary page-btn" data-index="<%= i %>">
+            <%= i + 1 %>
+          </button>
+        <% } %>
 
-  <button id="nextPageBtn" class="btn btn-outline-primary">Siguiente</button>
-  <button id="jumpForwardBtn" class="btn btn-outline-secondary">+5 &raquo;</button>
-</div>
+        <button id="nextPageBtn" class="btn btn-outline-primary">Siguiente</button>
+        <button id="jumpForwardBtn" class="btn btn-outline-secondary">+5 &raquo;</button>
+      </div>
 
     <% } else { %>
       <div class="alert alert-info text-center">No hay usuarios registrados.</div>
@@ -118,7 +121,6 @@
   </div>
 </div>
 
-// Paginación
 <script>
   window.paginationConfig = {
     carouselId: 'usersCarousel',

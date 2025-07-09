@@ -6,10 +6,12 @@ import Reservation from "../models/reservation.model.js";
 
 // DashBoard
 export const dashboard = async (req, res) => {
-  console.log("Dashboard");
-
+  console.log("Dashboard ");
   const user = await User.findById(req.session.userId);
-  res.render("dashboard", { title: "admin", user });
+  const reservations = await Reservation.find({ user: req.session.userId }).limit(10);
+  const apartments = await Apartment.find({ createdBy: req.session.userId }).limit(50);
+  
+  res.render("dashboard", { title: "home", user, reservations, apartments });
 };
 
 // GET Edit Profile
@@ -156,7 +158,8 @@ export const postNewApartment = async (req, res) => {
           : 0,
       },
     };
-
+console.log(location.province.nm);
+console.log(location.province.if);
     //  *** Camas por habitación ***
     let bedsPerRoom = [];
     if (Array.isArray(req.body.bedsPerRoom)) {
@@ -187,10 +190,9 @@ export const postNewApartment = async (req, res) => {
     req.flash("success_msg", "El apartamento se ha creado satisfactoriamente.");
     res.redirect("/admin");
   } catch (error) {
-    req.flash('error_msg', 'Hubo un error al crear el apartamento.');
+    req.flash("error_msg", "Hubo un error al crear el apartamento.");
     console.error("Error:", error.message);
-        res.redirect('/admin')
-
+    res.redirect("/admin");
   }
 };
 
