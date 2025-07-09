@@ -158,8 +158,8 @@ export const postNewApartment = async (req, res) => {
           : 0,
       },
     };
-console.log(location.province.nm);
-console.log(location.province.if);
+console.log(location.province);
+console.log(location.province);
     //  *** Camas por habitación ***
     let bedsPerRoom = [];
     if (Array.isArray(req.body.bedsPerRoom)) {

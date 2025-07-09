@@ -46,7 +46,8 @@ router.get('/apartments/search', authController.getApartmentSearch);
 router.get('/seeApartments', authController.getSeeApartments);
 
 //  ******************** RESERVAS ******************** 
-
+// POST New Reservation
+router.post("/reservations/new-reservation", authController.postNewReservation);
 
 
 

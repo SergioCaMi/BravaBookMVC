@@ -153,7 +153,7 @@
                         <h5>Formulario de Reserva</h5>
                         <form action="/reservations/new-reservation" method="POST">
                             <input type="hidden" name="apartmentId" value="<%= apartments._id %>">
-
+                            <input type="hidden" name="user" value="<%= user._id %>">
                             <div class="mb-3">
                                 <label for="guestName" class="form-label">Nombre completo del huésped</label>
                                 <input type="text" class="form-control" id="guestName" name="guestName" required>

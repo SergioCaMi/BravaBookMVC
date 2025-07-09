@@ -74,9 +74,13 @@ export const logout = (req, res) => {
 export const dashboard = async (req, res) => {
   console.log("Dashboard");
   const user = await User.findById(req.session.userId);
-  const reservations = await Reservation.find({ user: req.session.userId }).limit(10);
-  const apartments = await Apartment.find({ createdBy: req.session.userId }).limit(50);
-  
+  const reservations = await Reservation.find({
+    user: req.session.userId,
+  }).limit(10);
+  const apartments = await Apartment.find({
+    createdBy: req.session.userId,
+  }).limit(50);
+
   res.render("dashboard", { title: "home", user, reservations, apartments });
 };
 
@@ -347,7 +351,7 @@ export const getReservationsById = async (req, res) => {
   }
 
   try {
-  const reservations = await Reservation.find({ user: req.session.userId });
+    const reservations = await Reservation.find({ user: req.session.userId });
     res.render("userReservations.ejs", {
       title: "home",
       error: undefined,
@@ -355,5 +359,60 @@ export const getReservationsById = async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+};
+
+// POST New Reservation
+export const postNewReservation = async (req, res) => {
+  const { apartmentId, guestName, guestEmail } = req.body;
+  const startDate = new Date(req.body.startDate);
+  const endDate = new Date(req.body.endDate);
+  if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+    console.log("fecha no disponible");
+    req.flash("error_msg", "Fechas no disponibles.");
+    res.redirect("/reservations/new-reservation");
+  }
+
+  const status = "confirmed";
+  const paid = true;
+  try {
+    const dataReservations = await Reservation.find({
+      apartmentId: apartmentId,
+      $and: [{ endDate: { $gt: startDate } }, { startDate: { $lt: endDate } }],
+    });
+  console.log("dataReservations:", dataReservations.length);
+
+    if (dataReservations.length === 0) {
+            console.log("creamos el objeto");
+
+      const newReservation = new Reservation({
+        apartment: apartmentId,
+        user: req.session.userId,        
+        guestName,
+        guestEmail,
+        startDate,
+        endDate,
+        status,
+        paid,
+      });
+            console.log("objeto creado:", newReservation );
+
+      await newReservation.save();
+      console.log("Objeto guardado");
+      req.flash("success_msg", "Reserva realizada con éxito.");
+      res.redirect("/");
+    } else {
+      req.flash(
+        "error_msg",
+        "Fallo en la realización de la reserva. Pongase en contacto por telefono con nuestro equipo."
+      );
+      res.redirect("/");
+    }
+  } catch (err) {
+    req.flash(
+      "error_msg",
+      "Fallo en la realización de la reserva. Pongase en contacto por telefono con nuestro equipo."
+    );
+    res.redirect("/");
   }
 };
