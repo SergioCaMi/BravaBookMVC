@@ -35,10 +35,12 @@ router.get('/reservations', requireAuth, requireAdmin, adminController.getReserv
 // GET new Apartment
 router.get("/apartment/new", requireAuth, requireAdmin, adminController.getNewApartment);
 // POST new Apartment
-// router.post("/apartment/new", requireAuth, requireAdmin, adminController.postNewApartment);
 router.post("/apartment/new", adminController.postNewApartment);
 
-
-
+// ******************** PARAMS ********************
+//GET edit apartment
+router.get("/apartments/edit/:id", requireAuth, requireAdmin, adminController.getAdminEdit);
+//POST edit apartment
+// router.post("/apartment/edit/:id/save", requireAuth, requireAdmin, adminController.putAdminEdit);
 export default router;
 

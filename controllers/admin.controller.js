@@ -8,9 +8,13 @@ import Reservation from "../models/reservation.model.js";
 export const dashboard = async (req, res) => {
   console.log("Dashboard ");
   const user = await User.findById(req.session.userId);
-  const reservations = await Reservation.find({ user: req.session.userId }).limit(10);
-  const apartments = await Apartment.find({ createdBy: req.session.userId }).limit(50);
-  
+  const reservations = await Reservation.find({
+    user: req.session.userId,
+  }).limit(10);
+  const apartments = await Apartment.find({
+    createdBy: req.session.userId,
+  }).limit(50);
+
   res.render("dashboard", { title: "home", user, reservations, apartments });
 };
 
@@ -158,8 +162,8 @@ export const postNewApartment = async (req, res) => {
           : 0,
       },
     };
-console.log(location.province);
-console.log(location.province);
+    console.log(location.province);
+    console.log(location.province);
     //  *** Camas por habitación ***
     let bedsPerRoom = [];
     if (Array.isArray(req.body.bedsPerRoom)) {
@@ -204,7 +208,6 @@ export const getReservations = async (req, res) => {
 
     res.render("reservations.ejs", {
       title: "admin",
-      error: undefined,
       reservations,
     });
   } catch (error) {
@@ -213,5 +216,27 @@ export const getReservations = async (req, res) => {
       message: "Error interno del servidor",
       status: 404,
     });
+  }
+};
+
+//GET edit apartment
+export const getAdminEdit = async (req, res) => {
+  const { id } = req.params;
+  console.log(req.params);
+  try {
+    const apartments = await Apartment.findById(id);
+console.log(apartments);
+    if (!apartments) {
+      req.flash("error_msg", "El apartamento no se ha encontrado.");
+      res.redirect("/admin");
+    }
+        res.render("editApartment.ejs", {
+      title: "admin",
+      apartments,
+    });
+
+  } catch (err) {
+    req.flash("error_msg", "Error interno del servidor.");
+    res.redirect("/admin");
   }
 };
