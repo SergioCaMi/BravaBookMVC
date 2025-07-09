@@ -1,5 +1,15 @@
 import mongoose from "mongoose";
+
 const { Schema } = mongoose;
+
+const servicesSchema = new Schema({
+  airConditioning: { type: Boolean, default: false },
+  heating: { type: Boolean, default: false },
+  accessibility: { type: Boolean, default: false },
+  television: { type: Boolean, default: false },
+  kitchen: { type: Boolean, default: false },
+  internet: { type: Boolean, default: false },
+});
 
 const apartmentSchema = new Schema(
   {
@@ -46,14 +56,7 @@ const apartmentSchema = new Schema(
       type: Number,
       default: 0,
     },
-    services: {
-      airConditioning: { type: Boolean, default: false },
-      heating: { type: Boolean, default: false },
-      accessibility: { type: Boolean, default: false },
-      television: { type: Boolean, default: false },
-      kitchen: { type: Boolean, default: false },
-      internet: { type: Boolean, default: false },
-    },
+    services: servicesSchema,
     location: {
       province: {
         id: { type: Number, default: 0 },
