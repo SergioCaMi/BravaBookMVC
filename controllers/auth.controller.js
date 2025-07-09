@@ -14,27 +14,25 @@ export const register = async (req, res) => {
     // Ya existe?
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.render("register", {
-        title: "home",
-        error: "El correo electrónico ya está en uso.",
-      });
+      req.flash("error_msg", "El correo electrónico ya está en uso.");
+      return res.redirect("/register");
     }
 
     // El primer usuario será admin
     const firstUser = await User.countDocuments();
     const user = new User({
-      name: req.body.name,
-      email: req.body.email,
-      password: req.body.password,
+      name,
+      email,
+      password,
       role: firstUser === 0 ? "admin" : "user",
     });
 
     await user.save();
     console.log("Usuario guardado:", user);
     req.session.userId = user._id;
+    req.flash("success_msg", "Nuevo usuario añadido con éxito.");
     res.redirect("/dashboard");
 
-    // res.render("home", { title: "home", error: undefined, user});
   } catch (err) {
     console.error(err);
     res.render("register", {
@@ -53,10 +51,6 @@ export const login = async (req, res) => {
   if (!user || !(await user.comparePassword(password))) {
     req.flash("error_msg", "Credenciales incorrectas.");
     return res.redirect("/login");
-    // return res.render("login", {
-    //   title: "home",
-    //   error: "Credenciales incorrectas",
-    // });
   }
 
   req.session.userId = user._id;
@@ -86,11 +80,11 @@ export const dashboard = async (req, res) => {
 
 // ContactUs
 export const getContactUs = async (req, res) => {
-  res.render("contactUs", { title: "contact", error: undefined });
+  res.render("contactUs", { title: "contact" });
 };
 // AboutUs
 export const getAboutUs = async (req, res) => {
-  res.render("aboutUs", { title: "about", error: undefined });
+  res.render("aboutUs", { title: "about" });
 };
 
 // GET Editar profile
@@ -100,14 +94,11 @@ export const getEditProfile = async (req, res) => {
     if (!user) {
       return res.redirect("/login");
     }
-    res
-      .status(200)
-      .render("editProfile.ejs", { title: "home", user, error: undefined });
+    res.status(200).render("editProfile.ejs", { title: "home", user });
   } catch (err) {
-    res.status(500).render("error.ejs", {
-      message: "Error interno del servidor",
-      status: 404,
-    });
+        req.flash("error_msg", "Error interno del servidor.");
+    return res.redirect("/");
+
   }
 };
 
@@ -117,11 +108,8 @@ export const postUpdateProfile = async (req, res) => {
     const { name, email, bio } = req.body;
 
     if (!name || !email) {
-      return res.status(400).render("editProfile", {
-        title: "Editar perfil",
-        user: req.user,
-        error: "Nombre y correo son obligatorios.",
-      });
+        req.flash("error_msg", "Nombre de usuario y correo electrónico son oobligatorios");
+    return res.redirect("/profile/edit");
     }
 
     const updates = { name, email, bio };
@@ -367,6 +355,7 @@ export const postNewReservation = async (req, res) => {
   const { apartmentId, guestName, guestEmail } = req.body;
   const startDate = new Date(req.body.startDate);
   const endDate = new Date(req.body.endDate);
+
   if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
     console.log("fecha no disponible");
     req.flash("error_msg", "Fechas no disponibles.");
@@ -380,14 +369,14 @@ export const postNewReservation = async (req, res) => {
       apartmentId: apartmentId,
       $and: [{ endDate: { $gt: startDate } }, { startDate: { $lt: endDate } }],
     });
-  console.log("dataReservations:", dataReservations.length);
+    console.log("dataReservations:", dataReservations.length);
 
     if (dataReservations.length === 0) {
-            console.log("creamos el objeto");
+      console.log("creamos el objeto");
 
       const newReservation = new Reservation({
         apartment: apartmentId,
-        user: req.session.userId,        
+        user: req.session.userId,
         guestName,
         guestEmail,
         startDate,
@@ -395,7 +384,7 @@ export const postNewReservation = async (req, res) => {
         status,
         paid,
       });
-            console.log("objeto creado:", newReservation );
+      console.log("objeto creado:", newReservation);
 
       await newReservation.save();
       console.log("Objeto guardado");
