@@ -164,7 +164,8 @@ export const getSeeApartments = async (req, res) => {
 
 // GET Apartment Search
 export const getApartmentSearch = async (req, res) => {
-  console.log(req.query);
+  console.log("Query recibida:", req.query);
+
   const {
     minPrice,
     maxPrice,
@@ -178,132 +179,92 @@ export const getApartmentSearch = async (req, res) => {
     "services.television": television,
     "services.kitchen": kitchen,
     "services.internet": internet,
-    rol,
+    startDate,
+    endDate,
   } = req.query;
 
-  const province = req.query["location[province]"];
-  const city = req.query["location[city]"];
+const provinceName = req.query["province[nm]"];
+const cityName = req.query["municipality[nm]"];
 
-  console.log("Provincia recibida:", province);
+  const query = { active: true };
 
-  const query = {};
-  query.active = true;
-
-  // *** Ciudad ***
-  if (city) {
-    query["location.city"] = {
-      $exists: true,
-      $ne: "",
-      $regex: city.trim(),
+  // *** Provincia (location.province.nm) ***
+  if (provinceName) {
+    query["location.province.nm"] = {
+      $regex: provinceName.trim(),
       $options: "i",
     };
   }
-  // *** Provincia ***
-  if (province) {
-    query["location.province"] = {
-      $exists: true,
-      $ne: "",
-      $regex: province.trim(),
+
+  // *** Ciudad/Municipio (location.municipality.nm) ***
+  if (cityName) {
+    query["location.municipality.nm"] = {
+      $regex: cityName.trim(),
       $options: "i",
     };
   }
-  // *** Precio ***
-  // Desestructuramos para no sobreescribir otra consulta anterior (min o max) sobre el mismo campo
-  if (minPrice) {
-    const numMinPrice = Number(minPrice);
-    if (!isNaN(numMinPrice)) {
-      query.price = { ...query.price, $gte: numMinPrice };
-    }
+
+  // *** Precio mínimo y máximo ***
+  if (minPrice || maxPrice) {
+    query.price = {};
+    if (!isNaN(Number(minPrice))) query.price.$gte = Number(minPrice);
+    if (!isNaN(Number(maxPrice))) query.price.$lte = Number(maxPrice);
   }
-  if (maxPrice) {
-    const numMaxPrice = Number(maxPrice);
-    if (!isNaN(numMaxPrice)) {
-      query.price = { ...query.price, $lte: numMaxPrice };
-    }
-  }
+
   // *** Huéspedes ***
-  if (maxGuests) {
-    const numGuests = Number(maxGuests);
-    if (!isNaN(numGuests)) {
-      query.maxGuests = { $lte: numGuests };
-    }
+  if (maxGuests && !isNaN(Number(maxGuests))) {
+    query.maxGuests = { $lte: Number(maxGuests) };
   }
-  // *** Metros cuadrados ***
-  if (squareMeters) {
-    const parsedSquareMeters = Number(squareMeters);
-    if (!isNaN(parsedSquareMeters)) {
-      query.squareMeters = { $gte: parsedSquareMeters };
-    }
+
+  // *** Metros cuadrados mínimos ***
+  if (squareMeters && !isNaN(Number(squareMeters))) {
+    query.squareMeters = { $gte: Number(squareMeters) };
   }
-  const servicesConditions = {};
-  if (airConditioning === "on") servicesConditions.airConditioning = true;
-  if (heating === "on") servicesConditions.heating = true;
-  if (accessibility === "on") servicesConditions.accessibility = true;
-  if (television === "on") servicesConditions.television = true;
-  if (kitchen === "on") servicesConditions.kitchen = true;
-  if (internet === "on") servicesConditions.internet = true;
-  console.log(internet); // "on"
-  if (Object.keys(servicesConditions).length > 0) {
-    Object.entries(servicesConditions).forEach(([key, value]) => {
-      query[`services.${key}`] = value;
-    });
-  }
+
+  // *** Servicios ***
+  const services = {};
+  if (airConditioning === "on") services["services.airConditioning"] = true;
+  if (heating === "on") services["services.heating"] = true;
+  if (accessibility === "on") services["services.accessibility"] = true;
+  if (television === "on") services["services.television"] = true;
+  if (kitchen === "on") services["services.kitchen"] = true;
+  if (internet === "on") services["services.internet"] = true;
+  Object.assign(query, services);
+
   // *** Fechas ***
   let reservedApartmentIds = [];
+  if (startDate && endDate) {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
 
-  if (req.query.startDate && req.query.endDate) {
-    const startDate = new Date(req.query.startDate);
-    const endDate = new Date(req.query.endDate);
-    const normalizedStart = new Date(
-      startDate.getFullYear(),
-      startDate.getMonth(),
-      startDate.getDate()
-    );
-    const normalizedEnd = new Date(
-      endDate.getFullYear(),
-      endDate.getMonth(),
-      endDate.getDate()
-    );
-    const ocupados = await Reservation.find({
-      apartmentId: { $exists: true },
-      startDate: { $lt: endDate },
-      endDate: { $gt: startDate },
+    const reservations = await Reservation.find({
+      startDate: { $lt: end },
+      endDate: { $gt: start },
     });
 
-    reservedApartmentIds = ocupados.map((r) => r.apartmentId);
-  }
-
-  if (req.query.startDate && req.query.endDate) {
-    query._id = { $nin: reservedApartmentIds };
+    reservedApartmentIds = reservations.map((r) => r.apartmentId);
+    if (reservedApartmentIds.length > 0) {
+      query._id = { $nin: reservedApartmentIds };
+    }
   }
 
   try {
-    console.log("Query final:", query);
-    // Paginación correcta con filtros
-    const queryObj = { ...req.query };
-    delete queryObj.page;
-    const pagination = await getPaginatedData(Apartment, query, req, 6);
-    const renderData = getRenderObject(
-      "",
-      pagination.dataApartments,
-      [],
-      req,
-      null,
-      undefined,
-      pagination.currentPage,
-      rol
-    );
-    renderData.totalPages = pagination.totalPages;
-    renderData.query = queryObj;
-    res.status(200).render("home.ejs", renderData);
-  } catch (error) {
-    console.error("Error al buscar apartamentos:", error);
-    res.status(500).render("error.ejs", {
-      message: "Error interno del servidor",
-      status: 404,
+    console.log("Consulta MongoDB:", query);
+
+    const apartments = await Apartment.find(query).sort({ createdAt: -1 });
+    res.render("seeApartments.ejs", {
+      title: "home",
+      apartments,
+    });
+  } catch (err) {
+    console.error("Error al buscar apartamentos:", err);
+    res.status(500).render("error", {
+      message: "Error al realizar la búsqueda de apartamentos",
+      status: 500,
     });
   }
 };
+
 
 // GET Apartment By Id (:id => Debe ir al final)
 export const getApartmentById = async (req, res) => {
