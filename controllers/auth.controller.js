@@ -164,9 +164,9 @@ export const getAllApartments = async (req, res) => {
 export const getSeeApartments = async (req, res) => {
   try {
     const apartments = await Apartment.find({ active: true });
+    console.log(apartments.length);
     res.render("seeApartments", {
       title: "home",
-      error: undefined,
       apartments,
     });
   } catch (err) {

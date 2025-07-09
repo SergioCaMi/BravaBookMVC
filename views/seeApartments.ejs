@@ -11,7 +11,7 @@
         <div class="bg-white p-4 shadow rounded-4">
           <h2 class="text-center text-primary fw-bold mb-4">Apartamentos disponibles</h2>
 
-          <% if ( currentUser && currentUser.role==='admin' ) { %>
+          <% if ( currentUser  ) { %>
             <div id="apartmentsCarousel" class="carousel slide" data-bs-interval="false" data-carousel-id="apartments">
               <div class="carousel-inner">
 
@@ -25,8 +25,8 @@
                             <a href="/apartments/<%= apartment._id %>">
                               <img src="<%= apartment.photos.find(p => p.isMain)?.url || '/img/default.jpg' %>"
                                 class="card-img-top object-fit-cover" style="height: 200px;" alt="Imagen principal">
-                            </a>
-                            <div class="card-body">
+                                </a>
+                                <div class="card-body">
                               <h5 class="card-title text-primary">
                                 <%= apartment.title %>
                               </h5>
