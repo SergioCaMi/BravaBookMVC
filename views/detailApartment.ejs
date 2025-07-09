@@ -30,12 +30,16 @@
                             Mapa
                         </button>
                     </li>
+                    <% if (currentUser) {%>
+
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="reservation-tab" data-bs-toggle="tab" data-bs-target="#reservation"
                             type="button" role="tab" aria-controls="reservation" aria-selected="false">
                             Reserva
                         </button>
                     </li>
+                    <% }%>
+
                 </ul>
             </div>
 
@@ -148,12 +152,13 @@
                             <p class="alert alert-warning">No hay datos de ubicación disponibles.</p>
                             <% } %>
                 </div>
+<% if (currentUser) {%>
                 <div class="tab-pane fade" id="reservation" role="tabpanel" aria-labelledby="reservation-tab">
                     <% if (apartments) { %>
                         <h5>Formulario de Reserva</h5>
                         <form action="/reservations/new-reservation" method="POST">
                             <input type="hidden" name="apartmentId" value="<%= apartments._id %>">
-                            <input type="hidden" name="user" value="<%= user._id %>">
+                            <input type="hidden" name="user" value="<%= currentUser._id %>">
                             <div class="mb-3">
                                 <label for="guestName" class="form-label">Nombre completo del huésped</label>
                                 <input type="text" class="form-control" id="guestName" name="guestName" required>
@@ -182,6 +187,8 @@
                             </p>
                             <% } %>
                 </div>
+<% }%>
+
             </div>
         </div>
     </main>

@@ -9,19 +9,17 @@
         <h2 class="mb-4 text-center text-primary fw-bold">Nuevo Apartamento</h2>
 
         <!-- <form id="apartmentForm" class="needs-validation" novalidate method="post" action="/admin/apartment"> -->
-        <form id="apartmentForm" method="post" action="/admin/apartment/new">
+        <form id="apartmentForm" class="needs-validation" method="post" action="/admin/apartment/new" novalidate>
           <!-- Título y descripción -->
           <div class="row g-4 mb-4">
             <div class="col-md-6">
               <label for="title" class="form-label">Título del apartamento</label>
               <input type="text" name="title" id="title" class="form-control" required />
-              <div class="invalid-feedback">El título es obligatorio.</div>
             </div>
             <div class="col-md-6">
               <label for="description" class="form-label">Descripción</label>
               <textarea name="description" id="description" class="form-control" rows="3" maxlength="3000"
                 required></textarea>
-              <div class="invalid-feedback">La descripción es obligatoria.</div>
             </div>
           </div>
 
@@ -39,7 +37,6 @@
             <div class="col-md-6">
               <label for="rooms" class="form-label">Número de habitaciones</label>
               <input type="number" name="rooms" id="rooms" min="1" class="form-control" required />
-              <div class="invalid-feedback">La cantidad de habitaciones es obligatoria.</div>
             </div>
             <div class="col-md-6">
               <label class="form-label">Camas por habitación</label>
@@ -60,9 +57,12 @@
                 class="btn btn-outline-secondary btn-sm">
                 Añadir foto
               </button>
-              <div class="invalid-feedback" id="photoUrlRequired">
-                Debes añadir al menos una foto con URL válida.
-              </div>
+              <small class="text-danger errorFoto" style="display:none;">
+                Debes añadir al menos una foto
+              </small>
+
+              <input type="hidden" id="photoButtonClicked" name="photoButtonClicked" value="false">
+
             </div>
           </div>
 
@@ -71,17 +71,14 @@
             <div class="col-md-4">
               <label for="price" class="form-label">Precio por noche (€)</label>
               <input type="number" name="price" id="price" min="0" class="form-control" required />
-              <div class="invalid-feedback">El precio por noche es obligatorio.</div>
             </div>
             <div class="col-md-4">
               <label for="maxGuests" class="form-label">Máximo de huéspedes</label>
               <input type="number" name="maxGuests" id="maxGuests" min="1" class="form-control" required />
-              <div class="invalid-feedback">El número máximo de huéspedes es obligatorio.</div>
             </div>
             <div class="col-md-4">
               <label for="squareMeters" class="form-label">Metros cuadrados</label>
               <input type="number" name="squareMeters" id="squareMeters" min="1" class="form-control" required />
-              <div class="invalid-feedback">La superficie del apartamento es obligatoria.</div>
             </div>
           </div>
 
@@ -113,7 +110,6 @@
               <select id="provinceSelect" name="location[province]" class="form-select" required>
                 <option value="">-- Selecciona una provincia --</option>
               </select>
-              <div class="invalid-feedback">Por favor, selecciona una provincia.</div>
 
               <!-- Campos ocultos provincia -->
               <input type="hidden" name="location[province][id]" id="provinceIdInput">
@@ -125,7 +121,6 @@
               <select id="municipalitySelect" name="location[city]" class="form-select" required>
                 <option value="">-- Selecciona un municipio --</option>
               </select>
-              <div class="invalid-feedback">Por favor, selecciona un municipio.</div>
 
               <!-- Campos ocultos municipio -->
               <input type="hidden" name="location[municipality][id]" id="municipalityIdInput">
