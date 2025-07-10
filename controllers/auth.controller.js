@@ -32,7 +32,6 @@ export const register = async (req, res) => {
     req.session.userId = user._id;
     req.flash("success_msg", "Nuevo usuario añadido con éxito.");
     res.redirect("/dashboard");
-
   } catch (err) {
     console.error(err);
     res.render("register", {
@@ -96,9 +95,8 @@ export const getEditProfile = async (req, res) => {
     }
     res.status(200).render("editProfile.ejs", { title: "home", user });
   } catch (err) {
-        req.flash("error_msg", "Error interno del servidor.");
+    req.flash("error_msg", "Error interno del servidor.");
     return res.redirect("/");
-
   }
 };
 
@@ -108,8 +106,11 @@ export const postUpdateProfile = async (req, res) => {
     const { name, email, bio } = req.body;
 
     if (!name || !email) {
-        req.flash("error_msg", "Nombre de usuario y correo electrónico son oobligatorios");
-    return res.redirect("/profile/edit");
+      req.flash(
+        "error_msg",
+        "Nombre de usuario y correo electrónico son oobligatorios"
+      );
+      return res.redirect("/profile/edit");
     }
 
     const updates = { name, email, bio };
@@ -183,34 +184,33 @@ export const getApartmentSearch = async (req, res) => {
     endDate,
   } = req.query;
 
-const provinceName = req.query["province[nm]"];
-const cityName = req.query["municipality[nm]"];
-
   const query = { active: true };
+  const provinceName = req.query.province?.nm?.trim();
+  const cityName = req.query.municipality?.nm?.trim();
 
   // *** Provincia (location.province.nm) ***
   if (provinceName) {
     query["location.province.nm"] = {
-      $regex: provinceName.trim(),
+      $regex: provinceName,
       $options: "i",
     };
   }
-
   // *** Ciudad/Municipio (location.municipality.nm) ***
   if (cityName) {
     query["location.municipality.nm"] = {
-      $regex: cityName.trim(),
+      $regex: cityName,
       $options: "i",
     };
   }
 
+
   // *** Precio mínimo y máximo ***
   if (minPrice) {
-    query.price = {...query.price};
+    query.price = { ...query.price };
     if (!isNaN(Number(minPrice))) query.price.$gte = Number(minPrice);
   }
   if (maxPrice) {
-    query.price = {...query.price};
+    query.price = { ...query.price };
     if (!isNaN(Number(maxPrice))) query.price.$lte = Number(maxPrice);
   }
 
@@ -267,7 +267,6 @@ const cityName = req.query["municipality[nm]"];
     });
   }
 };
-
 
 // GET Apartment By Id (:id => Debe ir al final)
 export const getApartmentById = async (req, res) => {
