@@ -1,0 +1,60 @@
+<%- include("partials/header") %>
+  <%- include("partials/mensajes") %>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm mb-4">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">BravaBook Dashboard</a>
+        <div class="ms-auto">
+          <a href="/logout" class="btn btn-outline-primary">Cerrar sesión</a>
+        </div>
+      </div>
+    </nav>
+    <div class="container-fluid">
+      <div class="row">
+        <!-- Aside - Menú lateral -->
+        <aside class="col-md-3 col-lg-2 d-flex flex-column p-4 bg-light border-end">
+          <h5 class="mb-3">Menú</h5>
+          <ul class="nav nav-pills flex-column">
+            <li class="nav-item">
+              <a href="<%= user.role === 'admin' ? '/admin/dashboard' : '/dashboard' %>" class="nav-link">Perfil</a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link">Reservas</a>
+            </li>
+            <li class="nav-item">
+              <a href="/profile/edit" class="nav-link active">Configuración</a>
+            </li>
+          </ul>
+        </aside>
+        <!-- Main Content -->
+        <main class="col-md-9 col-lg-10 p-4">
+          <div class="container mt-5">
+            <h2 class="mb-4">Editar perfil</h2>
+            <form action="/profile/update" method="POST" enctype="multipart/form-data">
+              <div class="mb-3 text-center">
+                <img src="/uploads/<%= currentUser.avatar %>" class="rounded-circle"
+                  style="width: 200px; height: 200px; object-fit: cover;" alt="Avatar">
+                <p>Avatar</p>
+              </div>
+              <div class="mb-3">
+                <label for="avatar" class="form-label">Cambiar avatar</label>
+                <input type="file" name="avatar" id="avatar" class="form-control" accept="image/*">
+              </div>
+              <div class="mb-3">
+                <label for="name" class="form-label">Nombre</label>
+                <input type="text" name="name" id="name" class="form-control" value="<%= user.name %>" required>
+              </div>
+              <div class="mb-3">
+                <label for="email" class="form-label">Correo electrónico</label>
+                <input type="email" name="email" id="email" class="form-control" value="<%= user.email %>" required>
+              </div>
+              <div class="mb-3">
+                <label for="bio" class="form-label">Biografía</label>
+                <textarea name="bio" id="bio" class="form-control" rows="4"><%= user.bio || '' %></textarea>
+              </div>
+              <button type="submit" class="btn btn-success my-5">Guardar cambios</button>
+            </form>
+          </div>
+        </main>
+      </div>
+    </div>
+    <%- include("partials/footer") %>
