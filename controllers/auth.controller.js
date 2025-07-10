@@ -167,6 +167,7 @@ export const getApartmentSearch = async (req, res) => {
   console.log("Query recibida:", req.query);
 
   const {
+    sortPrice,
     minPrice,
     maxPrice,
     maxGuests,
@@ -252,8 +253,10 @@ export const getApartmentSearch = async (req, res) => {
 
   try {
     console.log("Consulta MongoDB:", query);
+    const sortvalue = +sortPrice;
+    console.log("Orden:", sortvalue);
 
-    const apartments = await Apartment.find(query).sort({ createdAt: -1 });
+    const apartments = await Apartment.find(query).sort({ price: sortvalue });
     res.render("seeApartments.ejs", {
       title: "home",
       apartments,

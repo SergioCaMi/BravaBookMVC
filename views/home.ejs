@@ -25,7 +25,8 @@
         <div class="container text-white text-center">
           <div class="row justify-content-center">
             <div class="col-12 col-lg-12 bg-dark bg-opacity-75 p-3 p-md-4 rounded">
-              <h1 class="display-6 display-md-4 fw-bold mb-3 mb-md-4">La forma más fácil de encontrar tu lugar para lo que
+              <h1 class="display-6 display-md-4 fw-bold mb-3 mb-md-4">La forma más fácil de encontrar tu lugar para lo
+                que
                 necesites</h1>
               <!-- Formulario de búsqueda -->
               <form action="/apartments/search" method="GET" onsubmit="updateHiddenFields()">
@@ -162,6 +163,15 @@
                     </div>
                   </div>
                 </div>
+                <div class="mb-3 mb-md-4">
+                  <label for="sortPrice" class="form-label">Ordenar por precio:</label>
+                  <select id="sortPrice" class="form-select" name="sortPrice">
+                    <option value="">-- Selecciona orden --</option>
+                    <option value="1">Precio ascendente</option>
+                    <option value="-1">Precio descendente</option>
+                  </select>
+
+                </div>
                 <!-- Botón submit -->
                 <div class="d-grid">
                   <button type="submit" class="btn btn-primary py-2">Buscar apartamentos</button>
@@ -186,7 +196,7 @@
         </div>
         <!-- Scroll horizontal de tarjetas -->
         <div class="d-flex overflow-auto gap-3 pb-3" style="scroll-snap-type: x mandatory;">
-          <% apartments.forEach(apartment => { %>
+          <% apartments.forEach(apartment=> { %>
             <div class="flex-shrink-0" style="width: 280px; scroll-snap-align: start;">
               <div class="card h-100 shadow-sm d-flex flex-column" style="height: auto;">
                 <a href="/apartments/<%= apartment._id %>">
@@ -211,46 +221,46 @@
                       <%= apartment.bathrooms %> baños
                     </span>
                   </div>
-                  <% const s = apartment.services; %>
-                  <div class="mb-3 d-flex flex-wrap gap-2 small text-secondary">
-                    <% if (s.airConditioning) { %>
-                      <span data-bs-toggle="tooltip" title="Aire acondicionado">
-                        <i class="bi bi-snow text-black me-1"></i>
-                      </span>
-                    <% } %>
-                    <% if (s.heating) { %>
-                      <span data-bs-toggle="tooltip" title="Calefacción">
-                        <i class="bi bi-fire text-black me-1"></i>
-                      </span>
-                    <% } %>
-                    <% if (s.accessibility) { %>
-                      <span data-bs-toggle="tooltip" title="Accesibilidad">
-                        <i class="bi bi-person-wheelchair text-black me-1"></i>
-                      </span>
-                    <% } %>
-                    <% if (s.television) { %>
-                      <span data-bs-toggle="tooltip" title="Televisión">
-                        <i class="bi bi-tv text-black me-1"></i>
-                      </span>
-                    <% } %>
-                    <% if (s.kitchen) { %>
-                      <span data-bs-toggle="tooltip" title="Cocina">
-                        <i class="bi bi-cup-hot text-black me-1"></i>
-                      </span>
-                    <% } %>
-                    <% if (s.internet) { %>
-                      <span data-bs-toggle="tooltip" title="Internet">
-                        <i class="bi bi-wifi text-black me-1"></i>
-                      </span>
-                    <% } %>
-                  </div>
-                  <a href="/apartments/<%= apartment._id %>" class="btn btn-outline-primary btn-sm w-100 mt-auto">
-                    Ver detalles
-                  </a>
+                  <% const s=apartment.services; %>
+                    <div class="mb-3 d-flex flex-wrap gap-2 small text-secondary">
+                      <% if (s.airConditioning) { %>
+                        <span data-bs-toggle="tooltip" title="Aire acondicionado">
+                          <i class="bi bi-snow text-black me-1"></i>
+                        </span>
+                        <% } %>
+                          <% if (s.heating) { %>
+                            <span data-bs-toggle="tooltip" title="Calefacción">
+                              <i class="bi bi-fire text-black me-1"></i>
+                            </span>
+                            <% } %>
+                              <% if (s.accessibility) { %>
+                                <span data-bs-toggle="tooltip" title="Accesibilidad">
+                                  <i class="bi bi-person-wheelchair text-black me-1"></i>
+                                </span>
+                                <% } %>
+                                  <% if (s.television) { %>
+                                    <span data-bs-toggle="tooltip" title="Televisión">
+                                      <i class="bi bi-tv text-black me-1"></i>
+                                    </span>
+                                    <% } %>
+                                      <% if (s.kitchen) { %>
+                                        <span data-bs-toggle="tooltip" title="Cocina">
+                                          <i class="bi bi-cup-hot text-black me-1"></i>
+                                        </span>
+                                        <% } %>
+                                          <% if (s.internet) { %>
+                                            <span data-bs-toggle="tooltip" title="Internet">
+                                              <i class="bi bi-wifi text-black me-1"></i>
+                                            </span>
+                                            <% } %>
+                    </div>
+                    <a href="/apartments/<%= apartment._id %>" class="btn btn-outline-primary btn-sm w-100 mt-auto">
+                      Ver detalles
+                    </a>
                 </div>
               </div>
             </div>
-          <% }) %>
+            <% }) %>
         </div>
       </div>
     </div>
@@ -300,6 +310,7 @@
       var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
       });
+
     </script>
     <script src="js/municipiAndProvince.js"></script>
     <%- include("partials/footer") %>
