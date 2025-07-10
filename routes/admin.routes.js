@@ -42,5 +42,19 @@ router.post("/apartment/new", adminController.postNewApartment);
 router.get("/apartments/edit/:id", requireAuth, requireAdmin, adminController.getAdminEdit);
 //POST edit apartment
 router.post("/apartment/edit/:id/save", requireAuth, requireAdmin, adminController.putAdminEdit);
+
+//POST cancel Reservation
+router.post("/reservations/delete/:id", requireAuth, requireAdmin, adminController.postCancelReservation);
+
+//POST delete User
+router.post("/user/delete/:id", requireAuth, requireAdmin, adminController.postDeleteUser);
+
+//POST delete Apartment
+router.post("/apartment/delete/:id", requireAuth, requireAdmin, adminController.postDeleteApartment);
+
+
+
+
+
 export default router;
 

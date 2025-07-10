@@ -301,7 +301,7 @@ export const getReservationsById = async (req, res) => {
   }
 
   try {
-    const reservations = await Reservation.find({ user: req.session.userId });
+    const reservations = await Reservation.find({ user: req.session.userId }).populate("apartment");
     res.render("userReservations.ejs", {
       title: "home",
       error: undefined,

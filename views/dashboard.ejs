@@ -117,7 +117,9 @@
                       <th>Total (€)</th>
                       <th>Estado</th>
                       <th>Pagado</th>
-                      <th>Acciones</th>
+                      <% if (currentUser.role==="admin" ) { %>
+                        <th>Acciones</th>
+                        <% } %>
                     </tr>
                   </thead>
                   <tbody>
@@ -137,9 +139,10 @@
                           <td>
                             <% if (reservation.apartment) { %>
                               <a href="/apartments/<%= reservation.apartment._id %>">
-                                <%= reservation.apartment %>
+                                <%= reservation.apartment.title %>                              
                               </a>
-                              <% } else { %><em>No disponible</em>
+                              <% } else { %>
+                                <em>No disponible</em>
                                 <% } %>
                           </td>
                           <td>
@@ -163,6 +166,8 @@
                                 <% } %>
                           </td>
                           <!-- Acciones -->
+                                                     <% if (currentUser.role==="admin" ) { %>
+
                           <td>
                             <div
                               class="d-flex flex-column flex-sm-row flex-wrap gap-1 justify-content-center align-items-center">
@@ -239,6 +244,7 @@
                               </div>
                             </div>
                           </td>
+                          <% } %>
                         </tr>
                         <% }); %>
                   </tbody>

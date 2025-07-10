@@ -10,7 +10,9 @@ export const dashboard = async (req, res) => {
   const user = await User.findById(req.session.userId);
   const reservations = await Reservation.find({
     user: req.session.userId,
-  }).limit(10);
+  })
+    .limit(10)
+    .sort({ endDate: 1 });
   const apartments = await Apartment.find({
     createdBy: req.session.userId,
   }).limit(50);
@@ -204,7 +206,10 @@ export const postNewApartment = async (req, res) => {
 // GET Reservation
 export const getReservations = async (req, res) => {
   try {
-    const reservations = await Reservation.find({}).populate("apartment").populate("user");
+    const reservations = await Reservation.find({})
+      .populate("apartment")
+      .populate("user")
+      .sort({ endDate: 1 });
     res.render("reservations.ejs", {
       title: "admin",
       reservations,
@@ -224,22 +229,20 @@ export const getAdminEdit = async (req, res) => {
   console.log(req.params);
   try {
     const apartments = await Apartment.findById(id);
-console.log(apartments);
+    console.log(apartments);
     if (!apartments) {
       req.flash("error_msg", "El apartamento no se ha encontrado.");
       res.redirect("/admin");
     }
-        res.render("editApartment.ejs", {
+    res.render("editApartment.ejs", {
       title: "admin",
       apartments,
     });
-
   } catch (err) {
     req.flash("error_msg", "Error interno del servidor.");
     res.redirect("/admin");
   }
 };
-
 
 // PUT edit apartment
 export const putAdminEdit = async (req, res) => {
@@ -307,21 +310,22 @@ export const putAdminEdit = async (req, res) => {
           : 0,
       },
     };
-                                                                                        console.log("Location:", location)
+    console.log("Location:", location);
     //  *** Camas por habitación ***
     let bedsPerRoom = [];
     if (Array.isArray(req.body.bedsPerRoom)) {
       bedsPerRoom = req.body.bedsPerRoom
         .map((num) => parseInt(num, 10))
-        .filter((num) => !isNaN(num) && num >= 0).slice(0, Number(rooms));
+        .filter((num) => !isNaN(num) && num >= 0)
+        .slice(0, Number(rooms));
     }
 
     // *** Crear la nueva instancia ***
     // Estado activo/desactivado
     let active = false;
-    if (typeof req.body.active === 'string') {
-      active = req.body.active === 'on' || req.body.active === 'true';
-    } else if (typeof req.body.active === 'boolean') {
+    if (typeof req.body.active === "string") {
+      active = req.body.active === "on" || req.body.active === "true";
+    } else if (typeof req.body.active === "boolean") {
       active = req.body.active;
     }
     const updateApartment = {
@@ -343,13 +347,72 @@ export const putAdminEdit = async (req, res) => {
     const apartment = await Apartment.findByIdAndUpdate(id, updateApartment, {
       new: true,
     });
-    req.flash("success_msg", "El apartamento se ha editado satisfactoriamente.");
+    req.flash(
+      "success_msg",
+      "El apartamento se ha editado satisfactoriamente."
+    );
     res.redirect("/admin");
     console.log("Updated!");
-
   } catch (error) {
     req.flash("error_msg", "Hubo un error al crear el apartamento.");
     console.error("Error:", error.message);
     res.redirect("/admin");
+  }
+};
+
+// POST Cancel Reservation
+export const postCancelReservation = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const reservation = await Reservation.findById(id);
+    if (!reservation) {
+      req.flash("error_msg", "Reserva no encontrada");
+      return res.redirect("/admin/reservations");
+    }
+    reservation.status = "cancelled";
+    await reservation.save();
+    req.flash("success_msg", "Reserva cancelada satisfactoriamente.");
+    return res.redirect("/admin/reservations");
+  } catch (error) {
+    req.flash("error_msg", "Error al cancelar la reserva.");
+    return res.redirect("/admin/reservations");
+  }
+};
+
+// POST delete user
+export const postDeleteUser = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    if (id !== req.user._id){
+      await User.findByIdAndDelete(id);
+    }
+    req.flash("success_msg", "User eliminado satisfactoriamente.");
+    return res.redirect("/admin/users");
+  } catch (error) {
+    req.flash("error_msg", "Error al eliminar usuario.");
+    return res.redirect("/admin/users");
+  }
+};
+
+
+// POST Delete Apartment
+export const postDeleteApartment = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const apartment = await Apartment.findById(id);
+    if (!apartment) {
+      req.flash("error_msg", "Reserva no encontrada");
+      return res.redirect("/seeApartments");
+    }
+    apartment.active = false;
+    await apartment.save();
+    req.flash("success_msg", "Reserva cancelada satisfactoriamente.");
+    return res.redirect("/seeApartments");
+  } catch (error) {
+    req.flash("error_msg", "Error al cancelar la reserva.");
+    return res.redirect("/seeApartments");
   }
 };
