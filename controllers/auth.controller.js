@@ -205,9 +205,12 @@ const cityName = req.query["municipality[nm]"];
   }
 
   // *** Precio mínimo y máximo ***
-  if (minPrice || maxPrice) {
-    query.price = {};
+  if (minPrice) {
+    query.price = {...query.price};
     if (!isNaN(Number(minPrice))) query.price.$gte = Number(minPrice);
+  }
+  if (maxPrice) {
+    query.price = {...query.price};
     if (!isNaN(Number(maxPrice))) query.price.$lte = Number(maxPrice);
   }
 
