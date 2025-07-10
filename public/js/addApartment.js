@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const bedsContainer = document.getElementById("bedsContainer");
 
   if (!roomsInput || !bedsContainer) {
-    console.error("No se encontraron los elementos del DOM");
+    console.error("No se encontraron los elementos del DresolveOM");
     return;
   }
 
