@@ -68,8 +68,7 @@ export const dashboard = async (req, res) => {
   console.log("Dashboard");
   const user = await User.findById(req.session.userId);
   const reservations = await Reservation.find({
-    user: req.session.userId,
-  }).limit(10);
+    user: req.session.userId }).populate("apartment").limit(10);
   const apartments = await Apartment.find({
     createdBy: req.session.userId,
   }).limit(50);

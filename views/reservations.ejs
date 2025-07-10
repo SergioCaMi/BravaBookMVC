@@ -3,199 +3,205 @@
   <a href="#" onclick="window.history.back()" class="row justify-content-start ">
     <img src="/img/back.png" alt="Volver atrás" style="max-width: 70px; height: auto;" class="m-3">
   </a>
-<%- include("partials/mensajes") %>
-  <div class="container-fluid my-5 mx-6">
-    <div class="bg-white p-4 shadow rounded-4">
-      <h2 class="text-center text-primary fw-bold mb-4">Reservas - Vista por Páginas</h2>
+  <%- include("partials/mensajes") %>
+    <div class="container-fluid my-5 mx-6">
+      <div class="bg-white p-4 shadow rounded-4">
+        <h2 class="text-center text-primary fw-bold mb-4">Reservas - Vista por Páginas</h2>
 
-      <% if (reservations && reservations.length> 0) {
-        const chunkSize = 20;
-        const totalPages = Math.ceil(reservations.length / chunkSize);
-        const currentPage = 0;
-        %>
+        <% if (reservations && reservations.length> 0) {
+          const chunkSize = 20;
+          const totalPages = Math.ceil(reservations.length / chunkSize);
+          const currentPage = 0;
+          %>
 
-        <div id="reservationsCarousel" class="carousel slide" data-bs-interval="false">
-          <div class="carousel-inner">
+          <div id="reservationsCarousel" class="carousel slide" data-bs-interval="false">
+            <div class="carousel-inner">
 
-            <% for (let i=0; i < totalPages; i++) { const currentChunk=reservations.slice(i * chunkSize, (i + 1) *
-              chunkSize); %>
-              <div class="carousel-item <%= i === 0 ? 'active' : '' %>">
-                <div class="table-responsive">
-                  <table class="table table-hover align-middle text-center mb-0">
-                    <thead class="table-dark">
-                      <tr>
-                        <th>#</th>
-                        <th>Huésped</th>
-                        <th>Email</th>
-                        <th>Apartamento</th>
-                        <th>Usuario</th>
-                        <th>Fechas</th>
-                        <th>Total (€)</th>
-                        <th>Estado</th>
-                        <th>Pagado</th>
-                        <th>Acciones</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <% currentChunk.forEach((reservation, index)=> { %>
-                        <tr class="<%= new Date(reservation.endDate) < new Date() ? 'table-light' : 'table-success' %>">
-                          <td>
-                            <%= (i * chunkSize) + index + 1 %>
-                          </td>
-                          <td><strong>
-                              <%= reservation.guestName %>
-                            </strong></td>
-                          <td>
-                            <%= reservation.guestEmail %>
-                          </td>
-                          <td>
-                            <% if (reservation.apartment?.title) { %>
-                              <a href="/apartments/<%= reservation.apartment._id %>">
-                                <%= reservation.apartment.title %>
-                              </a>
-                              <% } else { %><em>No disponible</em>
-                                <% } %>
-                          </td>
-                          <td>
-                            <%= reservation.user?.name || 'Desconocido' %>
-                          </td>
-                          <td>
-                            <%= new Date(reservation.startDate).toLocaleDateString() %> –
-                              <%= new Date(reservation.endDate).toLocaleDateString() %>
-                          </td>
-                          <td><span class="badge bg-secondary">€ <%= reservation.totalPrice.toFixed(2) %></span></td>
-                          <td>
-                            <span class="badge <%= reservation.status === 'confirmed' ? 'bg-success' : 'bg-danger' %>">
-                              <%= reservation.status %>
-                            </span>
-                          </td>
-                          <td>
-                            <% if (reservation.paid) { %>
-                              <i class="bi bi-check-circle-fill text-success fs-5"></i>
-                              <% } else { %>
-                                <i class="bi bi-x-circle-fill text-danger fs-5"></i>
-                                <% } %>
-                          </td>
-
-                          <!-- Acciones -->
-                          <td>
-                            <div
-                              class="d-flex flex-column flex-sm-row flex-wrap gap-1 justify-content-center align-items-center">
-
-                              <!-- Editar -->
-                              <a href="/reservations/edit/<%= reservation._id %>"
-                                class="btn btn-warning btn-sm px-2 py-1">
-                                <i class="bi bi-pencil-square"></i>
-                              </a>
-
-                              <!-- Eliminar -->
-                              <button class="btn btn-danger btn-sm px-2 py-1" data-bs-toggle="modal"
-                                data-bs-target="#deleteReservationModal-<%= reservation._id %>">
-                                <i class="bi bi-trash3"></i>
-                              </button>
-
-                              <!-- Marcar como Pagado -->
-                              <% if (!reservation.paid) { %>
-                                <button class="btn btn-success btn-sm px-2 py-1" data-bs-toggle="modal"
-                                  data-bs-target="#markPaidModal-<%= reservation._id %>">
-                                  <i class="bi bi-cash-coin"></i>
-                                </button>
-                                <% } %>
-                            </div>
-
-                            <!-- Modal Eliminar -->
-                            <div class="modal fade" id="deleteReservationModal-<%= reservation._id %>" tabindex="-1"
-                              aria-labelledby="deleteReservationLabel-<%= reservation._id %>" aria-hidden="true">
-                              <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content">
-                                  <div class="modal-header bg-danger text-white">
-                                    <h5 class="modal-title" id="deleteReservationLabel-<%= reservation._id %>">
-                                      Confirmar eliminación
-                                    </h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                      aria-label="Cerrar"></button>
-                                  </div>
-                                  <div class="modal-body">
-                                    ¿Deseas eliminar la reserva de <strong>
-                                      <%= reservation.guestName %>
-                                    </strong>?
-                                  </div>
-                                  <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary btn-sm"
-                                      data-bs-dismiss="modal">Cancelar</button>
-                                    <form action="/reservations/delete/<%= reservation._id %>" method="POST">
-                                      <button type="submit" class="btn btn-danger btn-sm">Sí, eliminar</button>
-                                    </form>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-
-                            <!-- Modal Marcar Pagado -->
-                            <div class="modal fade" id="markPaidModal-<%= reservation._id %>" tabindex="-1"
-                              aria-labelledby="markPaidLabel-<%= reservation._id %>" aria-hidden="true">
-                              <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content">
-                                  <div class="modal-header bg-success text-white">
-                                    <h5 class="modal-title" id="markPaidLabel-<%= reservation._id %>">
-                                      Confirmar pago
-                                    </h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                      aria-label="Cerrar"></button>
-                                  </div>
-                                  <div class="modal-body">
-                                    ¿Deseas marcar como pagada la reserva de <strong>
-                                      <%= reservation.guestName %>
-                                    </strong>?
-                                  </div>
-                                  <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary btn-sm"
-                                      data-bs-dismiss="modal">Cancelar</button>
-                                    <form action="/reservations/mark-paid/<%= reservation._id %>" method="POST">
-                                      <button type="submit" class="btn btn-success btn-sm">Sí, marcar</button>
-                                    </form>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </td>
+              <% for (let i=0; i < totalPages; i++) { const currentChunk=reservations.slice(i * chunkSize, (i + 1) *
+                chunkSize); %>
+                <div class="carousel-item <%= i === 0 ? 'active' : '' %>">
+                  <div class="table-responsive">
+                    <table class="table table-hover align-middle text-center mb-0">
+                      <thead class="table-dark">
+                        <tr>
+                          <th>#</th>
+                          <th>Huésped</th>
+                          <th>Email</th>
+                          <th>Apartamento</th>
+                          <th>Cuenta de Usuario</th>
+                          <th>Fechas</th>
+                          <th>Total (€)</th>
+                          <th>Estado</th>
+                          <th>Pagado</th>
+                          <th>Acciones</th>
                         </tr>
-                        <% }) %>
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        <% currentChunk.forEach((reservation, index)=> { %>
+                          <tr
+                            class="<%= new Date(reservation.endDate) < new Date() ? 'table-light' : 'table-success' %>">
+                            <td>
+                              <%= (i * chunkSize) + index + 1 %>
+                            </td>
+                            <td><strong>
+                                <%= reservation.guestName %>
+                              </strong></td>
+                            <td>
+                              <%= reservation.guestEmail %>
+                            </td>
+                            <td>
+                              <% if (reservation.apartment?.title) { %>
+                                <a href="/apartments/<%= reservation.apartment._id %>">
+                                  <%= reservation.apartment.title %>
+                                </a>
+                                <% } else { %><em>No disponible</em>
+                                  <% } %>
+                            </td>
+
+
+
+                            <td data-bs-toggle="tooltip"
+                              title="Reserva enviada a: <%= reservation.user?.email || 'Sin correo' %>">
+                              <%= reservation.user?.name || 'Desconocido' %>
+                            </td>
+                            <td>
+                              <%= new Date(reservation.startDate).toLocaleDateString() %> –
+                                <%= new Date(reservation.endDate).toLocaleDateString() %>
+                            </td>
+                            <td><span class="badge bg-secondary">€ <%= reservation.totalPrice.toFixed(2) %></span></td>
+                            <td>
+                              <span
+                                class="badge <%= reservation.status === 'confirmed' ? 'bg-success' : 'bg-danger' %>">
+                                <%= reservation.status %>
+                              </span>
+                            </td>
+                            <td>
+                              <% if (reservation.paid) { %>
+                                <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                                <% } else { %>
+                                  <i class="bi bi-x-circle-fill text-danger fs-5"></i>
+                                  <% } %>
+                            </td>
+
+                            <!-- Acciones -->
+                            <td>
+                              <div
+                                class="d-flex flex-column flex-sm-row flex-wrap gap-1 justify-content-center align-items-center">
+
+                                <!-- Editar -->
+                                <a href="/reservations/edit/<%= reservation._id %>"
+                                  class="btn btn-warning btn-sm px-2 py-1">
+                                  <i class="bi bi-pencil-square"></i>
+                                </a>
+
+                                <!-- Eliminar -->
+                                <button class="btn btn-danger btn-sm px-2 py-1" data-bs-toggle="modal"
+                                  data-bs-target="#deleteReservationModal-<%= reservation._id %>">
+                                  <i class="bi bi-trash3"></i>
+                                </button>
+
+                                <!-- Marcar como Pagado -->
+                                <% if (!reservation.paid) { %>
+                                  <button class="btn btn-success btn-sm px-2 py-1" data-bs-toggle="modal"
+                                    data-bs-target="#markPaidModal-<%= reservation._id %>">
+                                    <i class="bi bi-cash-coin"></i>
+                                  </button>
+                                  <% } %>
+                              </div>
+
+                              <!-- Modal Eliminar -->
+                              <div class="modal fade" id="deleteReservationModal-<%= reservation._id %>" tabindex="-1"
+                                aria-labelledby="deleteReservationLabel-<%= reservation._id %>" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                  <div class="modal-content">
+                                    <div class="modal-header bg-danger text-white">
+                                      <h5 class="modal-title" id="deleteReservationLabel-<%= reservation._id %>">
+                                        Confirmar eliminación
+                                      </h5>
+                                      <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Cerrar"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                      ¿Deseas eliminar la reserva de <strong>
+                                        <%= reservation.guestName %>
+                                      </strong>?
+                                    </div>
+                                    <div class="modal-footer">
+                                      <button type="button" class="btn btn-secondary btn-sm"
+                                        data-bs-dismiss="modal">Cancelar</button>
+                                      <form action="/reservations/delete/<%= reservation._id %>" method="POST">
+                                        <button type="submit" class="btn btn-danger btn-sm">Sí, eliminar</button>
+                                      </form>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <!-- Modal Marcar Pagado -->
+                              <div class="modal fade" id="markPaidModal-<%= reservation._id %>" tabindex="-1"
+                                aria-labelledby="markPaidLabel-<%= reservation._id %>" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                  <div class="modal-content">
+                                    <div class="modal-header bg-success text-white">
+                                      <h5 class="modal-title" id="markPaidLabel-<%= reservation._id %>">
+                                        Confirmar pago
+                                      </h5>
+                                      <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Cerrar"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                      ¿Deseas marcar como pagada la reserva de <strong>
+                                        <%= reservation.guestName %>
+                                      </strong>?
+                                    </div>
+                                    <div class="modal-footer">
+                                      <button type="button" class="btn btn-secondary btn-sm"
+                                        data-bs-dismiss="modal">Cancelar</button>
+                                      <form action="/reservations/mark-paid/<%= reservation._id %>" method="POST">
+                                        <button type="submit" class="btn btn-success btn-sm">Sí, marcar</button>
+                                      </form>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                          <% }) %>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
-              </div>
-              <% } %>
+                <% } %>
+            </div>
           </div>
-        </div>
 
-        <!-- Controles de paginación personalizados -->
-        <div class="d-flex justify-content-center gap-3 mt-4">
-          <button id="jumpBackBtn" class="btn btn-outline-secondary">&laquo; -5</button>
-          <button id="prevPageBtn" class="btn btn-outline-primary">Anterior</button>
+          <!-- Controles de paginación personalizados -->
+          <div class="d-flex justify-content-center gap-3 mt-4">
+            <button id="jumpBackBtn" class="btn btn-outline-secondary">&laquo; -5</button>
+            <button id="prevPageBtn" class="btn btn-outline-primary">Anterior</button>
 
-          <% for (let i=0; i < totalPages; i++) { %>
-            <button class="btn btn-outline-primary page-btn" data-index="<%= i %>">
-              <%= i + 1 %>
-            </button>
+            <% for (let i=0; i < totalPages; i++) { %>
+              <button class="btn btn-outline-primary page-btn" data-index="<%= i %>">
+                <%= i + 1 %>
+              </button>
+              <% } %>
+
+                <button id="nextPageBtn" class="btn btn-outline-primary">Siguiente</button>
+                <button id="jumpForwardBtn" class="btn btn-outline-secondary">+5 &raquo;</button>
+          </div>
+
+          <% } else { %>
+            <div class="alert alert-info text-center">No hay reservas disponibles.</div>
             <% } %>
-
-              <button id="nextPageBtn" class="btn btn-outline-primary">Siguiente</button>
-              <button id="jumpForwardBtn" class="btn btn-outline-secondary">+5 &raquo;</button>
-        </div>
-
-        <% } else { %>
-          <div class="alert alert-info text-center">No hay reservas disponibles.</div>
-          <% } %>
+      </div>
     </div>
-  </div>
-  <script>
-    window.paginationConfig = {
-      carouselId: 'reservationsCarousel',
-      totalPages: <%= Math.ceil(reservations.length / 20) %>,
-      currentPage: 0
-    };
-  </script>
-  <script src="/js/pagination.js"></script>
+    <script>
+      window.paginationConfig = {
+        carouselId: 'reservationsCarousel',
+        totalPages: <%= Math.ceil(reservations.length / 20) %>,
+        currentPage: 0
+      };
+    </script>
+    <script src="/js/pagination.js"></script>
 
-  <%- include("partials/footer") %>
+    <%- include("partials/footer") %>

@@ -204,8 +204,7 @@ export const postNewApartment = async (req, res) => {
 // GET Reservation
 export const getReservations = async (req, res) => {
   try {
-    const reservations = await Reservation.find({});
-
+    const reservations = await Reservation.find({}).populate("apartment").populate("user");
     res.render("reservations.ejs", {
       title: "admin",
       reservations,
