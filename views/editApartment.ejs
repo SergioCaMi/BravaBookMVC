@@ -1,198 +1,296 @@
 <%- include("partials/header") %>
-<a href="#" onclick="window.history.back()" class="row justify-content-start">
-  <img src="/img/back.png" alt="Volver atrás" style="max-width: 70px; height: auto;" class="m-3">
-</a>
-<%- include("partials/mensajes") %>
+    <a href="#" onclick="window.history.back()" class="row justify-content-start">
+        <img src="/img/back.png" alt="Volver atrás" style="max-width: 70px; height: auto;" class="m-3">
+    </a>
+    <%- include("partials/mensajes") %>
+        <div class="container my-5">
+            <div class="bg-white p-5 shadow rounded-4">
+                <h2 class="mb-4 text-center text-primary fw-bold">Editar Apartamento</h2>
+                <% if (apartments) { %>
+                    <% const apartment=apartments; %>
+                        <form action="/admin/apartment/edit/<%= apartment._id %>/save" method="POST"
+                            class="needs-validation" novalidate>
+                            <!-- Título y descripción -->
+                            <div class="row g-4 mb-4">
+                                <div class="col-md-6">
+                                    <label for="title" class="form-label">Título del apartamento</label>
+                                    <input type="text" name="title" id="title" class="form-control"
+                                        value="<%= apartment.title %>" required>
+                                    <div class="invalid-feedback">
+                                        Por favor, ingresa un título.
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="description" class="form-label">Descripción</label>
+                                    <textarea name="description" id="description" rows="4" class="form-control"
+                                        required><%= apartment.description %></textarea>
+                                    <div class="invalid-feedback">
+                                        Por favor, ingresa una descripción.
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Reglas -->
+                            <div class="mb-4">
+                                <label class="form-label">Normas</label>
+                                <div id="rulesContainer">
+                                    <% if (apartment.rules && apartment.rules.length> 0) { %>
+                                        <% apartment.rules.forEach(function(rule) { %>
+                                            <div class="input-group mb-2">
+                                                <input type="text" name="rules[]" class="form-control"
+                                                    value="<%= rule %>" required>
+                                                <div class="invalid-feedback">
+                                                    Por favor, ingresa una norma.
+                                                </div>
+                                                <button type="button" class="btn btn-outline-danger"
+                                                    onclick="this.parentNode.remove()">Eliminar</button>
+                                            </div>
+                                            <% }) %>
+                                                <% } else { %>
+                                                    <input type="text" name="rules[]" class="form-control mb-2"
+                                                        placeholder="Ej. No fumar" required>
+                                                    <div class="invalid-feedback">
+                                                        Por favor, ingresa una norma.
+                                                    </div>
+                                                    <% } %>
+                                </div>
+                                <button type="button" class="btn btn-outline-secondary btn-sm mt-2"
+                                    onclick="addRuleInput()">+ Añadir norma</button>
+                            </div>
 
-<div class="container my-5">
-  <div class="bg-white p-5 shadow rounded-4">
-    <h2 class="mb-4 text-center text-primary fw-bold">Editar Apartamento</h2>
 
-    <% if (apartments) { %>
-      <% const apartment = apartments; %>
 
-      <form action="/admin/apartment/<%= apartment._id %>/edit/save" method="POST" class="needs-validation" novalidate>
-        <!-- Título y descripción -->
-        <div class="row g-4 mb-4">
-          <div class="col-md-6">
-            <label for="title" class="form-label">Título del apartamento</label>
-            <input type="text" name="title" id="title" class="form-control" value="<%= apartment.title %>" required>
-          </div>
-          <div class="col-md-6">
-            <label for="description" class="form-label">Descripción</label>
-            <textarea name="description" id="description" rows="4" class="form-control" required><%= apartment.description %></textarea>
-          </div>
-        </div>
+                            <div class="mb-3">
+                                <label class="form-label">Fotos</label>
+                                <div id="photosContainer">
+                                    <% if (apartment.photos && apartment.photos.length> 0) { %>
+                                        <% apartment.photos.forEach(function(photo, index) { %>
 
-        <!-- Reglas -->
-        <div class="mb-4">
-          <label class="form-label">Normas</label>
-          <div id="rulesContainer">
-            <% if (apartment.rules && apartment.rules.length > 0) { %>
-              <% apartment.rules.forEach(function(rule) { %>
-                <div class="input-group mb-2">
-                  <input type="text" name="rules[]" class="form-control" value="<%= rule %>" required>
-                  <button type="button" class="btn btn-outline-danger" onclick="this.parentNode.remove()">Eliminar</button>
-                </div>
-              <% }) %>
-            <% } else { %>
-              <input type="text" name="rules[]" class="form-control mb-2" placeholder="Ej. No fumar" required>
-            <% } %>
-          </div>
-          <button type="button" class="btn btn-outline-secondary btn-sm mt-2" onclick="addRuleInput()">+ Añadir norma</button>
-        </div>
 
-        <!-- Habitaciones y camas -->
-        <div class="row g-4 mb-4">
-          <div class="col-md-6">
-            <label for="rooms" class="form-label">Habitaciones</label>
-            <input type="number" name="rooms" id="rooms" class="form-control" value="<%= apartment.rooms %>" min="1" required>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label">Camas por habitación</label>
-            <div id="bedsPerRoomContainer">
-              <% if (apartment.bedsPerRoom && apartment.bedsPerRoom.length > 0) { %>
-                <% apartment.bedsPerRoom.forEach(function(bedCount, index) { %>
-                  <div class="input-group mb-2">
-                    <span class="input-group-text">Habitación <%= index + 1 %></span>
-                    <input type="number" name="bedsPerRoom[]" class="form-control" value="<%= bedCount %>" min="1" required>
-                    <button type="button" class="btn btn-outline-danger" onclick="this.parentNode.remove()">Eliminar</button>
-                  </div>
-                <% }) %>
-              <% } else { %>
-                <div class="input-group mb-2">
-                  <span class="input-group-text">Habitación 1</span>
-                  <input type="number" name="bedsPerRoom[]" class="form-control" value="2" min="1" required>
-                </div>
-              <% } %>
+
+
+
+
+                                            <div class="row g-2 align-items-center mb-2">
+                                                <div class="col-md-7">
+                                                    <input type="text" name="photos[<%= index %>][url]"
+                                                        class="form-control" value="<%= photo.url %>"
+                                                        placeholder="URL de la foto" required>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <input type="text" name="photos[<%= index %>][description]"
+                                                        class="form-control" value="<%= photo.description || '' %>"
+                                                        placeholder="Descripción">
+                                                </div>
+                                                <div class="col-md-1 d-flex align-items-center justify-content-center">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="radio"
+                                                            name="mainPhotoIndex" value="<%= index %>" <%=photo.isMain
+                                                            ? 'checked' : '' %>>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-1 d-flex align-items-center">
+                                                    <button type="button" class="btn btn-outline-danger"
+                                                        onclick="this.closest('.row').remove()">Eliminar</button>
+                                                </div>
+                                            </div>
+
+
+
+
+
+
+
+                                            <% }) %>
+                                                <% } else { %>
+                                                    <div class="row g-2 align-items-center mb-2">
+                                                        <div class="col-md-8">
+                                                            <input type="text" name="photos[0][url]"
+                                                                class="form-control" placeholder="URL de la foto"
+                                                                required>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <input type="text" name="photos[0][description]"
+                                                                class="form-control" placeholder="Descripción">
+                                                        </div>
+                                                        <div class="col-md-1 d-flex align-items-center">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="radio"
+                                                                    name="mainPhotoIndex" value="0" checked>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <% } %>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-success mt-2"
+                                    onclick="addPhotoFields()">+
+                                    Añadir foto</button>
+
+
+                            </div>
+
+
+
+
+
+
+
+
+                            <!-- Habitaciones y camas -->
+                            <div class="row g-4 mb-4">
+                                <div class="col-md-6">
+                                    <label for="rooms" class="form-label">Habitaciones</label>
+                                    <input type="number" name="rooms" id="rooms" class="form-control"
+                                        value="<%= apartment.rooms %>" min="1" required>
+                                    <div class="invalid-feedback">
+                                        Por favor, ingresa un número válido de habitaciones.
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Camas por habitación</label>
+                                    <div id="bedsPerRoomContainer">
+                                        <% if (apartment.bedsPerRoom && apartment.bedsPerRoom.length> 0) { %>
+                                            <% apartment.bedsPerRoom.forEach(function(bedCount, index) { %>
+                                                <div class="input-group mb-2">
+                                                    <span class="input-group-text">Habitación <%= index + 1 %></span>
+                                                    <input type="number" name="bedsPerRoom[]" class="form-control"
+                                                        value="<%= bedCount %>" min="1" required>
+                                                    <div class="invalid-feedback">
+                                                        Por favor, ingresa un número válido de camas.
+                                                    </div>
+                                                    <button type="button" class="btn btn-outline-danger"
+                                                        onclick="this.parentNode.remove()">Eliminar</button>
+                                                </div>
+                                                <% }) %>
+                                                    <% } else { %>
+                                                        <div class="input-group mb-2">
+                                                            <span class="input-group-text">Habitación 1</span>
+                                                            <input type="number" name="bedsPerRoom[]"
+                                                                class="form-control" value="2" min="1" required>
+                                                            <div class="invalid-feedback">
+                                                                Por favor, ingresa un número válido de camas.
+                                                            </div>
+                                                        </div>
+                                                        <% } %>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="bathrooms" class="form-label">Baños</label>
+                                    <input type="number" name="bathrooms" id="bathrooms" class="form-control"
+                                        value="<%= apartment.bathrooms %>" min="1" required>
+                                </div>
+
+                            </div>
+                            <!-- Precio, huéspedes, metros -->
+                            <div class="row g-4 mb-4">
+                                <div class="col-md-4">
+                                    <label for="price" class="form-label">Precio por noche (€)</label>
+                                    <input type="number" name="price" id="price" min="0" class="form-control"
+                                        value="<%= apartment.price %>" required>
+                                    <div class="invalid-feedback">
+                                        Por favor, ingresa un precio válido.
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="maxGuests" class="form-label">Máximo de huéspedes</label>
+                                    <input type="number" name="maxGuests" id="maxGuests" min="1" class="form-control"
+                                        value="<%= apartment.maxGuests %>" required>
+                                    <div class="invalid-feedback">
+                                        Por favor, ingresa un número válido de huéspedes.
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="squareMeters" class="form-label">Metros cuadrados</label>
+                                    <input type="number" name="squareMeters" id="squareMeters" min="1"
+                                        class="form-control" value="<%= apartment.squareMeters %>" required>
+                                    <div class="invalid-feedback">
+                                        Por favor, ingresa un número válido de metros cuadrados.
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Servicios -->
+                            <div class="mb-4">
+                                <legend class="form-label">Servicios</legend>
+                                <div class="row g-3">
+                                    <% const s=apartment.services || {}; %>
+                                        <% const services=[ { id: 'airConditioning' , label: 'Aire acondicionado' }, {
+                                            id: 'heating' , label: 'Calefacción' }, { id: 'accessibility' ,
+                                            label: 'Accesibilidad' }, { id: 'television' , label: 'Televisión' }, {
+                                            id: 'kitchen' , label: 'Cocina' }, { id: 'internet' , label: 'Internet' } ];
+                                            %>
+                                            <% services.forEach(service=> { %>
+                                                <div class="col-md-4">
+                                                    <div class="form-check">
+                                                        <input type="checkbox" name="services[<%= service.id %>]"
+                                                            class="form-check-input" id="<%= service.id %>"
+                                                            <%=s[service.id] ? 'checked' : '' %>>
+                                                        <label class="form-check-label" for="<%= service.id %>">
+                                                            <%= service.label %>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <% }) %>
+                                </div>
+                            </div>
+                            <!-- Ubicación -->
+                            <div class="row g-4 mb-4">
+                                <div class="col-md-4">
+                                    <label for="provinceSelect" class="form-label">Selecciona una provincia</label>
+                                    <select id="provinceSelect" name="location[province]" class="form-select" required>
+                                        <option value="<%= apartment.location.province.id %>">
+                                            <%= apartment.location.province.nm %>
+                                        </option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        Por favor, selecciona una provincia.
+                                    </div>
+                                    <!-- Campos ocultos provincia -->
+                                    <input type="hidden" name="location[province][id]" id="provinceIdInput">
+                                    <input type="hidden" name="location[province][nm]" id="provinceNameInput">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="municipalitySelect" class="form-label">Selecciona un municipio</label>
+                                    <select id="municipalitySelect" name="location[city]" class="form-select" required>
+                                        <option value="<%= apartment.location.municipality.nm %>">
+                                            <%= apartment.location.municipality.nm %>
+                                        </option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        Por favor, selecciona un municipio.
+                                    </div>
+                                    <!-- Campos ocultos municipio -->
+                                    <input type="hidden" name="location[municipality][id]" id="municipalityIdInput">
+                                    <input type="hidden" name="location[municipality][nm]" id="municipalityNameInput">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="lat" class="form-label">Latitud (GPS)</label>
+                                    <input type="number" step="any" name="location[gpsCoordinates][lat]"
+                                        class="form-control" value="<%= apartment.location.gpsCoordinates.lat %>">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="lng" class="form-label">Longitud (GPS)</label>
+                                    <input type="number" step="any" name="location[gpsCoordinates][lng]"
+                                        class="form-control" value="<%= apartment.location.gpsCoordinates.lng %>">
+                                </div>
+                            </div>
+                            <!-- Estado -->
+                            <div class="form-check form-switch mb-4">
+                                <input class="form-check-input" type="checkbox" id="active" name="active" value="true"
+                                    <%=apartment.active ? 'checked' : '' %>>
+                                <label class="form-check-label" for="active">
+                                    <%= apartment.active ? 'Activado' : 'Desactivado' %>
+                                </label>
+                            </div>
+                            <!-- Botones -->
+                            <div class="d-flex gap-3 mt-4">
+                                <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                                <a href="/admin/apartments" class="btn btn-secondary">Cancelar</a>
+                            </div>
+                        </form>
+                        <% } else { %>
+                            <p class="text-center my-5">No hay apartamentos disponibles.</p>
+                            <% } %>
             </div>
-            <button type="button" class="btn btn-outline-secondary btn-sm mt-2" onclick="addBedroomField()">+ Añadir habitación</button>
-          </div>
         </div>
-
-        <!-- Precio, huéspedes, metros -->
-        <div class="row g-4 mb-4">
-          <div class="col-md-4">
-            <label for="price" class="form-label">Precio por noche (€)</label>
-            <input type="number" name="price" id="price" min="0" class="form-control" value="<%= apartment.price %>" required />
-          </div>
-          <div class="col-md-4">
-            <label for="maxGuests" class="form-label">Máximo de huéspedes</label>
-            <input type="number" name="maxGuests" id="maxGuests" min="1" class="form-control" value="<%= apartment.maxGuests %>" required />
-          </div>
-          <div class="col-md-4">
-            <label for="squareMeters" class="form-label">Metros cuadrados</label>
-            <input type="number" name="squareMeters" id="squareMeters" min="1" class="form-control" value="<%= apartment.squareMeters %>" required />
-          </div>
-        </div>
-
-        <!-- Servicios -->
-        <div class="mb-4">
-          <legend class="form-label">Servicios</legend>
-          <div class="row g-3">
-            <% const s = apartment.services || {}; %>
-            <% const services = [
-              { id: 'airConditioning', label: 'Aire acondicionado' },
-              { id: 'heating', label: 'Calefacción' },
-              { id: 'accessibility', label: 'Accesibilidad' },
-              { id: 'television', label: 'Televisión' },
-              { id: 'kitchen', label: 'Cocina' },
-              { id: 'internet', label: 'Internet' }
-            ]; %>
-            <% services.forEach(service => { %>
-              <div class="col-md-4">
-                <div class="form-check">
-                  <input type="checkbox" name="services[<%= service.id %>]" class="form-check-input" id="<%= service.id %>" <%= s[service.id] ? 'checked' : '' %>>
-                  <label class="form-check-label" for="<%= service.id %>"><%= service.label %></label>
-                </div>
-              </div>
-            <% }) %>
-          </div>
-        </div>
-
-        <!-- Ubicación -->
-        <div class="row g-4 mb-4">
-            <div class="col-md-4">
-              <label for="provinceSelect" class="form-label">Selecciona una provincia</label>
-              <select id="provinceSelect" name="location[province]" class="form-select" required>
-                <option value="<%= apartment.location.province.id %>"><%= apartment.location.province.nm %></option>
-              </select>
-
-              <!-- Campos ocultos provincia -->
-              <input type="hidden" name="location[province][id]" id="provinceIdInput">
-              <input type="hidden" name="location[province][nm]" id="provinceNameInput">
-            </div>
-
-            <div class="col-md-4">
-              <label for="municipalitySelect" class="form-label">Selecciona un municipio</label>
-              <select id="municipalitySelect" name="location[city]" class="form-select" required>
-                <option value="<%= apartment.location.municipality.nm %>"><%= apartment.location.municipality.nm %></option>
-              </select>
-
-              <!-- Campos ocultos municipio -->
-              <input type="hidden" name="location[municipality][id]" id="municipalityIdInput">
-              <input type="hidden" name="location[municipality][nm]" id="municipalityNameInput">
-            </div>
-
-          <div class="col-md-2">
-            <label for="lat" class="form-label">Latitud (GPS)</label>
-            <input type="number" step="any" name="location[gpsCoordinates][lat]" class="form-control" value="<%= apartment.location.gpsCoordinates.lat %>" />
-          </div>
-          <div class="col-md-2">
-            <label for="lng" class="form-label">Longitud (GPS)</label>
-            <input type="number" step="any" name="location[gpsCoordinates][lng]" class="form-control" value="<%= apartment.location.gpsCoordinates.lng %>" />
-          </div>
-        </div>
-
-        <!-- Estado -->
-        <div class="form-check form-switch mb-4">
-          <input class="form-check-input" type="checkbox" id="active" name="active" value="true" <%= apartment.active ? 'checked' : '' %>>
-          <label class="form-check-label" for="active">
-            <%= apartment.active ? 'Activado' : 'Desactivado' %>
-          </label>
-        </div>
-
-        <!-- Botones -->
-        <div class="d-flex gap-3 mt-4">
-          <button type="submit" class="btn btn-primary">Guardar cambios</button>
-          <a href="/admin/apartments" class="btn btn-secondary">Cancelar</a>
-        </div>
-      </form>
-    <% } else { %>
-      <p class="text-center my-5">No hay apartamentos disponibles.</p>
-    <% } %>
-  </div>
-</div>
-
-<script src="/js/municipiAndProvince.js"></script>
-<!-- <script src="/js/editApartment.js"></script> -->
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-     document.getElementById('provinceSelect').valueToSelect = apartment.location.province.id;
-     console.log(apartment.location.province.id);
-    // const provinceSelect = document.getElementById('provinceSelect');
-    // if (location.province.id) {
-    //   for (let i = 0; i < provinceSelect.options.length; i++) {
-    //     if (provinceSelect.options[i].value == location.province.id) {
-    //       provinceSelect.selectedIndex = i;
-    //       break;
-    //     }
-    //   }
-    //   document.getElementById('provinceIdInput').value = location.province.id;
-    //   document.getElementById('provinceNameInput').value = location.province.nm;
-    // }
-
-    // const municipalitySelect = document.getElementById('municipalitySelect');
-    // if (location.municipality.id) {
-    //   for (let i = 0; i < municipalitySelect.options.length; i++) {
-    //     if (municipalitySelect.options[i].value == location.municipality.id) {
-    //       municipalitySelect.selectedIndex = i;
-    //       break;
-    //     }
-    //   }
-    //   document.getElementById('municipalityIdInput').value = location.municipality.id;
-    //   document.getElementById('municipalityNameInput').value = location.municipality.nm;
-    // }
-  });
-</script>
-<%- include("partials/footer") %>
+        <script src="/js/municipiAndProvince.js"></script>
+        <script src="/js/editApartment.js"></script>
+        <%- include("partials/footer") %>

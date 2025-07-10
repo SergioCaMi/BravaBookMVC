@@ -41,6 +41,6 @@ router.post("/apartment/new", adminController.postNewApartment);
 //GET edit apartment
 router.get("/apartments/edit/:id", requireAuth, requireAdmin, adminController.getAdminEdit);
 //POST edit apartment
-// router.post("/apartment/edit/:id/save", requireAuth, requireAdmin, adminController.putAdminEdit);
+router.post("/apartment/edit/:id/save", requireAuth, requireAdmin, adminController.putAdminEdit);
 export default router;
 

@@ -240,3 +240,117 @@ console.log(apartments);
     res.redirect("/admin");
   }
 };
+
+
+// PUT edit apartment
+export const putAdminEdit = async (req, res) => {
+  console.log(req.body);
+  const { id } = req.params;
+  try {
+    const {
+      title,
+      description,
+      rooms,
+      bathrooms,
+      price,
+      maxGuests,
+      squareMeters,
+    } = req.body;
+
+    // *** Normas ***
+    const rules = Array.isArray(req.body.rules)
+      ? req.body.rules.map((r) => r.trim()).filter((r) => r.length > 0)
+      : [];
+
+    // *** Fotos ***
+    const photos = Array.isArray(req.body.photos)
+      ? req.body.photos
+          .filter((photo) => photo.url?.trim())
+          .map((photo, index) => ({
+            ...photo,
+            url: photo.url.trim(),
+            description: photo.description || "",
+            isMain: String(index) === String(req.body.mainPhotoIndex),
+          }))
+      : [];
+
+    //  *** Servicios ***
+    // existe el servicio? es igual a 'on'? true/false
+    const services = {
+      airConditioning: req.body.services?.airConditioning === "on",
+      heating: req.body.services?.heating === "on",
+      accessibility: req.body.services?.accessibility === "on",
+      television: req.body.services?.television === "on",
+      kitchen: req.body.services?.kitchen === "on",
+      internet: req.body.services?.internet === "on",
+    };
+
+    //  *** Localización ***
+    const location = {
+      province: {
+        id: req.body.location?.province?.id
+          ? Number(req.body.location.province.id)
+          : 0,
+        nm: req.body.location?.province?.nm || "No especificado",
+      },
+      municipality: {
+        id: req.body.location?.municipality?.id
+          ? Number(req.body.location.municipality.id)
+          : 0,
+        nm: req.body.location?.municipality?.nm || "No especificado",
+      },
+      gpsCoordinates: {
+        lat: req.body.location?.gpsCoordinates?.lat
+          ? Number(req.body.location.gpsCoordinates.lat)
+          : 0,
+        lng: req.body.location?.gpsCoordinates?.lng
+          ? Number(req.body.location.gpsCoordinates.lng)
+          : 0,
+      },
+    };
+
+    //  *** Camas por habitación ***
+    let bedsPerRoom = [];
+    if (Array.isArray(req.body.bedsPerRoom)) {
+      bedsPerRoom = req.body.bedsPerRoom
+        .map((num) => parseInt(num, 10))
+        .filter((num) => !isNaN(num) && num >= 0).slice(0, Number(rooms));
+    }
+
+    // *** Crear la nueva instancia ***
+    // Estado activo/desactivado
+    let active = false;
+    if (typeof req.body.active === 'string') {
+      active = req.body.active === 'on' || req.body.active === 'true';
+    } else if (typeof req.body.active === 'boolean') {
+      active = req.body.active;
+    }
+    const updateApartment = {
+      title,
+      description,
+      rules,
+      rooms: Number(rooms),
+      bedsPerRoom,
+      bathrooms: Number(bathrooms),
+      photos,
+      price: Number(price),
+      maxGuests: Number(maxGuests),
+      squareMeters: Number(squareMeters),
+      services,
+      location,
+      active,
+    };
+    console.log("Creamos el objeto para update");
+    const apartment = await Apartment.findByIdAndUpdate(id, updateApartment, {
+      new: true,
+    });
+    req.flash("success_msg", "El apartamento se ha editado satisfactoriamente.");
+    res.redirect("/admin");
+    console.log("Updated!");
+
+  } catch (error) {
+    req.flash("error_msg", "Hubo un error al crear el apartamento.");
+    console.error("Error:", error.message);
+    res.redirect("/admin");
+  }
+};
