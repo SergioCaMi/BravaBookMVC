@@ -9,18 +9,18 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   provinces = await provinceRes.json();
   cities = await cityRes.json();
+
   provinces.sort((a, b) => a.nm.localeCompare(b.nm));
+
   const provinceSelect = document.getElementById("provinceSelect");
   const municipalitySelect = document.getElementById("municipalitySelect");
 
   const provinceIdInput = document.getElementById("provinceIdInput");
   const provinceNameInput = document.getElementById("provinceNameInput");
   const municipalityIdInput = document.getElementById("municipalityIdInput");
-  const municipalityNameInput = document.getElementById(
-    "municipalityNameInput"
-  );
+  const municipalityNameInput = document.getElementById("municipalityNameInput");
 
-  // Rellenar provincias
+  // Rellenar el select de provincias
   provinces.forEach((prov) => {
     const option = document.createElement("option");
     option.value = prov.id;
@@ -28,18 +28,17 @@ window.addEventListener("DOMContentLoaded", async () => {
     provinceSelect.appendChild(option);
   });
 
-  // Cambia provincia
+  // Evento: al cambiar de provincia
   provinceSelect.addEventListener("change", () => {
     const selectedProvinceId = provinceSelect.value;
     const selectedProvince = provinces.find((p) => p.id === selectedProvinceId);
 
-    // Guardar provincia en inputs ocultos
+    // Actualizar campos ocultos de provincia
     provinceIdInput.value = selectedProvince?.id || "";
     provinceNameInput.value = selectedProvince?.nm || "";
 
-    // Limpiar municipios
-    municipalitySelect.innerHTML =
-      '<option value="">-- Selecciona un municipio --</option>';
+    // Limpiar y recargar municipios
+    municipalitySelect.innerHTML = '<option value="">-- Selecciona un municipio --</option>';
     municipalityIdInput.value = "";
     municipalityNameInput.value = "";
 
@@ -48,6 +47,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         city.id.startsWith(selectedProvinceId)
       );
       filteredCities.sort((a, b) => a.nm.localeCompare(b.nm));
+
       filteredCities.forEach((city) => {
         const option = document.createElement("option");
         option.value = city.id;
@@ -57,7 +57,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
-  // Cambia municipio
+  // Evento: al cambiar de municipio
   municipalitySelect.addEventListener("change", () => {
     const selectedCityId = municipalitySelect.value;
     const selectedCity = cities.find((c) => c.id === selectedCityId);
@@ -65,4 +65,25 @@ window.addEventListener("DOMContentLoaded", async () => {
     municipalityIdInput.value = selectedCity?.id || "";
     municipalityNameInput.value = selectedCity?.nm || "";
   });
+
+  // --- Precarga segura si existen datos embebidos en el HTML ---
+  const initialProvinceId = provinceSelect.dataset.selected; // data-selected="46"
+  const initialMunicipalityId = municipalitySelect.dataset.selected; // data-selected="46031"
+
+  if (initialProvinceId) {
+    provinceSelect.value = initialProvinceId;
+    provinceSelect.dispatchEvent(new Event("change"));
+
+    setTimeout(() => {
+      municipalitySelect.value = initialMunicipalityId;
+
+      const selectedProvince = provinces.find((p) => p.id === initialProvinceId);
+      provinceIdInput.value = selectedProvince?.id || "";
+      provinceNameInput.value = selectedProvince?.nm || "";
+
+      const selectedCity = cities.find((c) => c.id === initialMunicipalityId);
+      municipalityIdInput.value = selectedCity?.id || "";
+      municipalityNameInput.value = selectedCity?.nm || "";
+    }, 100);
+  }
 });

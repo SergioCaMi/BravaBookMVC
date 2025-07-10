@@ -244,7 +244,7 @@ console.log(apartments);
 
 // PUT edit apartment
 export const putAdminEdit = async (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
   const { id } = req.params;
   try {
     const {
@@ -308,7 +308,7 @@ export const putAdminEdit = async (req, res) => {
           : 0,
       },
     };
-
+                                                                                        console.log("Location:", location)
     //  *** Camas por habitación ***
     let bedsPerRoom = [];
     if (Array.isArray(req.body.bedsPerRoom)) {

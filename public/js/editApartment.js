@@ -40,8 +40,6 @@
   // Controlar camas por habitaciones
   document.getElementById("rooms").addEventListener("input", generateBedInputs);
 
-  document.addEventListener('DOMContentLoaded', generateBedInputs);
-
   function addRuleInput() {
     const container = document.getElementById("rulesContainer");
     const div = document.createElement("div");
@@ -74,3 +72,46 @@
 
   container.appendChild(div);
 }
+
+
+document.getElementById("apartmentForm").addEventListener("submit", function () {
+  const provinceSelect = document.getElementById("provinceSelect");
+  const municipalitySelect = document.getElementById("municipalitySelect");
+
+  const selectedProvince = provinces.find(p => p.id === provinceSelect.value);
+  const selectedCity = cities.find(c => c.id === municipalitySelect.value);
+
+  document.getElementById("provinceIdInput").value = selectedProvince?.id || "";
+  document.getElementById("provinceNameInput").value = selectedProvince?.nm || "";
+
+  document.getElementById("municipalityIdInput").value = selectedCity?.id || "";
+  document.getElementById("municipalityNameInput").value = selectedCity?.nm || "";
+
+  console.log("provinceId:", document.getElementById("provinceIdInput").value);
+console.log("municipalityId:", document.getElementById("municipalityIdInput").value);
+
+});
+
+
+  document.addEventListener('DOMContentLoaded', generateBedInputs);
+
+
+  document.addEventListener('DOMContentLoaded', function () {
+  const form = document.getElementById("apartmentForm");
+
+  if (form) {
+    form.addEventListener("submit", function (event) {
+      const provinceSelect = document.getElementById("provinceSelect");
+      const municipalitySelect = document.getElementById("municipalitySelect");
+
+      const selectedProvince = provinces.find(p => p.id === provinceSelect.value);
+      const selectedCity = cities.find(c => c.id === municipalitySelect.value);
+
+      document.getElementById("provinceIdInput").value = selectedProvince?.id || "";
+      document.getElementById("provinceNameInput").value = selectedProvince?.nm || "";
+      document.getElementById("municipalityIdInput").value = selectedCity?.id || "";
+      document.getElementById("municipalityNameInput").value = selectedCity?.nm || "";
+    });
+  }
+});
+

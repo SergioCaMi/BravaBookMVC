@@ -8,7 +8,7 @@
                 <h2 class="mb-4 text-center text-primary fw-bold">Editar Apartamento</h2>
                 <% if (apartments) { %>
                     <% const apartment=apartments; %>
-                        <form action="/admin/apartment/edit/<%= apartment._id %>/save" method="POST"
+                        <form id="apartmentForm" action="/admin/apartment/edit/<%= apartment._id %>/save" method="POST"
                             class="needs-validation" novalidate>
                             <!-- Título y descripción -->
                             <div class="row g-4 mb-4">
@@ -235,10 +235,9 @@
                             <div class="row g-4 mb-4">
                                 <div class="col-md-4">
                                     <label for="provinceSelect" class="form-label">Selecciona una provincia</label>
-                                    <select id="provinceSelect" name="location[province]" class="form-select" required>
-                                        <option value="<%= apartment.location.province.id %>">
-                                            <%= apartment.location.province.nm %>
-                                        </option>
+                                    <select id="provinceSelect" name="tmpProvince" class="form-select" required
+                                        data-selected="<%= apartment?.location?.province?.id || '' %>">
+                                        <option value="">-- Selecciona una provincia --</option>
                                     </select>
                                     <div class="invalid-feedback">
                                         Por favor, selecciona una provincia.
@@ -249,10 +248,9 @@
                                 </div>
                                 <div class="col-md-4">
                                     <label for="municipalitySelect" class="form-label">Selecciona un municipio</label>
-                                    <select id="municipalitySelect" name="location[city]" class="form-select" required>
-                                        <option value="<%= apartment.location.municipality.nm %>">
-                                            <%= apartment.location.municipality.nm %>
-                                        </option>
+                                    <select id="municipalitySelect" name="location[city]" class="form-select" required
+                                        data-selected="<%= apartment?.location?.municipality?.id || '' %>">
+                                        <option value="">-- Selecciona un municipio --</option>
                                     </select>
                                     <div class="invalid-feedback">
                                         Por favor, selecciona un municipio.
