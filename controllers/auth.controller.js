@@ -241,13 +241,14 @@ export const getApartmentSearch = async (req, res) => {
   const [start, end] = dateRange.split(" - ");
   const startDate = new Date(start);
   const endDate = new Date(end);
-startDate.setDate(endDate.getDate()+1);//Para solapar fechas!!
+  
+startDate.setDate(startDate.getDate()+1);//Para solapar fechas!!
+  console.log("Start Date:", startDate);
+  console.log("End Date:", endDate);
+
   startDate.setHours(0, 0, 0, 0);
   endDate.setHours(0, 0, 0, 0);
 
-  console.log("Start Date:", startDate);
-  console.log("End Date:", endDate);
-  console.log("");
 
   let reservedApartmentIds = [];
 

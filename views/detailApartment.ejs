@@ -170,14 +170,13 @@
                             </div>
 
                             <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="startDate" class="form-label">Fecha de entrada</label>
-                                    <input type="date" class="form-control" id="startDate" name="startDate" required>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="endDate" class="form-label">Fecha de salida</label>
-                                    <input type="date" class="form-control" id="endDate" name="endDate" required>
-                                </div>
+                                    <div class="col-12 col-md-6">
+                    <label for="dateRange" class="form-label small mb-1">Selecciona el rango de fechas:</label>
+                    <input type="text" id="dateRange" name="dateRange" class="form-control" readonly />
+                  </div>
+
+                  <input type="hidden" id="startDate" name="startDate" />
+                  <input type="hidden" name="endDate" id="endDate" />
                             </div>
 
                             <button type="submit" class="btn btn-primary">Confirmar Reserva</button>
@@ -200,5 +199,8 @@
                 return new bootstrap.Tooltip(tooltipTriggerEl)
             })
         });
+
     </script>
+        <script src="/js/dateRangePicker.js"></script>
+
     <%- include("partials/footer") %>
