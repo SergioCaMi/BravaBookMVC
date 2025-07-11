@@ -182,7 +182,7 @@ export const getApartmentSearch = async (req, res) => {
     startDate,
     endDate,
   } = req.query;
-
+console.log(startDate+"-"+endDate);
 const provinceName = req.query["province[nm]"];
 const cityName = req.query["municipality[nm]"];
 
@@ -235,6 +235,7 @@ const cityName = req.query["municipality[nm]"];
   Object.assign(query, services);
 
   // *** Fechas ***
+
   let reservedApartmentIds = [];
   if (startDate && endDate) {
     const start = new Date(startDate);

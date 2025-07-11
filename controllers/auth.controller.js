@@ -68,7 +68,10 @@ export const dashboard = async (req, res) => {
   console.log("Dashboard");
   const user = await User.findById(req.session.userId);
   const reservations = await Reservation.find({
-    user: req.session.userId }).populate("apartment").limit(10);
+    user: req.session.userId,
+  })
+    .populate("apartment")
+    .limit(10);
   const apartments = await Apartment.find({
     createdBy: req.session.userId,
   }).limit(50);
@@ -203,7 +206,6 @@ export const getApartmentSearch = async (req, res) => {
     };
   }
 
-
   // *** Precio mínimo y máximo ***
   if (minPrice) {
     query.price = { ...query.price };
@@ -236,26 +238,39 @@ export const getApartmentSearch = async (req, res) => {
 
   // *** Fechas ***
   let reservedApartmentIds = [];
+
   if (startDate && endDate) {
     const start = new Date(startDate);
     const end = new Date(endDate);
 
-    const reservations = await Reservation.find({
-      startDate: { $lt: end },
-      endDate: { $gt: start },
+      // Tienen valores validos?
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+      throw new Error("Fechas inválidas proporcionadas.");
+    }
+
+    // Existe una reserva ya que esté sobre esas fechas?
+    const reservationsDates = await Reservation.find({
+      $and: [{ startDate: { $lt: end } }, { endDate: { $gt: start } }],
     });
 
-    reservedApartmentIds = reservations.map((r) => r.apartmentId);
+    reservedApartmentIds = reservationsDates.map((r) => r.apartmentId);
     if (reservedApartmentIds.length > 0) {
       query._id = { $nin: reservedApartmentIds };
     }
   }
 
-  try {
-    console.log("Consulta MongoDB:", query);
-    const sortvalue = +sortPrice;
-    console.log("Orden:", sortvalue);
 
+console.log();
+console.log();
+
+  // console.log("Consulta MongoDB:", query);
+  // Orden
+  let sortvalue = 0;
+  if (+sortPrice >= 0) sortvalue = 1;
+  if (+sortPrice < 0) sortvalue = -1;
+  console.log("Orden:", sortvalue);
+
+  try {
     const apartments = await Apartment.find(query).sort({ price: sortvalue });
     res.render("seeApartments.ejs", {
       title: "home",
@@ -304,7 +319,9 @@ export const getReservationsById = async (req, res) => {
   }
 
   try {
-    const reservations = await Reservation.find({ user: req.session.userId }).populate("apartment");
+    const reservations = await Reservation.find({
+      user: req.session.userId,
+    }).populate("apartment");
     res.render("userReservations.ejs", {
       title: "home",
       error: undefined,

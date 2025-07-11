@@ -16,12 +16,15 @@ const storage = multer.diskStorage({
     try {
       // Buscar al usuario en la base de datos
       const user = await User.findById(req.session.userId);
-      if (!user) {
-        return cb(new Error('Usuario no encontrado'), null);
+      if (!user || !user.email) {
+        // Si no hay usuario o email, usar carpeta por defecto
+        const defaultPath = path.join('public', 'uploads', 'usuarios', 'default');
+        ensureDirExists(defaultPath);
+        return cb(null, defaultPath);
       }
 
       // Extraer nombre base del email
-      const userBaseName = user.email.split('@')[0];
+      const userBaseName = user.email.split('@')[0] || 'default';
 
       // Ruta donde se guardará la imagen
       const uploadPath = path.join('public', 'uploads', 'usuarios', userBaseName);
@@ -32,7 +35,10 @@ const storage = multer.diskStorage({
       // Continuar con la ruta
       cb(null, uploadPath);
     } catch (err) {
-      cb(err, null);
+      // Si hay error, usar carpeta por defecto
+      const defaultPath = path.join('public', 'uploads', 'usuarios', 'default');
+      ensureDirExists(defaultPath);
+      cb(null, defaultPath);
     }
   },
   filename: (req, file, cb) => {

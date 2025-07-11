@@ -1,26 +1,16 @@
 document.addEventListener("DOMContentLoaded", () => {
-
-  // ********** ToolTips **********
-  var tooltipTriggerList = [].slice.call(
+  // ToolTips
+  const tooltipTriggerList = [].slice.call(
     document.querySelectorAll('[data-bs-toggle="tooltip"]')
   );
-  var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-    return new bootstrap.Tooltip(tooltipTriggerEl);
-  });
+  tooltipTriggerList.map((el) => new bootstrap.Tooltip(el));
 
-  // ********** Función para añadir camas **********
-
+  // ********** Camas por habitación **********
   const roomsInput = document.getElementById("rooms");
   const bedsContainer = document.getElementById("bedsContainer");
 
-  if (!roomsInput || !bedsContainer) {
-    console.error("No se encontraron los elementos del DresolveOM");
-    return;
-  }
-
   function generateBedInputs() {
-    const roomCount = parseInt(document.getElementById("rooms").value) || 0;
-    const bedsContainer = document.getElementById("bedsContainer");
+    const roomCount = parseInt(roomsInput.value) || 0;
     bedsContainer.innerHTML = "";
 
     if (roomCount <= 0) return;
@@ -47,21 +37,24 @@ document.addEventListener("DOMContentLoaded", () => {
       input.name = `bedsPerRoom[${i}]`;
       input.min = "0";
       input.value = "1";
-      input.required = true;
+      input.required = true; // <- Añadido
+
       input.className = "form-control";
 
       col.appendChild(label);
       col.appendChild(input);
-
       row.appendChild(col);
     }
 
     bedsContainer.appendChild(row);
   }
-  roomsInput.addEventListener("input", generateBedInputs);
 
-// Validación botónfotos
- const form = document.getElementById("apartmentForm");
+  if (roomsInput && bedsContainer) {
+    roomsInput.addEventListener("input", generateBedInputs);
+  }
+
+  // ********** Validación del formulario **********
+  const form = document.getElementById("apartmentForm");
 
   form.addEventListener("submit", function (e) {
     let isValid = true;
@@ -71,16 +64,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const errorFotoElement = document.querySelector(".errorFoto");
-    const fotoAgregada = document.getElementById("photoButtonClicked").value === "true";
+    const photoClickedInput = document.getElementById("photoButtonClicked");
+    const fotoAgregada = photoClickedInput && photoClickedInput.value === "true";
 
     if (!fotoAgregada) {
-      errorFotoElement.style.display = "inline";
+      if (errorFotoElement) errorFotoElement.style.display = "inline";
       isValid = false;
     } else {
-      errorFotoElement.style.display = "none";
+      if (errorFotoElement) errorFotoElement.style.display = "none";
     }
 
-    // Cancelar envío si no es válido
     if (!isValid) {
       e.preventDefault();
       e.stopPropagation();
@@ -88,41 +81,43 @@ document.addEventListener("DOMContentLoaded", () => {
 
     form.classList.add("was-validated");
   });
-
-
 });
 
-// ********** Función para añadir imagenes **********
+// ********** Función para añadir imágenes **********
 let photoCount = 0;
 
 function addPhotoField() {
-  document.getElementById("photoButtonClicked").value = "true";
+  const photoClickedInput = document.getElementById("photoButtonClicked");
+  if (photoClickedInput) {
+    photoClickedInput.value = "true";
+  }
+
   const container = document.getElementById("photosContainer");
   const fieldset = document.createElement("fieldset");
   fieldset.className = "photo-fieldset";
   fieldset.innerHTML = `
-      <legend>Foto ${photoCount + 1}</legend>
+    <legend>Foto ${photoCount + 1}</legend>
 
-      <label for="photos[${photoCount}][url]">URL de la foto:</label>
-      <input type="text" name="photos[${photoCount}][url]" required /><br>
+    <label for="photos[${photoCount}][url]">URL de la foto:</label>
+    <input type="text" name="photos[${photoCount}][url]" class="form-control" required /><br>
 
-      <label for="photos[${photoCount}][description]">Descripción:</label>
-      <input type="text" name="photos[${photoCount}][description]" />
+    <label for="photos[${photoCount}][description]">Descripción:</label>
+    <input type="text" name="photos[${photoCount}][description]" class="form-control" />
 
-      <label>
-        <input type="radio" name="mainPhotoIndex" value="${photoCount}" ${
+    <label>
+      <input type="radio" name="mainPhotoIndex" value="${photoCount}" ${
     photoCount === 0 ? "checked" : ""
   } />
-        Foto Principal
-      </label>
+      Foto Principal
+    </label>
 
-      <hr />
-    `;
+    <hr />
+  `;
   container.appendChild(fieldset);
   photoCount++;
 }
 
-// ********** Función para añadir normas **********
+// ********** Función para añadir reglas **********
 let ruleCount = 0;
 
 function addRuleField() {
@@ -141,12 +136,11 @@ function addRuleField() {
   input.name = `rules[]`;
   input.placeholder = "Ej: CheckOut antes de las 12am.";
   input.className = "form-control";
+  input.required = true; // <- Añadido
 
   group.appendChild(label);
   group.appendChild(input);
-
   container.appendChild(group);
 
   ruleCount++;
 }
-

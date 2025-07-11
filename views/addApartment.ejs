@@ -8,8 +8,10 @@
       <div class="bg-white p-5 shadow rounded-4">
         <h2 class="mb-4 text-center text-primary fw-bold">Nuevo Apartamento</h2>
 
-        <!-- <form id="apartmentForm" class="needs-validation" novalidate method="post" action="/admin/apartment"> -->
         <form id="apartmentForm" class="needs-validation" method="post" action="/admin/apartment/new" novalidate>
+          <!-- Campo oculto para validar fotos -->
+          <input type="hidden" id="photoButtonClicked" name="photoButtonClicked" value="false" />
+
           <!-- Título y descripción -->
           <div class="row g-4 mb-4">
             <div class="col-md-6">

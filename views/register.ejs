@@ -22,8 +22,10 @@
                 <div class="mb-3">
                   <label for="password" class="form-label">Contraseña</label>
                   <div class="d-flex align-items-center gap-2">
-                    <input type="password" name="password" id="password" class="form-control" placeholder="Contraseña"
-                      required>
+                    <input type="password" name="password" id="password" class="form-control"
+                      placeholder="Contraseña (8-16 caracteres)"
+                      pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,16}$"
+                      title="Debe tener entre 8 y 16 caracteres, al menos una letra, un número y un símbolo." required>
                     <i class="bi bi-eye-slash text-secondary" style="font-size: 1.2rem; cursor: pointer;"
                       id="togglePassword" title="Mostrar/ocultar contraseña"></i>
                   </div>
