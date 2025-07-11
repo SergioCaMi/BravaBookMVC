@@ -413,3 +413,30 @@ export const postDeleteApartment = async (req, res) => {
     return res.redirect("/seeApartments");
   }
 };
+
+
+//GET edit reservation
+export const getReservationEdit = async (req, res) => {
+  const { id } = req.params;
+  console.log(req.params);
+  try {
+    const apartments = await Apartment.findById(id);
+    console.log(apartments);
+    if (!apartments) {
+      req.flash("error_msg", "La reserva no se ha encontrado.");
+      res.redirect("/admin");
+    }
+    res.render("editReservation.ejs", {
+      title: "admin",
+      apartments,
+    });
+  } catch (err) {
+    req.flash("error_msg", "Error interno del servidor.");
+    res.redirect("/admin");
+  }
+};
+
+
+//GET edit reservation
+export const putReservationEdit = async (req, res) => {
+};

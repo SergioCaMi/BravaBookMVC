@@ -39,8 +39,18 @@ router.post("/apartment/new", adminController.postNewApartment);
 
 // ******************** PARAMS ********************
 //GET edit apartment
-router.get("/apartments/edit/:id", requireAuth, requireAdmin, adminController.getAdminEdit);
+router.get("/apartments/edit/:id", requireAuth, requireAdmin, adminController.getApartmentEdit);
 //POST edit apartment
-router.post("/apartment/edit/:id/save", requireAuth, requireAdmin, adminController.putAdminEdit);
+router.post("/apartment/edit/:id/save", requireAuth, requireAdmin, adminController.putApartmentEdit);
+
+//GET edit reservation
+router.get("/reservations/edit/:id", requireAuth, requireAdmin, adminController.getReservationEdit);
+//POST edit reservation
+router.post("/reservation/edit/:id/save", requireAuth, requireAdmin, adminController.putReservationEdit);
+
+
+
 export default router;
+
+
 

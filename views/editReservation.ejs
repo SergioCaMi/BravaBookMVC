@@ -1,0 +1,51 @@
+<form id="reservationForm" class="needs-validation" method="POST" action="/reservations/edit-reservation" novalidate>
+    <input type="hidden" name="apartmentId" value="<%= apartments._id %>">
+    <input type="hidden" name="user" value="<%= currentUser._id %>">
+
+    <div class="mb-3">
+        <label for="guestName" class="form-label">Nombre completo del huésped</label>
+        <input type="text" class="form-control" id="guestName" name="guestName" required>
+        <div class="invalid-feedback">
+            Por favor, ingresa el nombre completo del huésped.
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label for="guestEmail" class="form-label">Correo electrónico</label>
+        <input type="email" class="form-control" id="guestEmail" name="guestEmail" required>
+        <div class="invalid-feedback">
+            Por favor, ingresa un correo electrónico válido.
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12 col-md-6">
+            <label for="dateRange" class="form-label small mb-1">Selecciona el rango de fechas:</label>
+            <input type="text" id="dateRange" name="dateRange" class="form-control" readonly required>
+            <div class="invalid-feedback">
+                Por favor, selecciona un rango de fechas.
+            </div>
+        </div>
+        <input type="hidden" id="startDate" name="startDate" required>
+        <input type="hidden" id="endDate" name="endDate" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Confirmar Reserva</button>
+
+    <script>
+        (function () {
+            'use strict';
+
+            var form = document.getElementById('reservationForm');
+
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+
+                form.classList.add('was-validated');
+            }, false);
+        })();
+    </script>
+</form>
