@@ -66,9 +66,9 @@ function addPhotoField() {
     <div class="invalid-feedback">
       Por favor, proporciona una URL válida.
     </div>
-    <button type="button" class="btn btn-outline-danger" onclick="this.parentNode.remove()">
-      Eliminar
-    </button>
+    // <button type="button" class="btn btn-outline-danger" onclick="this.parentNode.remove()">
+    //   Eliminar
+    // </button>
   `;
 
   container.appendChild(div);
