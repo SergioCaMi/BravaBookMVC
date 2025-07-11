@@ -183,8 +183,9 @@ export const getApartmentSearch = async (req, res) => {
     "services.television": television,
     "services.kitchen": kitchen,
     "services.internet": internet,
-    startDate,
-    endDate,
+    dateRange,
+    // startDate,
+    // endDate,
   } = req.query;
 
   const query = { active: true };
@@ -237,41 +238,48 @@ export const getApartmentSearch = async (req, res) => {
   Object.assign(query, services);
 
   // *** Fechas ***
+  const [start, end] = dateRange.split(" - ");
+  const startDate = new Date(start);
+  const endDate = new Date(end);
+startDate.setDate(endDate.getDate()+1);//Para solapar fechas!!
+  startDate.setHours(0, 0, 0, 0);
+  endDate.setHours(0, 0, 0, 0);
+
+  console.log("Start Date:", startDate);
+  console.log("End Date:", endDate);
+  console.log("");
+
   let reservedApartmentIds = [];
 
-  if (startDate && endDate) {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-
-      // Tienen valores validos?
-    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-      throw new Error("Fechas inválidas proporcionadas.");
-    }
-
-    // Existe una reserva ya que esté sobre esas fechas?
+  if (!isNaN(startDate.getTime()) || !isNaN(endDate.getTime())) {
     const reservationsDates = await Reservation.find({
-      $and: [{ startDate: { $lt: end } }, { endDate: { $gt: start } }],
+      $and: [
+        { startDate: { $lt: endDate } },
+        { endDate: { $gte: startDate } },
+        { status: "confirmed" },
+      ],
     });
 
-    reservedApartmentIds = reservationsDates.map((r) => r.apartmentId);
+    reservedApartmentIds = reservationsDates.map((r) => r.apartment);
+
     if (reservedApartmentIds.length > 0) {
       query._id = { $nin: reservedApartmentIds };
     }
+  } else {
+    console.log("Fechas inválidas");
+    throw new Error("Fechas inválidas proporcionadas.");
   }
 
-
-console.log();
-console.log();
-
   // console.log("Consulta MongoDB:", query);
+
   // Orden
   let sortvalue = 0;
   if (+sortPrice >= 0) sortvalue = 1;
   if (+sortPrice < 0) sortvalue = -1;
-  console.log("Orden:", sortvalue);
 
   try {
     const apartments = await Apartment.find(query).sort({ price: sortvalue });
+    console.log(apartments._id);
     res.render("seeApartments.ejs", {
       title: "home",
       apartments,

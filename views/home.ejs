@@ -65,29 +65,27 @@
                   </div>
                 </div>
                 <!-- *** Fila 3 *** -->
-                <!-- <div class="row g-2 g-md-3 mb-2 mb-md-4">
-                  <div class="col-12 col-md-6">
-                    <label for="startDate" class="form-label small mb-1">Fecha de entrada:</label>
-                    <input type="date" name="startDate" id="startDate" class="form-control">
-                  </div>
-                  <div class="col-12 col-md-6">
-                    <label for="endDate" class="form-label small mb-1">Fecha de salida:</label>
-                    <input type="date" name="endDate" id="endDate" class="form-control">
-                  </div>
-                </div> -->
-
-
-<div class="row g-2 g-md-3 mb-2 mb-md-4">
-  <div class="col-12">
+<div class="row g-2 g-md-3 mb-2 mb-md-4 align-items-end">
+  <div class="col-12 col-md-6">
     <label for="dateRange" class="form-label small mb-1">Selecciona el rango de fechas:</label>
     <input type="text" id="dateRange" name="dateRange" class="form-control" readonly />
   </div>
-</div>    
-<input type="hidden" id="startDate" name="startDate" />
-<input type="hidden" name="endDate" id="endDate" />
+  <div class="col-12 col-md-6">
+    <label for="sortPrice" class="form-label">Ordenar por precio:</label>
+    <select id="sortPrice" class="form-select" name="sortPrice">
+      <option value="">-- Selecciona orden --</option>
+      <option value="1">Precio ascendente</option>
+      <option value="-1">Precio descendente</option>
+    </select>
+  </div>
+  <input type="hidden" id="startDate" name="startDate" />
+  <input type="hidden" name="endDate" id="endDate" />
+</div>
 
 
-<!-- *** Fila 4 - Servicios *** -->
+
+
+                <!-- *** Fila 4 - Servicios *** -->
                 <div class="mb-3 mb-md-4">
                   <label class="form-label small mb-2 d-block">Servicios:</label>
                   <div class="row g-2">
@@ -174,15 +172,6 @@
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="mb-3 mb-md-4">
-                  <label for="sortPrice" class="form-label">Ordenar por precio:</label>
-                  <select id="sortPrice" class="form-select" name="sortPrice">
-                    <option value="">-- Selecciona orden --</option>
-                    <option value="1">Precio ascendente</option>
-                    <option value="-1">Precio descendente</option>
-                  </select>
-
                 </div>
                 <!-- Botón submit -->
                 <div class="d-grid">
@@ -276,45 +265,6 @@
         </div>
       </div>
     </div>
-    <!-- Features Section -->
-    <!-- <section class="features-1 py-5">
-  <div class="container">
-    <div class="row g-4">
-      <div class="col-6 col-lg-3" data-aos="fade-up" data-aos-delay="300">
-        <div class="text-center p-4 border rounded shadow-sm h-100">
-          <span class="flaticon-house display-4 text-primary mb-3 d-block"></span>
-          <h3 class="h5 mb-3">Our Properties</h3>
-          <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptates, accusamus.</p>
-          <a href="#" class="text-decoration-none fw-bold">Learn More</a>
-        </div>
-      </div>
-      <div class="col-6 col-lg-3" data-aos="fade-up" data-aos-delay="500">
-        <div class="text-center p-4 border rounded shadow-sm h-100">
-          <span class="flaticon-building display-4 text-primary mb-3 d-block"></span>
-          <h3 class="h5 mb-3">Property for Sale</h3>
-          <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptates, accusamus.</p>
-          <a href="#" class="text-decoration-none fw-bold">Learn More</a>
-        </div>
-      </div>
-      <div class="col-6 col-lg-3" data-aos="fade-up" data-aos-delay="400">
-        <div class="text-center p-4 border rounded shadow-sm h-100">
-          <span class="flaticon-house-3 display-4 text-primary mb-3 d-block"></span>
-          <h3 class="h5 mb-3">Real Estate Agent</h3>
-          <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptates, accusamus.</p>
-          <a href="#" class="text-decoration-none fw-bold">Learn More</a>
-        </div>
-      </div>
-      <div class="col-6 col-lg-3" data-aos="fade-up" data-aos-delay="600">
-        <div class="text-center p-4 border rounded shadow-sm h-100">
-          <span class="flaticon-house-1 display-4 text-primary mb-3 d-block"></span>
-          <h3 class="h5 mb-3">House for Sale</h3>
-          <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptates, accusamus.</p>
-          <a href="#" class="text-decoration-none fw-bold">Learn More</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</section> -->
     <script>
       var tooltipTriggerList = [].slice.call(
         document.querySelectorAll('[data-bs-toggle="tooltip"]')
@@ -324,30 +274,30 @@
       });
 
 
-$(document).ready(function() {
-  $('#dateRange').daterangepicker({
-    locale: {
-      format: 'YYYY-MM-DD'
-    },
-    startDate: moment(), // Valor inicial
-    endDate: moment().add(1, 'days'), // Valor inicial
-    autoUpdateInput: false,
-    ranges: {
-      'Hoy': [moment(), moment()],
-      'Mañana': [moment().add(1, 'days'), moment().add(1, 'days')],
-      'Próximos 7 días': [moment(), moment().add(6, 'days')]
-    }
-  }, function(start, end, label) {
-    $('#startDate').val(start.format('YYYY-MM-DD'));
-    $('#endDate').val(end.format('YYYY-MM-DD'));
-  });
+      $(document).ready(function () {
+        $('#dateRange').daterangepicker({
+          locale: {
+            format: 'YYYY-MM-DD'
+          },
+          startDate: moment(), // Valor inicial
+          endDate: moment().add(1, 'days'), // Valor inicial
+          autoUpdateInput: false,
+          ranges: {
+            'Hoy': [moment(), moment()],
+            'Mañana': [moment().add(1, 'days'), moment().add(1, 'days')],
+            'Próximos 7 días': [moment(), moment().add(6, 'days')]
+          }
+        }, function (start, end, label) {
+          $('#startDate').val(start.format('YYYY-MM-DD'));
+          $('#endDate').val(end.format('YYYY-MM-DD'));
+        });
 
-  $('#dateRange').on('apply.daterangepicker', function(ev, picker) {
-    $('#startDate').val(picker.startDate.format('YYYY-MM-DD'));
-    $('#endDate').val(picker.endDate.format('YYYY-MM-DD'));
-  });
-});
-      
+        $('#dateRange').on('apply.daterangepicker', function (ev, picker) {
+          $('#startDate').val(picker.startDate.format('YYYY-MM-DD'));
+          $('#endDate').val(picker.endDate.format('YYYY-MM-DD'));
+        });
+      });
+
     </script>
     <script src="js/municipiAndProvince.js"></script>
     <script src="js/dateRangePicker.js"></script>
