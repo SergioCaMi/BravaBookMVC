@@ -33,11 +33,12 @@
                             <div class="mb-4">
                                 <label class="form-label">Normas</label>
                                 <div id="rulesContainer">
+                                    
                                     <% if (apartment.rules && apartment.rules.length> 0) { %>
                                         <% apartment.rules.forEach(function(rule) { %>
                                             <div class="input-group mb-2">
                                                 <input type="text" name="rules[]" class="form-control"
-                                                    value="<%= rule %>" required>
+                                                    value="<%= rule %>">
                                                 <div class="invalid-feedback">
                                                     Por favor, ingresa una norma.
                                                 </div>
@@ -45,12 +46,6 @@
                                                     onclick="this.parentNode.remove()">Eliminar</button>
                                             </div>
                                             <% }) %>
-                                                <% } else { %>
-                                                    <input type="text" name="rules[]" class="form-control mb-2"
-                                                        placeholder="Ej. No fumar" required>
-                                                    <div class="invalid-feedback">
-                                                        Por favor, ingresa una norma.
-                                                    </div>
                                                     <% } %>
                                 </div>
                                 <button type="button" class="btn btn-outline-secondary btn-sm mt-2"
@@ -237,27 +232,25 @@
                                     <label for="provinceSelect" class="form-label">Selecciona una provincia</label>
                                     <select id="provinceSelect" name="tmpProvince" class="form-select" required
                                         data-selected="<%= apartment?.location?.province?.id || '' %>">
-                                        <option value="">-- Selecciona una provincia --</option>
+                                        <option value="<%= apartment.location.province.id %>"><%= apartment.location.province.nm %></option>
                                     </select>
                                     <div class="invalid-feedback">
                                         Por favor, selecciona una provincia.
                                     </div>
-                                    <!-- Campos ocultos provincia -->
-                                    <input type="hidden" name="location[province][id]" id="provinceIdInput">
-                                    <input type="hidden" name="location[province][nm]" id="provinceNameInput">
+              <input type="hidden" name="location[province][id]" id="provinceIdInput">
+              <input type="hidden" name="location[province][nm]" id="provinceNameInput">
                                 </div>
                                 <div class="col-md-4">
                                     <label for="municipalitySelect" class="form-label">Selecciona un municipio</label>
                                     <select id="municipalitySelect" name="location[city]" class="form-select" required
                                         data-selected="<%= apartment?.location?.municipality?.id || '' %>">
-                                        <option value="">-- Selecciona un municipio --</option>
+                                        <option value="<%= apartment.location.municipality.id %>"><%= apartment.location.municipality.nm %></option>
                                     </select>
                                     <div class="invalid-feedback">
                                         Por favor, selecciona un municipio.
                                     </div>
-                                    <!-- Campos ocultos municipio -->
-                                    <input type="hidden" name="location[municipality][id]" id="municipalityIdInput">
-                                    <input type="hidden" name="location[municipality][nm]" id="municipalityNameInput">
+              <input type="hidden" name="location[municipality][id]" id="municipalityIdInput">
+              <input type="hidden" name="location[municipality][nm]" id="municipalityNameInput">
                                 </div>
                                 <div class="col-md-2">
                                     <label for="lat" class="form-label">Latitud (GPS)</label>

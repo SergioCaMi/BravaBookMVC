@@ -66,24 +66,4 @@ window.addEventListener("DOMContentLoaded", async () => {
     municipalityNameInput.value = selectedCity?.nm || "";
   });
 
-  // --- Precarga segura si existen datos embebidos en el HTML ---
-  const initialProvinceId = provinceSelect.dataset.selected; // data-selected="46"
-  const initialMunicipalityId = municipalitySelect.dataset.selected; // data-selected="46031"
-
-  if (initialProvinceId) {
-    provinceSelect.value = initialProvinceId;
-    provinceSelect.dispatchEvent(new Event("change"));
-
-    setTimeout(() => {
-      municipalitySelect.value = initialMunicipalityId;
-
-      const selectedProvince = provinces.find((p) => p.id === initialProvinceId);
-      provinceIdInput.value = selectedProvince?.id || "";
-      provinceNameInput.value = selectedProvince?.nm || "";
-
-      const selectedCity = cities.find((c) => c.id === initialMunicipalityId);
-      municipalityIdInput.value = selectedCity?.id || "";
-      municipalityNameInput.value = selectedCity?.nm || "";
-    }, 100);
-  }
 });

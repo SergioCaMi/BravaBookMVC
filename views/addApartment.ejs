@@ -112,22 +112,19 @@
           <div class="row g-4 mb-4">
             <div class="col-md-4">
               <label for="provinceSelect" class="form-label">Selecciona una provincia</label>
-              <select id="provinceSelect" name="location[province]" class="form-select" required>
+<select id="provinceSelect" name="tmpProvince" class="form-select" required>
                 <option value="">-- Selecciona una provincia --</option>
               </select>
-
-              <!-- Campos ocultos provincia -->
               <input type="hidden" name="location[province][id]" id="provinceIdInput">
               <input type="hidden" name="location[province][nm]" id="provinceNameInput">
             </div>
 
             <div class="col-md-4">
               <label for="municipalitySelect" class="form-label">Selecciona un municipio</label>
-              <select id="municipalitySelect" name="location[city]" class="form-select" required>
+<select id="municipalitySelect" name="tmpCity" class="form-select" required>
                 <option value="">-- Selecciona un municipio --</option>
               </select>
 
-              <!-- Campos ocultos municipio -->
               <input type="hidden" name="location[municipality][id]" id="municipalityIdInput">
               <input type="hidden" name="location[municipality][nm]" id="municipalityNameInput">
             </div>
