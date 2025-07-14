@@ -361,12 +361,13 @@ export const postNewReservation = async (req, res) => {
   const status = "confirmed";
   const paid = true;
   try {
-    const dataReservations = await Reservation.findOne({
-      apartmentId: apartmentId,
+    const dataReservations = await Reservation.find({
+      apartment: apartmentId,
       status: "confirmed",
       $and: [{ endDate: { $gt: startDate } }, { startDate: { $lt: endDate } }],
     });
-    console.log("dataReservations:", dataReservations.length);
+
+    console.log("dataReservations:", dataReservations);
 
     if (dataReservations.length === 0) {
       console.log("creamos el objeto");
@@ -394,7 +395,7 @@ export const postNewReservation = async (req, res) => {
   } catch (err) {
     req.flash(
       "error_msg",
-      "Fallo en la realización de la reserva. Las fechas no están disponibles."
+      "Fallo en la realización de la reserva. Lo comunicaremos a nuestro departamento técnico."
     );
     res.redirect(`/apartments/${apartmentId}#reservation`);
   }

@@ -81,16 +81,9 @@
           <div class="invalid-feedback">
             Por favor, selecciona un rango válido.
           </div>
+          <input type="hidden" id="startDateHidden" name="startDate" />
+          <input type="hidden" id="endDateHidden" name="endDate" />
         </div>
-      </div>
-      <!-- Estado de la reserva -->
-      <div class="form-check form-switch mb-4 mt-4">
-        <input class="form-check-input" type="checkbox" id="status"
-        name="status" <%= reservation.status === 'confirmed' ? 'checked' : ''
-        %>>
-        <label class="form-check-label" for="status">
-          Estado de la reserva
-        </label>
       </div>
 
       <!-- Botón -->
@@ -107,6 +100,5 @@
 <script></script>
 <script src="/js/editReservation.js"></script>
 <script src="/js/dateRangePicker.js"></script>
-
 
 <%- include("partials/footer") %>

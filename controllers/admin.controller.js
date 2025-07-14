@@ -11,6 +11,7 @@ export const dashboard = async (req, res) => {
   const reservations = await Reservation.find({
     user: req.session.userId,
   })
+    .populate("apartment")
     .limit(10)
     .sort({ endDate: 1 });
   const apartments = await Apartment.find({
@@ -397,13 +398,12 @@ export const postConfirmReservation = async (req, res) => {
   }
 };
 
-
 // POST delete user
 export const postDeleteUser = async (req, res) => {
   const { id } = req.params;
 
   try {
-    if (id !== req.user._id){
+    if (id !== req.user._id) {
       await User.findByIdAndDelete(id);
     }
     req.flash("success_msg", "User eliminado satisfactoriamente.");
@@ -413,7 +413,6 @@ export const postDeleteUser = async (req, res) => {
     return res.redirect("/admin/users");
   }
 };
-
 
 // POST Delete Apartment
 export const postDeleteApartment = async (req, res) => {
@@ -455,8 +454,6 @@ export const postActiveApartment = async (req, res) => {
   }
 };
 
-
-
 //GET edit reservation
 export const getReservationEdit = async (req, res) => {
   const { id } = req.params;
@@ -478,10 +475,10 @@ export const getReservationEdit = async (req, res) => {
   }
 };
 
-
 //POST edit reservation
 export const putReservationEdit = async (req, res) => {
-  const { apartmentId, guestName, guestEmail, dateRange, status } = req.body;
+  const { id } = req.params;
+  const { apartmentId, guestName, guestEmail, dateRange } = req.body;
   const [start, end] = dateRange.split(" - ");
   const startDate = new Date(start);
   const endDate = new Date(end);
@@ -493,46 +490,47 @@ export const putReservationEdit = async (req, res) => {
   }
 
   try {
+     const reservationToUpdate = await Reservation.findById(id);
+    if (!reservationToUpdate) {
+      req.flash("error_msg", "Reserva no encontrada.");
+      return res.redirect("/");
+    }
     const dataReservations = await Reservation.find({
-      apartmentId: apartmentId,
+      apartment: id,
+      status: "confirmed",
+      _id: { $ne: id },
       $and: [{ endDate: { $gt: startDate } }, { startDate: { $lt: endDate } }],
     });
-    console.log("dataReservations:", dataReservations.length);
-
+    console.log("La fecha es válida?", dataReservations.length === 0);
     if (dataReservations.length === 0) {
-      console.log("creamos el objeto");
-
-      const newReservation = new Reservation({
-        apartment: apartmentId,
-        user: req.session.userId,
-        guestName,
-        guestEmail,
-        startDate,
-        endDate,
-        status,
-        paid,
-      });
-      console.log("objeto creado:", newReservation);
-
-      await newReservation.save();
+      console.log("reserva valida");
+      await Reservation.findByIdAndUpdate(
+        id,
+        {
+          user: req.session.userId,
+          guestName,
+          guestEmail,
+          startDate,
+          endDate,
+        },
+        { new: true, runValidators: true }
+      );
       console.log("Objeto guardado");
       req.flash("success_msg", "Reserva realizada con éxito.");
       res.redirect("/");
     } else {
-      req.flash(
-        "error_msg",
-        "Fechas no disponibles"
-      );
-      res.redirect("/");
+      console.log("reserva INvalida");
+
+      req.flash("error_msg", "Fechas no disponibles");
+      res.redirect(`/apartments/${apartmentId}#reservation`);
     }
   } catch (err) {
+    console.log("Error:", err);
+
     req.flash(
       "error_msg",
-      "Fallo en la realización de la reserva. Pongase en contacto por telefono con nuestro equipo."
+      "Fallo en la edición de la reserva. Pongase en contacto por telefono con nuestro equipo."
     );
     res.redirect("/");
   }
 };
-
-
-
