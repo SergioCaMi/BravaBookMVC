@@ -361,7 +361,7 @@ export const postNewReservation = async (req, res) => {
   const status = "confirmed";
   const paid = true;
   try {
-    const dataReservations = await Reservation.find({
+    const dataReservations = await Reservation.findOne({
       apartmentId: apartmentId,
       status: "confirmed",
       $and: [{ endDate: { $gt: startDate } }, { startDate: { $lt: endDate } }],
@@ -389,13 +389,13 @@ export const postNewReservation = async (req, res) => {
       res.redirect("/");
     } else {
       req.flash("error_msg", "Fechas no disponibles");
-      res.redirect("/");
+      res.redirect(`/apartments/${apartmentId}#reservation`);
     }
   } catch (err) {
     req.flash(
       "error_msg",
-      "Fallo en la realización de la reserva. Pongase en contacto por telefono con nuestro equipo."
+      "Fallo en la realización de la reserva. Las fechas no están disponibles."
     );
-    res.redirect("/");
+    res.redirect(`/apartments/${apartmentId}#reservation`);
   }
 };

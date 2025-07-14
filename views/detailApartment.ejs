@@ -325,6 +325,18 @@
       return new bootstrap.Tooltip(tooltipTriggerEl);
     });
   });
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const hash = window.location.hash;
+
+    if (hash === "#reservation") {
+      const tabElement = document.querySelector('button[data-bs-target="#reservation"]');
+      if (tabElement) {
+        const tab = new bootstrap.Tab(tabElement);
+        tab.show();
+      }
+    }
+  });
 </script>
 <script src="/js/dateRangePicker.js"></script>
 
