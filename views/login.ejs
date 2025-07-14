@@ -1,60 +1,99 @@
 <%- include("partials/header") %>
 
-  <div class="container mt-5">
-    <div class="row justify-content-center">
-      <div class="col-md-6">
-        <div class="card shadow-sm my-5">
-          <div class="card-body">
-            <h3 class="card-title text-center mb-4">Iniciar Sesión</h3>
-            <%- include("partials/mensajes") %>
-              <form action="/login" method="POST">
-                <div class="mb-3">
-                  <label for="email" class="form-label">Email</label>
-                  <input type="email" name="email" id="email" class="form-control" placeholder="Email" required>
-                </div>
-<div class="mb-3">
-  <label for="password" class="form-label">Contraseña</label>
-  <div class="d-flex align-items-center gap-2">
-    <input 
-      type="password" 
-      name="password" 
-      id="password" 
-      class="form-control" 
-      placeholder="Contraseña"
-      required
-    >
-    <i 
-      class="bi bi-eye-slash text-secondary" 
-      style="font-size: 1.2rem; cursor: pointer;" 
-      id="togglePassword"
-      title="Mostrar/ocultar contraseña"
-    ></i>
-  </div>
-</div>                <div class="d-grid">
-                  <button type="submit" class="btn btn-success">Iniciar sesión</button>
-                </div>
-              </form>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-sm my-5">
+        <div class="card-body">
+          <h3 class="card-title text-center mb-4">Iniciar Sesión</h3>
+          
+          <%- include("partials/mensajes") %>
 
-              <div class="mt-3 text-center">
-                <a href="/register">¿No tienes cuenta? Regístrate</a>
+          <form action="/login" method="POST" class="needs-validation" novalidate>
+            <!-- Email -->
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input
+                type="email"
+                name="email"
+                id="email"
+                class="form-control"
+                placeholder="Email"
+                required
+              />
+              <div class="invalid-feedback">
+                Por favor, introduce un email válido.
               </div>
+            </div>
+
+            <!-- Contraseña -->
+            <div class="mb-3">
+              <label for="password" class="form-label">Contraseña</label>
+              <div class="d-flex align-items-center gap-2">
+                <input
+                  type="password"
+                  name="password"
+                  id="password"
+                  class="form-control"
+                  placeholder="Contraseña"
+                  required
+                />
+                <i
+                  class="bi bi-eye-slash text-secondary"
+                  style="font-size: 1.2rem; cursor: pointer;"
+                  id="togglePassword"
+                  title="Mostrar/ocultar contraseña"
+                ></i>
+              </div>
+              <div class="invalid-feedback">
+                Por favor, introduce tu contraseña.
+              </div>
+            </div>
+
+            <!-- Botón Submit -->
+            <div class="d-grid">
+              <button type="submit" class="btn btn-success">Iniciar sesión</button>
+            </div>
+          </form>
+
+          <!-- Enlace Registro -->
+          <div class="mt-3 text-center">
+            <a href="/register">¿No tienes cuenta? Regístrate</a>
           </div>
         </div>
       </div>
     </div>
   </div>
+</div>
+
+<!-- Script de validación + toggle -->
 <script>
+  // Validación del formulario
+  const form = document.querySelector(".needs-validation");
+
+  if (form) {
+    form.addEventListener("submit", function (event) {
+      if (!form.checkValidity()) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+
+      form.classList.add("was-validated");
+    });
+  }
+
+  // Toggle contraseña
   const passwordInput = document.getElementById("password");
   const toggleIcon = document.getElementById("togglePassword");
 
-  toggleIcon.addEventListener("click", function () {
-    // CambiarInput
-    const type = passwordInput.type === "password" ? "text" : "password";
-    passwordInput.type = type;
-
-    // Cambiar icono
-    this.classList.toggle("bi-eye");
-    this.classList.toggle("bi-eye-slash");
-  });
+  if (toggleIcon && passwordInput) {
+    toggleIcon.addEventListener("click", function () {
+      const type = passwordInput.type === "password" ? "text" : "password";
+      passwordInput.type = type;
+      this.classList.toggle("bi-eye");
+      this.classList.toggle("bi-eye-slash");
+    });
+  }
 </script>
-  <%- include("partials/footer") %>
+
+<%- include("partials/footer") %>

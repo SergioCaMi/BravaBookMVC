@@ -207,20 +207,36 @@
                                 <legend class="form-label">Servicios</legend>
                                 <div class="row g-3">
                                     <% const s=apartment.services || {}; %>
-                                        <% const services=[ { id: 'airConditioning' , label: 'Aire acondicionado' }, {
-                                            id: 'heating' , label: 'Calefacción' }, { id: 'accessibility' ,
-                                            label: 'Accesibilidad' }, { id: 'television' , label: 'Televisión' }, {
-                                            id: 'kitchen' , label: 'Cocina' }, { id: 'internet' , label: 'Internet' } ];
+                                    
+
+
+
+
+
+                                        <% const services=[ 
+                                        { id: 'airConditioning' , label: 'Aire acondicionado', icon: 'bi bi-snow text-black me-1' }, 
+                                        {           id: 'heating' , label: 'Calefacción' , icon: 'bi bi-fire text-black me-1'}, 
+                                        { id: 'accessibility' ,                           label: 'Accesibilidad' , icon: 'bi bi-person-wheelchair text-black me-1'}, 
+                                        { id: 'television' , label: 'Televisión' , icon: 'bi bi-tv text-black me-1'}, 
+                                        {                 id: 'kitchen' , label: 'Cocina', icon: 'bi bi-cup-hot text-black me-1' },
+                                         { id: 'internet' , label: 'Internet', icon: 'bi bi-wifi text-black me-1' } ];
                                             %>
+
+
+
+
+
+
                                             <% services.forEach(service=> { %>
                                                 <div class="col-md-4">
                                                     <div class="form-check">
                                                         <input type="checkbox" name="services[<%= service.id %>]"
                                                             class="form-check-input" id="<%= service.id %>"
-                                                            <%=s[service.id] ? 'checked' : '' %>>
+                                                            <%=s[service.id] ? 'checked' : '' %>><i class="<% s[service.icon] %>"></i>
                                                         <label class="form-check-label" for="<%= service.id %>">
                                                             <%= service.label %>
                                                         </label>
+                                                        
                                                     </div>
                                                 </div>
                                                 <% }) %>

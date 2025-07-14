@@ -1,61 +1,115 @@
 <%- include("partials/header.ejs") %>
 
-  <div class="container mt-5">
-    <div class="row justify-content-center">
-      <div class="col-md-6 ">
-        <div class="card shadow-sm my-5 ">
-          <div class="card-body ">
-            <h3 class="card-title text-center mb-4">Registrarse</h3>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-sm my-5">
+        <div class="card-body">
+          <h3 class="card-title text-center mb-4">Registrarse</h3>
 
-            <%- include("partials/mensajes") %>
+          <%- include("partials/mensajes") %>
 
-
-              <form action="/register" method="POST">
-                <div class="mb-3">
-                  <label for="name" class="form-label">Nombre</label>
-                  <input type="text" name="name" id="name" class="form-control" placeholder="Nombre" required>
-                </div>
-                <div class="mb-3">
-                  <label for="email" class="form-label">Email</label>
-                  <input type="email" name="email" id="email" class="form-control" placeholder="Email" required>
-                </div>
-                <div class="mb-3">
-                  <label for="password" class="form-label">Contraseña</label>
-                  <div class="d-flex align-items-center gap-2">
-                    <input type="password" name="password" id="password" class="form-control"
-                      placeholder="Contraseña (8-16 caracteres)"
-                      pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,16}$"
-                      title="Debe tener entre 8 y 16 caracteres, al menos una letra, un número y un símbolo." required>
-                    <i class="bi bi-eye-slash text-secondary" style="font-size: 1.2rem; cursor: pointer;"
-                      id="togglePassword" title="Mostrar/ocultar contraseña"></i>
-                  </div>
-                </div>
-                <div class="d-grid">
-                  <button type="submit" class="btn btn-primary">Registrarse</button>
-                </div>
-              </form>
-
-              <div class="mt-3 text-center">
-                <a href="/login">¿Ya tienes cuenta? Inicia sesión</a>
+          <form action="/register" method="POST" id="registerForm" class="needs-validation" novalidate>
+            <!-- Nombre -->
+            <div class="mb-3">
+              <label for="name" class="form-label">Nombre</label>
+              <input
+                type="text"
+                name="name"
+                id="name"
+                class="form-control"
+                placeholder="Nombre"
+                required
+              />
+              <div class="invalid-feedback">
+                Por favor, introduce tu nombre.
               </div>
+            </div>
+
+            <!-- Email -->
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input
+                type="email"
+                name="email"
+                id="email"
+                class="form-control"
+                placeholder="Email"
+                required
+              />
+              <div class="invalid-feedback">
+                Por favor, introduce un email válido.
+              </div>
+            </div>
+
+            <!-- Contraseña -->
+            <div class="mb-3">
+              <label for="password" class="form-label">Contraseña</label>
+              <div class="d-flex align-items-center gap-2">
+                <input
+                  type="password"
+                  name="password"
+                  id="password"
+                  class="form-control"
+                  placeholder="Contraseña (8-16 caracteres)"
+                  pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,16}$"
+                  title="Debe tener entre 8 y 16 caracteres, al menos una letra, un número y un símbolo."
+                  required
+                />
+                <i
+                  class="bi bi-eye-slash text-secondary"
+                  style="font-size: 1.2rem; cursor: pointer;"
+                  id="togglePassword"
+                  title="Mostrar/ocultar contraseña"
+                ></i>
+              </div>
+              <div class="invalid-feedback">
+                Debe tener entre 8 y 16 caracteres, al menos una letra, un número y un símbolo.
+              </div>
+            </div>
+
+            <!-- Botón -->
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary">Registrarse</button>
+            </div>
+          </form>
+
+          <!-- Enlace Login -->
+          <div class="mt-3 text-center">
+            <a href="/login">¿Ya tienes cuenta? Inicia sesión</a>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <script>
-    const passwordInput = document.getElementById("password");
-    const toggleIcon = document.getElementById("togglePassword");
+</div>
 
+<!-- Script de validación + toggle -->
+<script>
+  // Validación del formulario
+  const form = document.getElementById('registerForm');
+  if (form) {
+    form.addEventListener('submit', function (event) {
+      if (!form.checkValidity()) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      form.classList.add('was-validated');
+    });
+  }
+
+  // Toggle contraseña
+  const passwordInput = document.getElementById("password");
+  const toggleIcon = document.getElementById("togglePassword");
+
+  if (toggleIcon && passwordInput) {
     toggleIcon.addEventListener("click", function () {
-      // CambiarInput
       const type = passwordInput.type === "password" ? "text" : "password";
       passwordInput.type = type;
-
-      // Cambiar icono
       this.classList.toggle("bi-eye");
       this.classList.toggle("bi-eye-slash");
     });
-  </script>
+  }
+</script>
 
-  <%- include("partials/footer.ejs") %>
+<%- include("partials/footer.ejs") %>
