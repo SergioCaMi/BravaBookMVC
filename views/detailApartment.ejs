@@ -213,6 +213,7 @@
         <% } else { %>
         <p class="alert alert-warning">No hay apartamentos disponibles.</p>
         <% } %>
+
       </div>
 
       <div
@@ -242,102 +243,156 @@
         <% } %>
       </div>
       <% if (currentUser && apartments.active == true) {%>
-      <div
-        class="tab-pane fade"
-        id="reservation"
-        role="tabpanel"
-        aria-labelledby="reservation-tab"
-      >
-        <% if (apartments) { %>
-        <h5>Formulario de Reserva</h5>
-        <form action="/reservations/new-reservation" method="POST">
+
+
+
+
+
+<div
+  class="tab-pane fade"
+  id="reservation"
+  role="tabpanel"
+  aria-labelledby="reservation-tab"
+>
+  <% if (apartments) { %>
+  <h5 class="mb-4">Formulario de Reserva</h5>
+
+  <div class="row">
+    <!-- Columna izquierda: Formulario -->
+    <div class="col-md-6">
+      <form action="/reservations/new-reservation" method="POST">
+        <input type="hidden" name="apartmentId" value="<%= apartments._id %>" />
+        <input type="hidden" name="user" value="<%= currentUser._id %>" />
+
+        <div class="mb-3">
+          <label for="guestName" class="form-label">Nombre completo del huésped</label>
           <input
-            type="hidden"
-            name="apartmentId"
-            value="<%= apartments._id %>"
+            type="text"
+            class="form-control"
+            id="guestName"
+            name="guestName"
+            required
           />
-          <input type="hidden" name="user" value="<%= currentUser._id %>" />
-          <div class="mb-3">
-            <label for="guestName" class="form-label"
-              >Nombre completo del huésped</label
-            >
-            <input
-              type="text"
-              class="form-control"
-              id="guestName"
-              name="guestName"
-              required
-            />
-          </div>
+        </div>
 
-          <div class="mb-3">
-            <label for="guestEmail" class="form-label"
-              >Correo electrónico</label
-            >
-            <input
-              type="email"
-              class="form-control"
-              id="guestEmail"
-              name="guestEmail"
-              required
-            />
-          </div>
+        <div class="mb-3">
+          <label for="guestEmail" class="form-label">Correo electrónico</label>
+          <input
+            type="email"
+            class="form-control"
+            id="guestEmail"
+            name="guestEmail"
+            required
+          />
+        </div>
 
-          <div class="row">
-            <div class="col-12 col-md-6">
-              <label for="dateRange" class="form-label small mb-1"
-                >Selecciona el rango de fechas:</label
-              >
-              <input
-                type="text"
-                id="dateRange"
-                name="dateRange"
-                class="form-control"
-                readonly
-              />
-            </div>
+        <div class="mb-3">
+          <label for="dateRange" class="form-label">Selecciona el rango de fechas:</label>
+          <input
+            type="text"
+            id="dateRange"
+            name="dateRange"
+            class="form-control"
+            readonly
+          />
+        </div>
 
-            <!-- <input type="hidden" id="startDate" name="startDate" />
-            <input type="hidden" name="endDate" id="endDate" /> -->
-          </div>
+        <button type="submit" class="btn btn-primary">Confirmar Reserva</button>
+      </form>
+    </div>
 
-          <button type="submit" class="btn btn-primary">
-            Confirmar Reserva
-          </button>
-        </form>
-        <% } else { %>
-        <p class="alert alert-warning">
-          No se puede realizar una reserva sin datos del apartamento.
-        </p>
-        <% } %>
+    <!-- Columna derecha: Calendario -->
+    <div class="col-md-6">
+      <div id="calendar" style="min-height: 500px; background-color: #f8f9fa;" class="rounded p-3 shadow-sm">
+        <!-- Aquí se renderiza tu calendario -->
       </div>
+    </div>
+  </div>
+  <% } else { %>
+  <p class="alert alert-warning">
+    No se puede realizar una reserva sin datos del apartamento.
+  </p>
+  <% } %>
+</div>
+
+
+
+
+
+
       <% }%>
     </div>
   </div>
 </main>
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    // ********** ToolTips **********
+    // Inicializar tooltips de Bootstrap
     var tooltipTriggerList = [].slice.call(
       document.querySelectorAll('[data-bs-toggle="tooltip"]')
     );
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-      return new bootstrap.Tooltip(tooltipTriggerEl);
+    tooltipTriggerList.map(function (el) {
+      return new bootstrap.Tooltip(el);
     });
-  });
 
-  document.addEventListener("DOMContentLoaded", function () {
-    const hash = window.location.hash;
-
-    if (hash === "#reservation") {
+    // Ir directamente a la pestaña de reservas si el hash es '#reservation'
+    if (window.location.hash === "#reservation") {
       const tabElement = document.querySelector('button[data-bs-target="#reservation"]');
       if (tabElement) {
         const tab = new bootstrap.Tab(tabElement);
         tab.show();
       }
     }
+
+    // Obtener las reservas pasadas desde el backend en formato JSON
+    const reservations = <%- JSON.stringify(reservations) %>;
+
+    // Mapear reservas para crear eventos de FullCalendar
+const events = reservations.map(res => {
+  const startDate = new Date(res.startDate).toISOString().split('T')[0];
+  const endDate = new Date(new Date(res.endDate).getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+  return {
+    start: startDate,
+    end: endDate,
+    display: 'background',
+    backgroundColor: 'rgba(255, 0, 0, 0.3)',
+    borderColor: 'rgba(255, 0, 0, 0.3)'
+  };
+});
+
+//     const events = reservations.map(res => ({
+//   start: res.startDate,
+//   end: new Date(new Date(res.endDate).getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+//   display: 'background', // Esto hace que el evento se muestre como un fondo
+//   backgroundColor: 'rgba(255, 0, 0, 0.3)', // Rojo translúcido
+//   borderColor: 'rgba(255, 0, 0, 0.3)', // Mismo color para el borde (opcional)
+// }));
+
+
+    // Inicializar FullCalendar
+    const calendarEl = document.getElementById('calendar');
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'dayGridMonth',
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth'
+      },
+      events: events
+    });
+
+    calendar.render();
+
+    // Redimensionar calendario al mostrar la pestaña de reservas
+    const reservationTab = document.querySelector('#reservation-tab');
+    if (reservationTab) {
+      reservationTab.addEventListener('shown.bs.tab', () => {
+        calendar.updateSize();
+      });
+    }
   });
 </script>
+
 <script src="/js/dateRangePicker.js"></script>
 
 <%- include("partials/footer") %>

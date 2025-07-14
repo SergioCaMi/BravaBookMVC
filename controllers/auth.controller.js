@@ -310,10 +310,12 @@ export const getApartmentById = async (req, res) => {
 
   try {
     const apartments = await Apartment.findById(id);
+    const reservations = await Reservation.find({apartment: apartments})
     res.render("detailApartment.ejs", {
       title: "home",
       error: undefined,
       apartments,
+      reservations
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
