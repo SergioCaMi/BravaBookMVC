@@ -8,10 +8,14 @@
     class="m-3"
   />
 </a>
-<%- include("partials/mensajes") %> <% const chunkSize=12; const
-totalPages=Math.ceil(apartments.length / chunkSize); const currentPage=0; %>
+<%- include("partials/mensajes") %> 
+<% 
+const chunkSize=12; 
+const totalPages=Math.ceil(apartments.length / chunkSize); const currentPage=0; 
+%>
 
 <div class="container my-5">
+  
   <div class="bg-white p-4 shadow rounded-4">
     <h2 class="text-center text-primary fw-bold mb-4">
       Apartamentos disponibles
