@@ -45,6 +45,12 @@ router.get('/apartments/search', authController.getApartmentSearch);
 // GET see Apartments
 router.get('/seeApartments', authController.getSeeApartments);
 
+
+// GET Maps
+router.get('/map', authController.getMap);
+
+
+
 //  ******************** RESERVAS ******************** 
 // POST New Reservation
 router.post("/reservations/new-reservation", authController.postNewReservation);

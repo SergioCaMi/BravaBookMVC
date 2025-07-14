@@ -131,7 +131,7 @@ export const postUpdateProfile = async (req, res) => {
   } catch (err) {
     console.error("Error al actualizar perfil:", err);
     res.status(500).render("editProfile", {
-      title: "Editar perfil",
+      title: "admin",
       user: req.user,
       error: "Hubo un error al guardar los cambios.",
     });
@@ -150,6 +150,20 @@ export const getAllApartments = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+// GET Maps
+export const getMap = async (req, res) => {
+  try {
+    // Recuperar los apartamentos activos
+    const apartments = await Apartment.find({ active: true });
+
+    // Renderizar la vista y pasar los apartamentos como contexto
+    res.render('map', { title: 'home', apartments });
+  } catch (error) {
+    console.error('Error al recuperar los apartamentos:', error);
+    res.status(500).send('Error al cargar los datos de los apartamentos');
+  }
+}
 
 // GET All Apartments
 export const getSeeApartments = async (req, res) => {

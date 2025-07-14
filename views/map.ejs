@@ -1,0 +1,159 @@
+<%- include("partials/header", { title: title }) %>
+
+<!-- Leaflet CSS & JS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .container {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  #apartment-list {
+    width: 300px;
+    padding: 1rem;
+    background: white;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    overflow-y: auto;
+    border-right: 1px solid #ddd;
+  }
+
+  #apartment-list h2 {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+    color: #343a40;
+  }
+
+  .apartment-item {
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fff;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+
+  .apartment-item:hover {
+    background-color: #f1f1f1;
+  }
+
+  .apartment-item.selected {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+  }
+
+  .apartment-item strong {
+    display: block;
+    font-size: 1rem;
+    margin-bottom: 3px;
+  }
+
+  #map {
+    flex: 1;
+    height: 100%;
+    z-index: 0;
+  }
+
+  @media (max-width: 768px) {
+    .container {
+      flex-direction: column;
+    }
+    #apartment-list {
+      width: 100%;
+      max-height: 300px;
+      border-right: none;
+      border-bottom: 1px solid #ddd;
+    }
+  }
+</style>
+
+<div class="container">
+  <div id="apartment-list">
+    <h2>Lista de Apartamentos</h2>
+    <% apartments.forEach(apartment => { %>
+      <div class="apartment-item" data-id="<%= apartment._id %>">
+        <strong><%= apartment.title %></strong>
+        <small><%= apartment.location.municipality.nm %>, <%= apartment.location.province.nm %></small>
+      </div>
+    <% }) %>
+  </div>
+
+  <div id="map"></div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    const map = L.map('map').setView([40.4168, -3.7038], 6);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    const apartments = <%- JSON.stringify(apartments) %>;
+    const apartmentItems = document.querySelectorAll('.apartment-item');
+    const markers = [];
+
+    async function geocodeApartment(apartment) {
+      const address = `${apartment.location.municipality.nm}, ${apartment.location.province.nm}, España`;
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        if (data && data.length > 0) {
+          return {
+            lat: parseFloat(data[0].lat),
+            lon: parseFloat(data[0].lon)
+          };
+        }
+      } catch (err) {
+        console.error(`Error geocoding: ${address}`, err);
+      }
+
+      return null;
+    }
+
+    async function placeMarkers() {
+      for (const apartment of apartments) {
+        const coords = await geocodeApartment(apartment);
+        if (coords) {
+          const marker = L.marker([coords.lat, coords.lon]).addTo(map);
+          marker.bindPopup(`
+            <b>${apartment.title}</b><br>
+            <a href="/apartments/${apartment._id}">Ver detalles</a>
+          `);
+          markers.push({ id: apartment._id, marker });
+        }
+        await new Promise(resolve => setTimeout(resolve, 1000)); // evitar bloqueo por Nominatim
+      }
+    }
+
+    apartmentItems.forEach(item => {
+      item.addEventListener('click', () => {
+        const id = item.dataset.id;
+        apartmentItems.forEach(i => i.classList.remove('selected'));
+        item.classList.add('selected');
+        const markerObj = markers.find(m => m.id === id);
+        if (markerObj) {
+          markerObj.marker.openPopup();
+          map.setView(markerObj.marker.getLatLng(), 14);
+        }
+      });
+    });
+
+    await placeMarkers();
+  });
+</script>
+
+<%- include("partials/footer") %>
