@@ -377,6 +377,27 @@ export const postCancelReservation = async (req, res) => {
   }
 };
 
+// POST Confirm Reservation
+export const postConfirmReservation = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const reservation = await Reservation.findById(id);
+    if (!reservation) {
+      req.flash("error_msg", "Reserva no encontrada");
+      return res.redirect("/admin/reservations");
+    }
+    reservation.status = "confirmed";
+    await reservation.save();
+    req.flash("success_msg", "Reserva confirmada satisfactoriamente.");
+    return res.redirect("/admin/reservations");
+  } catch (error) {
+    req.flash("error_msg", "Error al confirmar la reserva.");
+    return res.redirect("/admin/reservations");
+  }
+};
+
+
 // POST delete user
 export const postDeleteUser = async (req, res) => {
   const { id } = req.params;
@@ -413,6 +434,27 @@ export const postDeleteApartment = async (req, res) => {
     return res.redirect("/seeApartments");
   }
 };
+
+// POST Active Apartment
+export const postActiveApartment = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const apartment = await Apartment.findById(id);
+    if (!apartment) {
+      req.flash("error_msg", "apartment no encontrado");
+      return res.redirect("/seeApartments");
+    }
+    apartment.active = true;
+    await apartment.save();
+    req.flash("success_msg", "Apartamento activado satisfactoriamente.");
+    return res.redirect("/seeApartments");
+  } catch (error) {
+    req.flash("error_msg", "Error al activar el apartamento.");
+    return res.redirect("/seeApartments");
+  }
+};
+
 
 
 //GET edit reservation

@@ -46,11 +46,19 @@ router.post("/apartment/edit/:id/save", requireAuth, requireAdmin, adminControll
 //POST cancel Reservation
 router.post("/reservations/delete/:id", requireAuth, requireAdmin, adminController.postCancelReservation);
 
+//POST confirm Reservation
+router.post("/reservations/confirm/:id", requireAuth, requireAdmin, adminController.postConfirmReservation);
+
 //POST delete User
 router.post("/user/delete/:id", requireAuth, requireAdmin, adminController.postDeleteUser);
 
 //POST delete Apartment
 router.post("/apartments/delete/:id", requireAuth, requireAdmin, adminController.postDeleteApartment);
+//POST active Apartment
+router.post("/apartments/active/:id", requireAuth, requireAdmin, adminController.postActiveApartment);
+
+
+
 
 //GET edit reservation
 router.get("/reservations/edit/:id", requireAuth, requireAdmin, adminController.getReservationEdit);
