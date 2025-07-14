@@ -53,10 +53,6 @@
 
                         <% if (currentUser && currentUser.role === 'admin') { %>
                           <td>
-                            <div class="d-flex justify-content-center gap-2">
-                              <a href="/user/edit/<%= user._id %>" class="btn btn-warning btn-sm">
-                                <i class="bi bi-pencil-square"></i>
-                              </a>
 
                               <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
                                       data-bs-target="#deleteUserModal-<%= user._id %>">

@@ -57,9 +57,6 @@ router.post("/apartments/delete/:id", requireAuth, requireAdmin, adminController
 //POST active Apartment
 router.post("/apartments/active/:id", requireAuth, requireAdmin, adminController.postActiveApartment);
 
-
-
-
 //GET edit reservation
 router.get("/reservations/edit/:id", requireAuth, requireAdmin, adminController.getReservationEdit);
 //POST edit reservation
