@@ -60,7 +60,7 @@ router.post("/apartments/active/:id", requireAuth, requireAdmin, adminController
 //GET edit reservation
 router.get("/reservations/edit/:id", requireAuth, requireAdmin, adminController.getReservationEdit);
 //POST edit reservation
-router.post("/reservation/edit/:id/save", requireAuth, requireAdmin, adminController.putReservationEdit);
+router.post("/reservations/edit/:id", requireAuth, requireAdmin, adminController.putReservationEdit);
 
 
 

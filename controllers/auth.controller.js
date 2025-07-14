@@ -156,9 +156,9 @@ export const getSeeApartments = async (req, res) => {
   let apartments;
   try {
     if (res.locals.currentUser.role == "admin") {
-       apartments = await Apartment.find({});
+      apartments = await Apartment.find({});
     } else {
-       apartments = await Apartment.find({ active: true });
+      apartments = await Apartment.find({ active: true });
     }
     console.log(apartments.length);
     res.render("seeApartments", {
@@ -363,6 +363,7 @@ export const postNewReservation = async (req, res) => {
   try {
     const dataReservations = await Reservation.find({
       apartmentId: apartmentId,
+      status: "confirmed",
       $and: [{ endDate: { $gt: startDate } }, { startDate: { $lt: endDate } }],
     });
     console.log("dataReservations:", dataReservations.length);
@@ -387,10 +388,7 @@ export const postNewReservation = async (req, res) => {
       req.flash("success_msg", "Reserva realizada con éxito.");
       res.redirect("/");
     } else {
-      req.flash(
-        "error_msg",
-        "Fallo en la realización de la reserva. Pongase en contacto por telefono con nuestro equipo."
-      );
+      req.flash("error_msg", "Fechas no disponibles");
       res.redirect("/");
     }
   } catch (err) {

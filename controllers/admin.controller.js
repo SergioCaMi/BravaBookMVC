@@ -479,8 +479,59 @@ export const getReservationEdit = async (req, res) => {
 };
 
 
-//GET edit reservation
+//POST edit reservation
 export const putReservationEdit = async (req, res) => {
+  const { apartmentId, guestName, guestEmail, dateRange, status } = req.body;
+  const [start, end] = dateRange.split(" - ");
+  const startDate = new Date(start);
+  const endDate = new Date(end);
+
+  if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+    console.log("fecha no disponible");
+    req.flash("error_msg", "Fechas no disponibles.");
+    res.redirect("/reservations/new-reservation");
+  }
+
+  try {
+    const dataReservations = await Reservation.find({
+      apartmentId: apartmentId,
+      $and: [{ endDate: { $gt: startDate } }, { startDate: { $lt: endDate } }],
+    });
+    console.log("dataReservations:", dataReservations.length);
+
+    if (dataReservations.length === 0) {
+      console.log("creamos el objeto");
+
+      const newReservation = new Reservation({
+        apartment: apartmentId,
+        user: req.session.userId,
+        guestName,
+        guestEmail,
+        startDate,
+        endDate,
+        status,
+        paid,
+      });
+      console.log("objeto creado:", newReservation);
+
+      await newReservation.save();
+      console.log("Objeto guardado");
+      req.flash("success_msg", "Reserva realizada con éxito.");
+      res.redirect("/");
+    } else {
+      req.flash(
+        "error_msg",
+        "Fechas no disponibles"
+      );
+      res.redirect("/");
+    }
+  } catch (err) {
+    req.flash(
+      "error_msg",
+      "Fallo en la realización de la reserva. Pongase en contacto por telefono con nuestro equipo."
+    );
+    res.redirect("/");
+  }
 };
 
 

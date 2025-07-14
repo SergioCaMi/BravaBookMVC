@@ -20,7 +20,7 @@
       id="reservationForm"
       class="needs-validation"
       method="POST"
-      action="/reservations/edit/<%= reservation._id %>"
+      action="/admin/reservations/edit/<%= reservation._id %>"
       novalidate
     >
       <!-- Hidden para mantener el ID del apartamento -->
@@ -73,21 +73,10 @@
           <input
             type="text"
             id="dateRange"
+            name="dateRange"
             class="form-control"
             readonly
-            required
-          />
-          <input
-            type="hidden"
-            id="startDate"
-            name="startDate"
-            value="<%= reservation.startDate.toISOString().split('T')[0] %>"
-          />
-          <input
-            type="hidden"
-            id="endDate"
-            name="endDate"
-            value="<%= reservation.endDate.toISOString().split('T')[0] %>"
+            value="<%= reservation ? `${reservation.startDate.toLocaleDateString('es-ES')} - ${reservation.endDate.toLocaleDateString('es-ES')}` : '' %>"
           />
           <div class="invalid-feedback">
             Por favor, selecciona un rango válido.
@@ -117,5 +106,7 @@
 
 <script></script>
 <script src="/js/editReservation.js"></script>
+<script src="/js/dateRangePicker.js"></script>
+
 
 <%- include("partials/footer") %>
