@@ -39,9 +39,9 @@ router.post("/apartment/new", adminController.postNewApartment);
 
 // ******************** PARAMS ********************
 //GET edit apartment
-router.get("/apartments/edit/:id", requireAuth, requireAdmin, adminController.getAdminEdit);
+router.get("/apartments/edit/:id", requireAuth, requireAdmin, adminController.getApartmentEdit);
 //POST edit apartment
-router.post("/apartment/edit/:id/save", requireAuth, requireAdmin, adminController.putAdminEdit);
+router.post("/apartment/edit/:id/save", requireAuth, requireAdmin, adminController.putApartmentEdit);
 
 //POST cancel Reservation
 router.post("/reservations/delete/:id", requireAuth, requireAdmin, adminController.postCancelReservation);
@@ -50,8 +50,12 @@ router.post("/reservations/delete/:id", requireAuth, requireAdmin, adminControll
 router.post("/user/delete/:id", requireAuth, requireAdmin, adminController.postDeleteUser);
 
 //POST delete Apartment
-router.post("/apartment/delete/:id", requireAuth, requireAdmin, adminController.postDeleteApartment);
+router.post("/apartments/delete/:id", requireAuth, requireAdmin, adminController.postDeleteApartment);
 
+//GET edit reservation
+router.get("/reservations/edit/:id", requireAuth, requireAdmin, adminController.getReservationEdit);
+//POST edit reservation
+router.post("/reservation/edit/:id/save", requireAuth, requireAdmin, adminController.putReservationEdit);
 
 
 

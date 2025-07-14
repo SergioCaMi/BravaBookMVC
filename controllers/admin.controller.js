@@ -222,7 +222,7 @@ export const getReservations = async (req, res) => {
 };
 
 //GET edit apartment
-export const getAdminEdit = async (req, res) => {
+export const getApartmentEdit = async (req, res) => {
   const { id } = req.params;
   console.log(req.params);
   try {
@@ -243,7 +243,7 @@ export const getAdminEdit = async (req, res) => {
 };
 
 // PUT edit apartment
-export const putAdminEdit = async (req, res) => {
+export const putApartmentEdit = async (req, res) => {
   // console.log(req.body);
   const { id } = req.params;
   try {
@@ -401,15 +401,15 @@ export const postDeleteApartment = async (req, res) => {
   try {
     const apartment = await Apartment.findById(id);
     if (!apartment) {
-      req.flash("error_msg", "Reserva no encontrada");
+      req.flash("error_msg", "apartment no encontrado");
       return res.redirect("/seeApartments");
     }
     apartment.active = false;
     await apartment.save();
-    req.flash("success_msg", "Reserva cancelada satisfactoriamente.");
+    req.flash("success_msg", "Apartamento eliminado satisfactoriamente.");
     return res.redirect("/seeApartments");
   } catch (error) {
-    req.flash("error_msg", "Error al cancelar la reserva.");
+    req.flash("error_msg", "Error al eliminar el apartamento.");
     return res.redirect("/seeApartments");
   }
 };
@@ -420,15 +420,15 @@ export const getReservationEdit = async (req, res) => {
   const { id } = req.params;
   console.log(req.params);
   try {
-    const apartments = await Apartment.findById(id);
-    console.log(apartments);
-    if (!apartments) {
+    const reservation = await Reservation.findById(id);
+    console.log(reservation);
+    if (!reservation) {
       req.flash("error_msg", "La reserva no se ha encontrado.");
       res.redirect("/admin");
     }
     res.render("editReservation.ejs", {
       title: "admin",
-      apartments,
+      reservation,
     });
   } catch (err) {
     req.flash("error_msg", "Error interno del servidor.");
@@ -440,3 +440,6 @@ export const getReservationEdit = async (req, res) => {
 //GET edit reservation
 export const putReservationEdit = async (req, res) => {
 };
+
+
+

@@ -1,51 +1,68 @@
-<form id="reservationForm" class="needs-validation" method="POST" action="/reservations/edit-reservation" novalidate>
-    <input type="hidden" name="apartmentId" value="<%= apartments._id %>">
-    <input type="hidden" name="user" value="<%= currentUser._id %>">
+<%- include("partials/header") %>
 
-    <div class="mb-3">
-        <label for="guestName" class="form-label">Nombre completo del huésped</label>
-        <input type="text" class="form-control" id="guestName" name="guestName" required>
-        <div class="invalid-feedback">
-            Por favor, ingresa el nombre completo del huésped.
+<a href="#" onclick="window.history.back()" class="row justify-content-start">
+  <img src="/img/back.png" alt="Volver atrás" style="max-width: 70px; height: auto;" class="m-3">
+</a>
+
+<%- include("partials/mensajes") %>
+
+<div class="container my-5">
+  <div class="bg-white p-5 shadow rounded-4">
+    <h2 class="mb-4 text-center text-primary fw-bold">Editar Reserva</h2>
+
+    <% if (reservation) { %>
+      <form id="reservationForm" class="needs-validation" method="POST" action="/reservations/edit/<%= reservation._id %>" novalidate>
+        <!-- Hidden para mantener el ID del apartamento -->
+        <input type="hidden" name="apartment" value="<%= reservation.apartment._id || reservation.apartment %>">
+
+        <!-- Nombre del huésped -->
+        <div class="mb-3">
+          <label for="guestName" class="form-label">Nombre completo del huésped</label>
+          <input type="text" class="form-control" id="guestName" name="guestName"
+            value="<%= reservation.guestName %>" required>
+          <div class="invalid-feedback">Por favor, ingresa el nombre completo del huésped.</div>
         </div>
-    </div>
 
-    <div class="mb-3">
-        <label for="guestEmail" class="form-label">Correo electrónico</label>
-        <input type="email" class="form-control" id="guestEmail" name="guestEmail" required>
-        <div class="invalid-feedback">
-            Por favor, ingresa un correo electrónico válido.
+        <!-- Email del huésped -->
+        <div class="mb-3">
+          <label for="guestEmail" class="form-label">Correo electrónico</label>
+          <input type="email" class="form-control" id="guestEmail" name="guestEmail"
+            value="<%= reservation.guestEmail %>" required>
+          <div class="invalid-feedback">Por favor, ingresa un correo electrónico válido.</div>
         </div>
-    </div>
 
-    <div class="row">
-        <div class="col-12 col-md-6">
-            <label for="dateRange" class="form-label small mb-1">Selecciona el rango de fechas:</label>
-            <input type="text" id="dateRange" name="dateRange" class="form-control" readonly required>
-            <div class="invalid-feedback">
-                Por favor, selecciona un rango de fechas.
-            </div>
+        <!-- Rango de fechas -->
+        <div class="row">
+          <div class="col-12 col-md-6">
+            <label for="dateRange" class="form-label">Selecciona el rango de fechas:</label>
+            <input type="text" id="dateRange" class="form-control" readonly required>
+            <input type="hidden" id="startDate" name="startDate" value="<%= reservation.startDate.toISOString().split('T')[0] %>">
+            <input type="hidden" id="endDate" name="endDate" value="<%= reservation.endDate.toISOString().split('T')[0] %>">
+            <div class="invalid-feedback">Por favor, selecciona un rango válido.</div>
+          </div>
         </div>
-        <input type="hidden" id="startDate" name="startDate" required>
-        <input type="hidden" id="endDate" name="endDate" required>
-    </div>
+                          <!-- Estado de la reserva -->
+<div class="form-check form-switch mb-4 mt-4">
+  <input class="form-check-input" type="checkbox" id="status" name="status"
+    <%= reservation.status === 'confirmed' ? 'checked' : '' %>>
+  <label class="form-check-label" for="status">
+    <%= reservation.status === 'confirmed' ? 'Activada (Confirmada)' : 'Cancelada' %>
+  </label>
+</div>
 
-    <button type="submit" class="btn btn-primary">Confirmar Reserva</button>
 
-    <script>
-        (function () {
-            'use strict';
+        <!-- Botón -->
+        <button type="submit" class="btn btn-primary mt-3">Guardar Cambios</button>
+      </form>
+    <% } else { %>
+      <p class="text-center my-5">Reserva no encontrada.</p>
+    <% } %>
+  </div>
+</div>
 
-            var form = document.getElementById('reservationForm');
+<script>
 
-            form.addEventListener('submit', function (event) {
-                if (!form.checkValidity()) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }
+</script>
+        <script src="/js/editReservation.js"></script>
 
-                form.classList.add('was-validated');
-            }, false);
-        })();
-    </script>
-</form>
+<%- include("partials/footer") %>

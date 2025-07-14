@@ -153,8 +153,13 @@ export const getAllApartments = async (req, res) => {
 
 // GET All Apartments
 export const getSeeApartments = async (req, res) => {
+  let apartments;
   try {
-    const apartments = await Apartment.find({ active: true });
+    if (res.locals.currentUser.role == "admin") {
+       apartments = await Apartment.find({});
+    } else {
+       apartments = await Apartment.find({ active: true });
+    }
     console.log(apartments.length);
     res.render("seeApartments", {
       title: "home",
@@ -241,14 +246,13 @@ export const getApartmentSearch = async (req, res) => {
   const [start, end] = dateRange.split(" - ");
   const startDate = new Date(start);
   const endDate = new Date(end);
-  
-startDate.setDate(startDate.getDate()+1);//Para solapar fechas!!
+
+  startDate.setDate(startDate.getDate() + 1); //Para solapar fechas!!
   console.log("Start Date:", startDate);
   console.log("End Date:", endDate);
 
   startDate.setHours(0, 0, 0, 0);
   endDate.setHours(0, 0, 0, 0);
-
 
   let reservedApartmentIds = [];
 
@@ -343,9 +347,10 @@ export const getReservationsById = async (req, res) => {
 
 // POST New Reservation
 export const postNewReservation = async (req, res) => {
-  const { apartmentId, guestName, guestEmail } = req.body;
-  const startDate = new Date(req.body.startDate);
-  const endDate = new Date(req.body.endDate);
+  const { apartmentId, guestName, guestEmail, dateRange } = req.body;
+  const [start, end] = dateRange.split(" - ");
+  const startDate = new Date(start);
+  const endDate = new Date(end);
 
   if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
     console.log("fecha no disponible");
