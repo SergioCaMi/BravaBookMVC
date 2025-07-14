@@ -459,7 +459,7 @@ export const getReservationEdit = async (req, res) => {
   const { id } = req.params;
   console.log(req.params);
   try {
-    const reservation = await Reservation.findById(id);
+    const reservation = await Reservation.findById(id).populate("apartment");
     console.log(reservation);
     if (!reservation) {
       req.flash("error_msg", "La reserva no se ha encontrado.");
@@ -496,12 +496,16 @@ export const putReservationEdit = async (req, res) => {
       return res.redirect("/");
     }
     const dataReservations = await Reservation.find({
-      apartment: id,
+      apartment: apartmentId,
       status: "confirmed",
       _id: { $ne: id },
       $and: [{ endDate: { $gt: startDate } }, { startDate: { $lt: endDate } }],
     });
     console.log("La fecha es válida?", dataReservations.length === 0);
+    console.log("Buscando en apartamento:", apartmentId);
+console.log("Fecha inicio nueva:", startDate);
+console.log("Fecha fin nueva:", endDate);
+console.log("Número de reservas solapadas:", dataReservations.length);
     if (dataReservations.length === 0) {
       console.log("reserva valida");
       await Reservation.findByIdAndUpdate(

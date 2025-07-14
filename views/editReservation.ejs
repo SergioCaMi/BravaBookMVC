@@ -83,6 +83,11 @@
           </div>
           <input type="hidden" id="startDateHidden" name="startDate" />
           <input type="hidden" id="endDateHidden" name="endDate" />
+          <input
+            type="hidden"
+            name="apartmentId"
+            value="<%= reservation.apartment._id %>"
+          />
         </div>
       </div>
 
@@ -96,9 +101,16 @@
     <% } %>
   </div>
 </div>
+<% if (reservation) { %>
+<script>
+  const reservationData = {
+    startDate: "<%= reservation.startDate.toISOString().split('T')[0] %>",
+    endDate: "<%= reservation.endDate.toISOString().split('T')[0] %>",
+  };
+</script>
+<% } %>
 
-<script></script>
+<!-- Luego carga tu script -->
 <script src="/js/editReservation.js"></script>
-<script src="/js/dateRangePicker.js"></script>
 
 <%- include("partials/footer") %>
