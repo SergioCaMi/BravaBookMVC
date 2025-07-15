@@ -457,6 +457,9 @@ export const searchApartments = async (req, res) => {
     let filters;
     try {
       filters = JSON.parse(cleanJson);
+console.log("Filtros generados por Gemini:", filters); // 👈 Añade esta línea
+
+      filters = JSON.parse(cleanJson);
     } catch (parseError) {
       console.error("❌ Error al parsear JSON de Gemini:\n", cleanJson);
       req.flash("error", "La IA no entendió la búsqueda. Prueba con otra frase.");
@@ -466,13 +469,24 @@ export const searchApartments = async (req, res) => {
     // 4. Traducir filtros a consulta MongoDB
     const query = { active: true };
 
-    if (filters.province) {
-      query["location.province.nm"] = { $regex: new RegExp(filters.province, "i") };
-    }
-    if (filters.municipality) {
-      query["location.municipality.nm"] = { $regex: new RegExp(filters.municipality, "i") };
-    }
-    if (filters.maxGuests) {
+// Construir condiciones OR si hay provincia y/o municipio
+const locationConditions = [];
+
+if (filters.province) {
+  locationConditions.push({
+    "location.province.nm": { $regex: new RegExp(filters.province, "i") }
+  });
+}
+if (filters.municipality) {
+  locationConditions.push({
+    "location.municipality.nm": { $regex: new RegExp(filters.municipality, "i") }
+  });
+}
+
+// Solo añadir $or si hay condiciones
+if (locationConditions.length > 0) {
+  query.$or = locationConditions;
+}    if (filters.maxGuests) {
       query.maxGuests = { $gte: filters.maxGuests };
     }
     if (filters.rooms) {
@@ -492,6 +506,7 @@ export const searchApartments = async (req, res) => {
         if (value === true) query[`services.${key}`] = true;
       }
     }
+console.log("Consulta MongoDB generada:", query);
 
     // 5. Buscar apartamentos
     const apartments = await Apartment.find(query);
