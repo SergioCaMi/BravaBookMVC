@@ -434,14 +434,14 @@ export const searchApartments = async (req, res) => {
           {
             parts: [
               {
-                text: `Convierte esta frase en un JSON con filtros para apartamentos: "${userQuery}". Usa campos como province, municipality, services, minPrice, maxPrice, rooms, bathrooms, maxGuests. Devuelve solo el objeto JSON.`
-              }
-            ]
-          }
-        ]
+                text: `Convierte esta frase en un JSON con filtros para apartamentos: "${userQuery}". Usa campos como province, municipality, services, minPrice, maxPrice, rooms, bathrooms, maxGuests. Devuelve solo el objeto JSON.`,
+              },
+            ],
+          },
+        ],
       },
       {
-        headers: { "Content-Type": "application/json" }
+        headers: { "Content-Type": "application/json" },
       }
     );
 
@@ -457,36 +457,42 @@ export const searchApartments = async (req, res) => {
     let filters;
     try {
       filters = JSON.parse(cleanJson);
-console.log("Filtros generados por Gemini:", filters); // 👈 Añade esta línea
+      console.log("Filtros generados por Gemini:", filters); // 👈 Añade esta línea
 
       filters = JSON.parse(cleanJson);
     } catch (parseError) {
       console.error("❌ Error al parsear JSON de Gemini:\n", cleanJson);
-      req.flash("error", "La IA no entendió la búsqueda. Prueba con otra frase.");
+      req.flash(
+        "error",
+        "La IA no entendió la búsqueda. Prueba con otra frase."
+      );
       return res.redirect("/");
     }
 
     // 4. Traducir filtros a consulta MongoDB
     const query = { active: true };
 
-// Construir condiciones OR si hay provincia y/o municipio
-const locationConditions = [];
+    // Construir condiciones OR si hay provincia y/o municipio
+    const locationConditions = [];
 
-if (filters.province) {
-  locationConditions.push({
-    "location.province.nm": { $regex: new RegExp(filters.province, "i") }
-  });
-}
-if (filters.municipality) {
-  locationConditions.push({
-    "location.municipality.nm": { $regex: new RegExp(filters.municipality, "i") }
-  });
-}
+    if (filters.province) {
+      locationConditions.push({
+        "location.province.nm": { $regex: new RegExp(filters.province, "i") },
+      });
+    }
+    if (filters.municipality) {
+      locationConditions.push({
+        "location.municipality.nm": {
+          $regex: new RegExp(filters.municipality, "i"),
+        },
+      });
+    }
 
-// Solo añadir $or si hay condiciones
-if (locationConditions.length > 0) {
-  query.$or = locationConditions;
-}    if (filters.maxGuests) {
+    // Solo añadir $or si hay condiciones
+    if (locationConditions.length > 0) {
+      query.$or = locationConditions;
+    }
+    if (filters.maxGuests) {
       query.maxGuests = { $gte: filters.maxGuests };
     }
     if (filters.rooms) {
@@ -506,16 +512,18 @@ if (locationConditions.length > 0) {
         if (value === true) query[`services.${key}`] = true;
       }
     }
-console.log("Consulta MongoDB generada:", query);
+    console.log("Consulta MongoDB generada:", query);
 
     // 5. Buscar apartamentos
     const apartments = await Apartment.find(query);
-    res.render("seeApartments.ejs", { title: 'home', apartments });
-
+    res.render("seeApartments.ejs", { title: "home", apartments });
   } catch (err) {
     // Manejo especial para exceso de cuota (429)
     if (err.response?.status === 429) {
-      req.flash("error", "🚫 Has superado el límite de uso de la IA. Inténtalo más tarde.");
+      req.flash(
+        "error",
+        "🚫 Has superado el límite de uso de la IA. Inténtalo más tarde."
+      );
       return res.redirect("/");
     }
 
