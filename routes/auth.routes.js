@@ -49,7 +49,8 @@ router.get('/seeApartments', authController.getSeeApartments);
 // GET Maps
 router.get('/map', authController.getMap);
 
-
+// IA de GEMINI
+router.post("/apartments/search", authController.searchApartments);
 
 //  ******************** RESERVAS ******************** 
 // POST New Reservation

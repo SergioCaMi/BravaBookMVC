@@ -3,6 +3,7 @@ import path from "path";
 import User from "../models/user.model.js";
 import Apartment from "../models/apartment.model.js";
 import Reservation from "../models/reservation.model.js";
+import axios from "axios";
 
 // ******************** USER ********************
 // Registro
@@ -158,12 +159,12 @@ export const getMap = async (req, res) => {
     const apartments = await Apartment.find({ active: true });
 
     // Renderizar la vista y pasar los apartamentos como contexto
-    res.render('map', { title: 'home', apartments });
+    res.render("map", { title: "home", apartments });
   } catch (error) {
-    console.error('Error al recuperar los apartamentos:', error);
-    res.status(500).send('Error al cargar los datos de los apartamentos');
+    console.error("Error al recuperar los apartamentos:", error);
+    res.status(500).send("Error al cargar los datos de los apartamentos");
   }
-}
+};
 
 // GET All Apartments
 export const getSeeApartments = async (req, res) => {
@@ -324,12 +325,12 @@ export const getApartmentById = async (req, res) => {
 
   try {
     const apartments = await Apartment.findById(id);
-    const reservations = await Reservation.find({apartment: apartments})
+    const reservations = await Reservation.find({ apartment: apartments });
     res.render("detailApartment.ejs", {
       title: "home",
       error: undefined,
       apartments,
-      reservations
+      reservations,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -414,5 +415,97 @@ export const postNewReservation = async (req, res) => {
       "Fallo en la realización de la reserva. Lo comunicaremos a nuestro departamento técnico."
     );
     res.redirect(`/apartments/${apartmentId}#reservation`);
+  }
+};
+
+// IA de GEMINI
+export const searchApartments = async (req, res) => {
+  const userQuery = req.body.query;
+
+  try {
+    console.log("API Key:", process.env.GEMINI_API_KEY?.slice(0, 5), "...");
+    console.log("User Query:", userQuery);
+
+    // 1. Enviar texto a Gemini
+    const geminiResponse = await axios.post(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      {
+        contents: [
+          {
+            parts: [
+              {
+                text: `Convierte esta frase en un JSON con filtros para apartamentos: "${userQuery}". Usa campos como province, municipality, services, minPrice, maxPrice, rooms, bathrooms, maxGuests. Devuelve solo el objeto JSON.`
+              }
+            ]
+          }
+        ]
+      },
+      {
+        headers: { "Content-Type": "application/json" }
+      }
+    );
+
+    // 2. Limpiar la respuesta de Gemini
+    let raw = geminiResponse.data.candidates[0].content.parts[0].text;
+    let cleanJson = raw.trim();
+
+    if (cleanJson.startsWith("```")) {
+      cleanJson = cleanJson.replace(/```json|```/g, "").trim();
+    }
+
+    // 3. Interpretar el JSON de forma segura
+    let filters;
+    try {
+      filters = JSON.parse(cleanJson);
+    } catch (parseError) {
+      console.error("❌ Error al parsear JSON de Gemini:\n", cleanJson);
+      req.flash("error", "La IA no entendió la búsqueda. Prueba con otra frase.");
+      return res.redirect("/");
+    }
+
+    // 4. Traducir filtros a consulta MongoDB
+    const query = { active: true };
+
+    if (filters.province) {
+      query["location.province.nm"] = { $regex: new RegExp(filters.province, "i") };
+    }
+    if (filters.municipality) {
+      query["location.municipality.nm"] = { $regex: new RegExp(filters.municipality, "i") };
+    }
+    if (filters.maxGuests) {
+      query.maxGuests = { $gte: filters.maxGuests };
+    }
+    if (filters.rooms) {
+      query.rooms = { $gte: filters.rooms };
+    }
+    if (filters.bathrooms) {
+      query.bathrooms = { $gte: filters.bathrooms };
+    }
+    if (filters.minPrice || filters.maxPrice) {
+      query.price = {};
+      if (filters.minPrice) query.price.$gte = filters.minPrice;
+      if (filters.maxPrice) query.price.$lte = filters.maxPrice;
+    }
+
+    if (filters.services) {
+      for (const [key, value] of Object.entries(filters.services)) {
+        if (value === true) query[`services.${key}`] = true;
+      }
+    }
+
+    // 5. Buscar apartamentos
+    const apartments = await Apartment.find(query);
+    res.render("seeApartments.ejs", { title: 'home', apartments });
+
+  } catch (err) {
+    // Manejo especial para exceso de cuota (429)
+    if (err.response?.status === 429) {
+      req.flash("error", "🚫 Has superado el límite de uso de la IA. Inténtalo más tarde.");
+      return res.redirect("/");
+    }
+
+    console.error("Error al buscar con IA:", err.response?.data || err.message);
+    req.flash("error", "No se pudo procesar la búsqueda. Inténtalo de nuevo.");
+    res.redirect("/");
   }
 };
