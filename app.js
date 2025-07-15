@@ -9,6 +9,7 @@ import User from './models/user.model.js';
 // Rutas
 import authRoutes from './routes/auth.routes.js';
 import adminRoutes from './routes/admin.routes.js';
+import apiRoutes from './routes/api.routes.js';
 
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -71,6 +72,7 @@ app.use((req, res, next) => {
 // Rutas
 app.use('/', authRoutes);
 app.use('/admin', adminRoutes);
+app.use('/api', apiRoutes);
 
 // --- Middlewares ---
 app.use(express.urlencoded({ extended: true }));
