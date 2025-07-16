@@ -1,4 +1,3 @@
-
 import { Router } from 'express';
 import * as authController from '../controllers/auth.controller.js';
 import { requireAuth } from '../middlewares/auth.js';
@@ -6,65 +5,63 @@ import {upload} from '../middlewares/uploadMiddleware.js';
 
 const router = Router();
 
-// ********** USER  ********** 
+// --- Rutas de Usuario ---
 
-// Register
+// Registro de usuario (GET formulario, POST envío)
 router.get('/register', (req, res) => res.render('register', {title: "home"}));
 router.post('/register', authController.register);
 
-// LogIn
+// Inicio de sesión (GET formulario, POST envío)
 router.get('/login', (req, res) => res.render('login', {title: "home"}));
 router.post('/login', authController.login);
 
-// LogOut
+// Cierre de sesión
 router.get('/logout', authController.logout);
 
-// Dashboard
+// Dashboard de usuario
 router.get('/dashboard', requireAuth, authController.dashboard);
 
-// ContactUs
+// Página de contacto
 router.get('/contact', authController.getContactUs);
 
-// AboutUs
+// Página "Acerca de nosotros"
 router.get('/about', authController.getAboutUs);
 
-// Editar profile
+// Editar perfil de usuario (GET formulario, POST actualización con subida de avatar)
 router.get('/profile/edit', requireAuth, authController.getEditProfile);
 router.post('/profile/update', upload.single('avatar'), requireAuth, authController.postUpdateProfile);
 
 
-//  ******************** APARTAMENTOS ******************** 
+// --- Rutas de Apartamentos ---
 
-// GET All Apartments
+// Obtener todos los apartamentos
 router.get('/', authController.getAllApartments);
 
-// GET Apartment Search
+// Buscar apartamentos
 router.get('/apartments/search', authController.getApartmentSearch);
 
-
-// GET see Apartments
+// Ver apartamentos (lista general)
 router.get('/seeApartments', authController.getSeeApartments);
 
-
-// GET Maps
+// Mapa de apartamentos
 router.get('/map', authController.getMap);
 
-// IA de GEMINI
+// Búsqueda de apartamentos (posiblemente por IA de Gemini)
 router.post("/apartments/search", authController.searchApartments);
 
-//  ******************** RESERVAS ******************** 
-// POST New Reservation
+
+// --- Rutas de Reservas ---
+
+// Crear nueva reserva
 router.post("/reservations/new-reservation", authController.postNewReservation);
 
 
+// --- Rutas con Parámetros de ID ---
 
-//  ******************** PARAMS ******************** 
-// GET Apartment By Id=> :id => Siempre al final
+// Obtener apartamento por ID
 router.get('/apartments/:id', authController.getApartmentById);
 
-// GET Reservation By Id=> :id => Siempre al final
+// Obtener reserva por ID (requiere autenticación)
 router.get('/reservation/:id', requireAuth, authController.getReservationsById);
 
-
 export default router;
-

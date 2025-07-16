@@ -1,70 +1,69 @@
-
 import { Router } from 'express';
 import { requireAuth, requireAdmin } from '../middlewares/auth.js';
 import * as adminController from '../controllers/admin.controller.js';
 import { uploadApartmentImages } from '../middlewares/uploadApartments.js'; 
-import { uploadNewApartmentTempImages  } from '../middlewares/uploadApartments.js'; 
+import { uploadNewApartmentTempImages  } from '../middlewares/uploadApartments.js'; 
 const router = Router();
 
-//  ******************** USERS ******************** 
+//  Rutas de Usuarios 
 
-// Dashboard
+// Dashboard del administrador
 router.get('/dashboard', requireAuth, requireAdmin, adminController.dashboard);
 
-
-// Panel de control de Admin
+// Panel de control principal del administrador
 router.get('/', requireAuth, requireAdmin, (req, res) => {
-  res.render('adminPanel', {title: "home"}); 
+  res.render('adminPanel', {title: "home"}); 
 });
 
-// Editar profile
+// Editar perfil de usuario (GET)
 router.get('/profile/edit', requireAuth, requireAdmin, adminController.getEditProfile);
+// Editar perfil de usuario (POST)
 router.post('/profile/update', requireAuth, requireAdmin, adminController.postUpdateProfile);
 
 // Ver todos los usuarios
 router.get('/users', requireAuth, requireAdmin, adminController.getUsers);
 
-
-//  ******************** RESERVAS ******************** 
+//  Rutas de Reservas 
 
 // Ver todas las reservas
 router.get('/reservations', requireAuth, requireAdmin, adminController.getReservations);
 
-// router.get('/reservation', requireAuth, requireAdmin, adminController.getReservations);
+//  Rutas de Apartamentos 
 
-//  ******************** APARTAMENTOS ******************** 
-// GET new Apartment
+// Formulario para crear nuevo apartamento
 router.get("/apartment/new", requireAuth, requireAdmin, adminController.getNewApartment);
-// POST new Apartment
+
+// Enviar formulario de nuevo apartamento (con subida temporal de fotos)
 router.post("/apartment/new", uploadNewApartmentTempImages.array('apartmentPhotos'), adminController.postNewApartment);
 
-// ******************** PARAMS ********************
-//GET edit apartment
+//  Rutas Dinámicas (con Parámetros :id) 
+
+// Formulario para editar un apartamento existente
 router.get("/apartments/edit/:id", requireAuth, requireAdmin, adminController.getApartmentEdit);
-//POST edit apartment
-// router.post("/apartment/edit/:id/save", requireAuth, requireAdmin, adminController.putApartmentEdit);
+
+// Enviar formulario de edición de apartamento (con subida de fotos y otros campos)
+// router.post("/apartment/edit/:id/save", requireAuth, requireAdmin, adminController.putApartmentEdit); 
 router.post("/apartment/edit/:id/save", requireAuth, requireAdmin, uploadApartmentImages.fields([{ name: 'apartmentPhotos'},]), adminController.putApartmentEdit);
-//POST cancel Reservation
+
+// Cancelar una reserva
 router.post("/reservations/delete/:id", requireAuth, requireAdmin, adminController.postCancelReservation);
 
-//POST confirm Reservation
+// Confirmar una reserva
 router.post("/reservations/confirm/:id", requireAuth, requireAdmin, adminController.postConfirmReservation);
 
-//POST delete User
+// Eliminar un usuario
 router.post("/user/delete/:id", requireAuth, requireAdmin, adminController.postDeleteUser);
 
-//POST delete Apartment
+// Eliminar un apartamento
 router.post("/apartments/delete/:id", requireAuth, requireAdmin, adminController.postDeleteApartment);
-//POST active Apartment
+
+// Activar/desactivar un apartamento
 router.post("/apartments/active/:id", requireAuth, requireAdmin, adminController.postActiveApartment);
 
-//GET edit reservation
+// Formulario para editar una reserva
 router.get("/reservations/edit/:id", requireAuth, requireAdmin, adminController.getReservationEdit);
-//POST edit reservation
+
+// Enviar formulario de edición de reserva
 router.post("/reservations/edit/:id", requireAuth, requireAdmin, adminController.putReservationEdit);
 
-
-
-
 export default router;
-

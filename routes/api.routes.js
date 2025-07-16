@@ -3,18 +3,21 @@ import * as apiController from '../controllers/api.controller.js';
 
 const router = express.Router();
 
+// --- Rutas de la API ---
 
-// endpoint para obtener todos los apartamentos en formato JSON
+// Endpoint raíz de la API (para obtener todos los apartamentos en formato JSON)
 router.get('/', apiController.getApi);
-// endpoint para obtener todos los apartamentos en formato JSON
+
+// Endpoint específico para obtener todos los apartamentos en formato JSON
 router.get('/apartments', apiController.getApiApartments);
-// endpoint para obtener apartamentos en formato JSON con preciosa maximos:
+
+// Endpoint para buscar apartamentos con precios máximos en formato JSON
 router.get('/apartments/search', apiController.getApartmentsSearchPrice);
 
-// endpoint para obtener apartamentos en formato JSON por :id
+// Endpoint para obtener un apartamento específico por ID en formato JSON
 router.get('/apartments/:id', apiController.getApartmentById);
-// endpoint para obtener servicios de apartamentos en formato JSON por :id
-router.get('/apartments/services/:id', apiController.getServicesApartmentById);
 
+// Endpoint para obtener los servicios de un apartamento específico por ID en formato JSON
+router.get('/apartments/services/:id', apiController.getServicesApartmentById);
 
 export default router;
