@@ -84,38 +84,60 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ********** Función para añadir imágenes **********
-let photoCount = 0;
+let photoCount = 0; // Lleva la cuenta de cuántos campos de foto se han añadido
 
 function addPhotoField() {
-  const photoClickedInput = document.getElementById("photoButtonClicked");
-  if (photoClickedInput) {
-    photoClickedInput.value = "true";
-  }
+    const photoClickedInput = document.getElementById("photoButtonClicked");
+    if (photoClickedInput) {
+        photoClickedInput.value = "true";
+    }
 
-  const container = document.getElementById("photosContainer");
-  const fieldset = document.createElement("fieldset");
-  fieldset.className = "photo-fieldset";
-  fieldset.innerHTML = `
-    <legend>Foto ${photoCount + 1}</legend>
+    const container = document.getElementById("photosContainer");
+    const fieldset = document.createElement("fieldset");
+    fieldset.className = "photo-fieldset";
 
-    <label for="photos[${photoCount}][url]">URL de la foto:</label>
-    <input type="text" name="photos[${photoCount}][url]" class="form-control" required /><br>
+    // Modificamos el innerHTML para incluir un input de tipo 'file'
+    // El 'name' del input es CRUCIAL: lo usamos como un array para Multer.
+    // 'apartmentPhotos[]' indica que Multer debe esperar un array de archivos con ese nombre.
+    // 'accept="image/*"' limita el selector de archivos a tipos de imagen.
+    fieldset.innerHTML = `
+        <legend>Foto ${photoCount + 1}</legend>
 
-    <label for="photos[${photoCount}][description]">Descripción:</label>
-    <input type="text" name="photos[${photoCount}][description]" class="form-control" />
+        <div class="mb-3">
+            <label for="apartmentPhotos_${photoCount}" class="form-label">Seleccionar archivo de foto:</label>
+            <input type="file" 
+                   name="apartmentPhotos" 
+                   id="apartmentPhotos_${photoCount}" 
+                   class="form-control" 
+                   accept="image/*" 
+                   required>
+        </div>
 
-    <label>
-      <input type="radio" name="mainPhotoIndex" value="${photoCount}" ${
-    photoCount === 0 ? "checked" : ""
-  } />
-      Foto Principal
-    </label>
+        <div class="mb-3">
+            <label for="photos[${photoCount}][description]" class="form-label">Descripción de la foto:</label>
+            <input type="text" 
+                   name="photos[${photoCount}][description]" 
+                   id="photos[${photoCount}][description]"
+                   class="form-control" />
+        </div>
 
-    <hr />
-  `;
-  container.appendChild(fieldset);
-  photoCount++;
+        <div class="form-check">
+            <input type="radio" 
+                   name="mainPhotoIndex" 
+                   id="mainPhoto_${photoCount}"
+                   value="${photoCount}" 
+                   class="form-check-input"
+                   ${photoCount === 0 ? "checked" : ""}>
+            <label class="form-check-label" for="mainPhoto_${photoCount}">Foto Principal</label>
+        </div>
+
+        <hr />
+    `;
+    container.appendChild(fieldset);
+    photoCount++;
 }
+
+
 
 // ********** Función para añadir reglas **********
 let ruleCount = 0;

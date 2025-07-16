@@ -9,8 +9,7 @@
                 <% if (apartments) { %>
                     <% const apartment=apartments; %>
                         <form id="apartmentForm" action="/admin/apartment/edit/<%= apartment._id %>/save" method="POST"
-                            class="needs-validation" novalidate>
-                            <!-- Título y descripción -->
+                            class="needs-validation" novalidate enctype="multipart/form-data">
                             <div class="row g-4 mb-4">
                                 <div class="col-md-6">
                                     <label for="title" class="form-label">Título del apartamento</label>
@@ -29,11 +28,10 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- Reglas -->
                             <div class="mb-4">
                                 <label class="form-label">Normas</label>
                                 <div id="rulesContainer">
-                                    
+
                                     <% if (apartment.rules && apartment.rules.length> 0) { %>
                                         <% apartment.rules.forEach(function(rule) { %>
                                             <div class="input-group mb-2">
@@ -46,91 +44,107 @@
                                                     onclick="this.parentNode.remove()">Eliminar</button>
                                             </div>
                                             <% }) %>
-                                                    <% } %>
+                                                <% } %>
                                 </div>
                                 <button type="button" class="btn btn-outline-secondary btn-sm mt-2"
                                     onclick="addRuleInput()">+ Añadir norma</button>
                             </div>
 
-
-
                             <div class="mb-3">
                                 <label class="form-label">Fotos</label>
-                                <div id="photosContainer">
-                                    <% if (apartment.photos && apartment.photos.length> 0) { %>
+
+                                <div id="existingPhotosContainer">
+                                    <% if (apartment.photos && apartment.photos.length > 0) { %>
                                         <% apartment.photos.forEach(function(photo, index) { %>
-
-
-
-
-
-
-                                            <div class="row g-2 align-items-center mb-2">
-                                                <div class="col-md-7">
-                                                    <input type="text" name="photos[<%= index %>][url]"
-                                                        class="form-control" value="<%= photo.url %>"
-                                                        placeholder="URL de la foto" required>
+                                            <fieldset class="photo-fieldset-existing mt-4" id="existingPhotoFieldset_<%= index %>">
+                                                <legend>Foto <%= index + 1 %></legend>
+                                                <div class="mb-3">
+                                                    <% if (photo.url.startsWith('/uploads')) { %>
+                                                        <p><strong>Tipo:</strong> Subida local</p>
+                                                        <img src="<%= photo.url %>" alt="<%= photo.description %>"
+                                                            class="img-thumbnail mb-2" style="max-width: 150px;">
+                                                        <input type="hidden" name="existingPhotos[<%= index %>][url]"
+                                                            value="<%= photo.url %>">
+                                                        <input type="hidden" name="existingPhotos[<%= index %>][type]"
+                                                            value="local">
+                                                    <% } else { %>
+                                                        <p><strong>Tipo:</strong> URL externa</p>
+                                                        <a href="<%= photo.url %>" target="_blank"
+                                                            class="d-block mb-2">Ver foto</a>
+                                                        <input type="hidden" name="existingPhotos[<%= index %>][url]"
+                                                            value="<%= photo.url %>">
+                                                        <input type="hidden" name="existingPhotos[<%= index %>][type]"
+                                                            value="url">
+                                                    <% } %>
                                                 </div>
-                                                <div class="col-md-3">
-                                                    <input type="text" name="photos[<%= index %>][description]"
-                                                        class="form-control" value="<%= photo.description || '' %>"
-                                                        placeholder="Descripción">
+                                                <div class="mb-3">
+                                                    <label for="existingPhotos_<%= index %>_description"
+                                                        class="form-label">Descripción:</label>
+                                                    <input type="text"
+                                                        name="existingPhotos[<%= index %>][description]"
+                                                        id="existingPhotos_<%= index %>_description" class="form-control"
+                                                        value="<%= photo.description || '' %>"
+                                                        placeholder="Descripción de la foto" />
                                                 </div>
-                                                <div class="col-md-1 d-flex align-items-center justify-content-center">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="radio"
-                                                            name="mainPhotoIndex" value="<%= index %>" <%=photo.isMain
-                                                            ? 'checked' : '' %>>
+                                                <div class="form-check">
+                                                    <input type="radio" name="mainPhotoIndex"
+                                                        id="existingMainPhoto_<%= index %>" value="<%= index %>"
+                                                        class="form-check-input" <%=photo.isMain ? "checked" : "" %>>
+                                                    <label class="form-check-label"
+                                                        for="existingMainPhoto_<%= index %>">Foto Principal</label>
+                                                </div>
+                                                
+                                                <button type="button" class="btn btn-danger btn-sm mt-2"
+                                                    data-bs-toggle="modal" data-bs-target="#deletePhotoModal-<%= index %>">
+                                                    Eliminar esta foto
+                                                </button>
+
+                                                <hr />
+                                            </fieldset>
+
+                                            <div class="modal fade" id="deletePhotoModal-<%= index %>" tabindex="-1"
+                                                aria-labelledby="deletePhotoLabel-<%= index %>" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header bg-danger text-white">
+                                                            <h5 class="modal-title" id="deletePhotoLabel-<%= index %>">
+                                                                Confirmar eliminación de foto
+                                                            </h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                                aria-label="Cerrar"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            ¿Estás seguro de que quieres eliminar esta foto?
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary btn-sm"
+                                                                data-bs-dismiss="modal">
+                                                                Cancelar
+                                                            </button>
+                                                            <button type="button" class="btn btn-danger btn-sm"
+                                                                onclick="confirmRemoveExistingPhoto(<%= index %>)">
+                                                                Sí, eliminar
+                                                            </button>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="col-md-1 d-flex align-items-center">
-                                                    <!-- <button type="button" class="btn btn-outline-danger"
-                                                        onclick="this.closest('.row').remove()">Eliminar</button> -->
                                                 </div>
                                             </div>
-
-
-
-
-
-
-
-                                            <% }) %>
+                                            <% }); %>
                                                 <% } else { %>
-                                                    <div class="row g-2 align-items-center mb-2">
-                                                        <div class="col-md-8">
-                                                            <input type="text" name="photos[0][url]"
-                                                                class="form-control" placeholder="URL de la foto"
-                                                                required>
-                                                        </div>
-                                                        <div class="col-md-3">
-                                                            <input type="text" name="photos[0][description]"
-                                                                class="form-control" placeholder="Descripción">
-                                                        </div>
-                                                        <div class="col-md-1 d-flex align-items-center">
-                                                            <div class="form-check">
-                                                                <input class="form-check-input" type="radio"
-                                                                    name="mainPhotoIndex" value="0" checked>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                    <p id="noExistingPhotosMessage">No hay fotos actuales.</p>
                                                     <% } %>
                                 </div>
-                                <button type="button" class="btn btn-sm btn-outline-success mt-2"
-                                    onclick="addPhotoFields()">+
-                                    Añadir foto</button>
 
-
+                                <label class="form-label mt-4">Añadir nuevas fotos</label>
+                                <div id="newPhotosContainer" class="mb-2"></div>
+                                <button type="button" id="addNewPhotoButton" onclick="addNewPhotoField()"
+                                    class="btn btn-outline-secondary btn-sm">
+                                    + Añadir nueva foto
+                                </button>
+                                <small class="text-danger errorFoto" style="display:none;">
+                                    Debes añadir al menos una foto
+                                </small>
                             </div>
-
-
-
-
-
-
-
-
-                            <!-- Habitaciones y camas -->
                             <div class="row g-4 mb-4">
                                 <div class="col-md-6">
                                     <label for="rooms" class="form-label">Habitaciones</label>
@@ -175,7 +189,6 @@
                                 </div>
 
                             </div>
-                            <!-- Precio, huéspedes, metros -->
                             <div class="row g-4 mb-4">
                                 <div class="col-md-4">
                                     <label for="price" class="form-label">Precio por noche (€)</label>
@@ -202,71 +215,61 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- Servicios -->
                             <div class="mb-4">
                                 <legend class="form-label">Servicios</legend>
                                 <div class="row g-3">
                                     <% const s=apartment.services || {}; %>
-                                    
-
-
-
-
-
-                                        <% const services=[ 
-                                        { id: 'airConditioning' , label: 'Aire acondicionado', icon: 'bi bi-snow text-black me-1' }, 
-                                        {           id: 'heating' , label: 'Calefacción' , icon: 'bi bi-fire text-black me-1'}, 
-                                        { id: 'accessibility' ,                           label: 'Accesibilidad' , icon: 'bi bi-person-wheelchair text-black me-1'}, 
-                                        { id: 'television' , label: 'Televisión' , icon: 'bi bi-tv text-black me-1'}, 
-                                        {                 id: 'kitchen' , label: 'Cocina', icon: 'bi bi-cup-hot text-black me-1' },
-                                         { id: 'internet' , label: 'Internet', icon: 'bi bi-wifi text-black me-1' } ];
+                                        <% const services=[
+                                            { id: 'airConditioning' , label: 'Aire acondicionado', icon: 'bi bi-snow text-black me-1' },
+                                            { id: 'heating' , label: 'Calefacción' , icon: 'bi bi-fire text-black me-1'},
+                                            { id: 'accessibility' , label: 'Accesibilidad' , icon: 'bi bi-person-wheelchair text-black me-1'},
+                                            { id: 'television' , label: 'Televisión' , icon: 'bi bi-tv text-black me-1'},
+                                            { id: 'kitchen' , label: 'Cocina', icon: 'bi bi-cup-hot text-black me-1' },
+                                            { id: 'internet' , label: 'Internet', icon: 'bi bi-wifi text-black me-1' } ];
                                             %>
-
-
-
-
-
-
                                             <% services.forEach(service=> { %>
                                                 <div class="col-md-4">
                                                     <div class="form-check">
                                                         <input type="checkbox" name="services[<%= service.id %>]"
                                                             class="form-check-input" id="<%= service.id %>"
-                                                            <%=s[service.id] ? 'checked' : '' %>><i class="<% s[service.icon] %>"></i>
+                                                            <%=s[service.id] ? 'checked' : '' %>><i class="<% service.icon %>"></i>
                                                         <label class="form-check-label" for="<%= service.id %>">
                                                             <%= service.label %>
                                                         </label>
-                                                        
+
                                                     </div>
                                                 </div>
                                                 <% }) %>
                                 </div>
                             </div>
-                            <!-- Ubicación -->
                             <div class="row g-4 mb-4">
                                 <div class="col-md-4">
                                     <label for="provinceSelect" class="form-label">Selecciona una provincia</label>
                                     <select id="provinceSelect" name="tmpProvince" class="form-select" required
                                         data-selected="<%= apartment?.location?.province?.id || '' %>">
-                                        <option value="<%= apartment.location.province.id %>"><%= apartment.location.province.nm %></option>
+                                        <option value="<%= apartment.location.province.id %>">
+                                            <%= apartment.location.province.nm %>
+                                        </option>
                                     </select>
                                     <div class="invalid-feedback">
                                         Por favor, selecciona una provincia.
                                     </div>
-              <input type="hidden" name="location[province][id]" id="provinceIdInput">
-              <input type="hidden" name="location[province][nm]" id="provinceNameInput">
+                                    <input type="hidden" name="location[province][id]" id="provinceIdInput">
+                                    <input type="hidden" name="location[province][nm]" id="provinceNameInput">
                                 </div>
                                 <div class="col-md-4">
                                     <label for="municipalitySelect" class="form-label">Selecciona un municipio</label>
                                     <select id="municipalitySelect" name="location[city]" class="form-select" required
                                         data-selected="<%= apartment?.location?.municipality?.id || '' %>">
-                                        <option value="<%= apartment.location.municipality.id %>"><%= apartment.location.municipality.nm %></option>
+                                        <option value="<%= apartment.location.municipality.id %>">
+                                            <%= apartment.location.municipality.nm %>
+                                        </option>
                                     </select>
                                     <div class="invalid-feedback">
                                         Por favor, selecciona un municipio.
                                     </div>
-              <input type="hidden" name="location[municipality][id]" id="municipalityIdInput">
-              <input type="hidden" name="location[municipality][nm]" id="municipalityNameInput">
+                                    <input type="hidden" name="location[municipality][id]" id="municipalityIdInput">
+                                    <input type="hidden" name="location[municipality][nm]" id="municipalityNameInput">
                                 </div>
                                 <div class="col-md-2">
                                     <label for="lat" class="form-label">Latitud (GPS)</label>
@@ -279,7 +282,6 @@
                                         class="form-control" value="<%= apartment.location.gpsCoordinates.lng %>">
                                 </div>
                             </div>
-                            <!-- Estado -->
                             <div class="form-check form-switch mb-4">
                                 <input class="form-check-input" type="checkbox" id="active" name="active" value="true"
                                     <%=apartment.active ? 'checked' : '' %>>
@@ -287,7 +289,6 @@
                                     <%= apartment.active ? 'Activado' : 'Desactivado' %>
                                 </label>
                             </div>
-                            <!-- Botones -->
                             <div class="d-flex gap-3 mt-4">
                                 <button type="submit" class="btn btn-primary">Guardar cambios</button>
                                 <a href="/seeApartments" class="btn btn-secondary">Cancelar</a>

@@ -2,7 +2,8 @@
 import { Router } from 'express';
 import { requireAuth, requireAdmin } from '../middlewares/auth.js';
 import * as adminController from '../controllers/admin.controller.js';
-import {upload} from '../middlewares/uploadMiddleware.js';
+import { uploadApartmentImages } from '../middlewares/uploadApartments.js'; 
+import { uploadNewApartmentTempImages  } from '../middlewares/uploadApartments.js'; 
 const router = Router();
 
 //  ******************** USERS ******************** 
@@ -35,14 +36,14 @@ router.get('/reservations', requireAuth, requireAdmin, adminController.getReserv
 // GET new Apartment
 router.get("/apartment/new", requireAuth, requireAdmin, adminController.getNewApartment);
 // POST new Apartment
-router.post("/apartment/new", adminController.postNewApartment);
+router.post("/apartment/new", uploadNewApartmentTempImages.array('apartmentPhotos'), adminController.postNewApartment);
 
 // ******************** PARAMS ********************
 //GET edit apartment
 router.get("/apartments/edit/:id", requireAuth, requireAdmin, adminController.getApartmentEdit);
 //POST edit apartment
-router.post("/apartment/edit/:id/save", requireAuth, requireAdmin, adminController.putApartmentEdit);
-
+// router.post("/apartment/edit/:id/save", requireAuth, requireAdmin, adminController.putApartmentEdit);
+router.post("/apartment/edit/:id/save", requireAuth, requireAdmin, uploadApartmentImages.fields([{ name: 'apartmentPhotos'},]), adminController.putApartmentEdit);
 //POST cancel Reservation
 router.post("/reservations/delete/:id", requireAuth, requireAdmin, adminController.postCancelReservation);
 
