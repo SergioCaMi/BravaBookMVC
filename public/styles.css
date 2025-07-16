@@ -7,3 +7,15 @@ body {
     background-repeat: no-repeat;      
     background-attachment: fixed;       
 }
+
+/* Estilos para hacer la fuente más pequeña en el footer */
+footer p,
+footer li a,
+.footer-bottom span { /* Selecciona los párrafos, enlaces de lista y el texto del copyright en el footer */
+    font-size: 0.9rem; /* Puedes ajustar este valor: 0.8rem, 0.75rem, etc. */
+}
+
+/* Opcional: si quieres afectar solo una sección específica, por ejemplo, el copyright */
+.footer-bottom {
+    font-size: 0.8rem; /* Tamaño de fuente más pequeño para el texto de copyright */
+}

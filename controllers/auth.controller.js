@@ -188,7 +188,7 @@ export const getSeeApartments = async (req, res) => {
 // GET Apartment Search
 export const getApartmentSearch = async (req, res) => {
   console.log("Query recibida:", req.query);
-
+  req.session.lastSearch = req.query;  //ojo
   const {
     sortPrice,
     minPrice,
@@ -296,7 +296,6 @@ export const getApartmentSearch = async (req, res) => {
   let sortvalue = 0;
   if (+sortPrice >= 0) sortvalue = 1;
   if (+sortPrice < 0) sortvalue = -1;
-
   try {
     const apartments = await Apartment.find(query).sort({ price: sortvalue });
     console.log(apartments._id);
