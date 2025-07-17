@@ -113,14 +113,3 @@
 
 <!-- Contenido principal de la página -->
 <main>
-    <!-- Comentado: Enlaces condicionales basados en el estado de autenticación y rol del usuario -->
-    <% if (!currentUser) { %>
-    <a href="/login">Iniciar sesión</a>
-    <a href="/register">Registrarse</a>
-    <% } else if (currentUser.role === 'admin') { %>
-    <a href="/admin/dashboard">Panel Admin</a>
-    <% } else { %>
-    <a href="/user/profile">Mi perfil</a>
-    <% } %>
-</main>
-</html>

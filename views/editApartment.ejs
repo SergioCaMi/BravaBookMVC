@@ -16,7 +16,7 @@
     <h2 class="mb-4 text-center text-primary fw-bold">Editar Apartamento</h2>
 
     <!-- Verifica si hay datos de apartamento disponibles -->
-    <% if (apartments) { %> <% const apartment = apartments; %>
+    <% if (apartment) { %>
 
     <!-- Formulario para editar el apartamento -->
     <form id="apartmentForm" action="/admin/apartment/edit/<%= apartment._id %>/save" method="POST" class="needs-validation" novalidate enctype="multipart/form-data">
@@ -170,10 +170,7 @@
       <div class="mb-4">
         <legend class="form-label">Servicios</legend>
         <div class="row g-3">
-          <% const s = apartment.services || {}; %> <% const services = [ { id: 'airConditioning', label: 'Aire acondicionado', icon: 'bi bi-snow text-black me-1' }, { id: 'heating', label:
-          'Calefacción', icon: 'bi bi-fire text-black me-1' }, { id: 'accessibility', label: 'Accesibilidad', icon: 'bi bi-person-wheelchair text-black me-1' }, { id: 'television', label:
-          'Televisión', icon: 'bi bi-tv text-black me-1' }, { id: 'kitchen', label: 'Cocina', icon: 'bi bi-cup-hot text-black me-1' }, { id: 'internet', label: 'Internet', icon: 'bi bi-wifi text-black
-          me-1' } ]; %> <% services.forEach(service => { %>
+          <% const s = apartment.services || {}; %> <% const services = [ { id: 'airConditioning', label: 'Aire acondicionado', icon: 'bi bi-snow text-black me-1' }, { id: 'heating', label:'Calefacción', icon: 'bi bi-fire text-black me-1' }, { id: 'accessibility', label: 'Accesibilidad', icon: 'bi bi-person-wheelchair text-black me-1' }, { id: 'television', label:'Televisión', icon: 'bi bi-tv text-black me-1' }, { id: 'kitchen', label: 'Cocina', icon: 'bi bi-cup-hot text-black me-1' }, { id: 'internet', label: 'Internet', icon: 'bi bi-wifi text-black me-1' } ]; %> <% services.forEach(service => { %>
           <div class="col-md-4">
             <div class="form-check">
               <input type="checkbox" name="services[<%= service.id %>]" class="form-check-input" id="<%= service.id %>" <%= s[service.id] ? 'checked' : '' %>>

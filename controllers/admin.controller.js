@@ -383,7 +383,7 @@ export const getApartmentEdit = async (req, res) => {
       req.flash("error_msg", "El apartamento no se ha encontrado.");
       return res.redirect("/admin");
     }
-    res.render("editApartment.ejs", { title: "admin", apartments: apartment }); // Usar 'apartments' para mantener la consistencia con la vista
+    res.render("editApartment.ejs", { title: "admin", apartment: apartment }); // Usar 'apartments' para mantener la consistencia con la vista
   } catch (err) {
     console.error("Error al obtener apartamento para edición:", err);
     req.flash("error_msg", "Error interno del servidor al obtener apartamento.");
