@@ -1,224 +1,253 @@
-// Espera a que el DOM esté completamente cargado antes de ejecutar el script.
 document.addEventListener("DOMContentLoaded", () => {
-  // --- Inicialización de ToolTips de Bootstrap ---
-
-  // Selecciona todos los elementos con el atributo `data-bs-toggle="tooltip"`
-  // y los convierte en un array para poder iterar sobre ellos.
+  // Inicialización de ToolTips de Bootstrap
   const tooltipTriggerList = [].slice.call(
     document.querySelectorAll('[data-bs-toggle="tooltip"]')
   );
-  // Itera sobre la lista de elementos y para cada uno, inicializa un tooltip de Bootstrap.
   tooltipTriggerList.map((el) => new bootstrap.Tooltip(el));
 
-  // --- Funcionalidad de Camas por Habitación ---
+  // ********** Camas por habitación **********
+  const roomsInput = document.getElementById("rooms");
+  const bedsContainer = document.getElementById("bedsContainer");
 
-  // Obtiene las referencias a los elementos del DOM.
-  const roomsInput = document.getElementById("rooms"); // Input para el número total de habitaciones.
-  const bedsContainer = document.getElementById("bedsContainer"); // Contenedor donde se añadirán los inputs de camas.
-
-  /**
-   * Genera dinámicamente campos de entrada para especificar el número de camas por cada habitación.
-   * La cantidad de campos generados depende del valor introducido en `roomsInput`.
-   */
   function generateBedInputs() {
-    // Obtiene el número de habitaciones del input, asegurándose de que sea un número entero.
     const roomCount = parseInt(roomsInput.value) || 0;
-    // Limpia el contenido actual del contenedor de camas.
-    bedsContainer.innerHTML = "";
+    bedsContainer.innerHTML = ""; // Limpia los campos anteriores
 
-    // Si el número de habitaciones es cero o negativo, no se generan inputs.
-    if (roomCount <= 0) return;
+    if (roomCount <= 0) return; // No generar campos si no hay habitaciones
 
-    // Crea y añade un título al contenedor de camas.
     const title = document.createElement("h6");
     title.textContent = "Camas por habitación:";
     title.className = "mb-3";
     bedsContainer.appendChild(title);
 
-    // Crea un contenedor de fila para los inputs, utilizando clases de Bootstrap para el diseño.
     const row = document.createElement("div");
     row.className = "row g-3";
 
-    // Itera para crear un input por cada habitación.
     for (let i = 0; i < roomCount; i++) {
-      // Crea una columna para cada input.
       const col = document.createElement("div");
-      col.className = "col-md-6"; // Media columna en pantallas medianas y grandes.
+      col.className = "col-md-6";
 
-      // Crea la etiqueta (label) para el input.
       const label = document.createElement("label");
-      label.setAttribute("for", `bedsPerRoom[${i}]`); // Asocia el label con el input.
-      label.textContent = `Camas en habitación ${i + 1}`; // Texto del label.
+      label.setAttribute("for", `bedsPerRoom[${i}]`);
+      label.textContent = `Camas en habitación ${i + 1}`;
       label.className = "form-label";
 
-      // Crea el input para el número de camas.
       const input = document.createElement("input");
-      input.type = "number"; // Tipo numérico.
-      input.name = `bedsPerRoom[${i}]`; // Nombre que permitirá a Express/Mongoose parsear como un array.
-      input.min = "0"; // Valor mínimo permitido.
-      input.value = "1"; // Valor por defecto.
-      input.required = true; // El campo es obligatorio.
-      input.className = "form-control"; // Clase de estilo de Bootstrap.
+      input.type = "number";
+      input.name = `bedsPerRoom[${i}]`;
+      input.min = "0";
+      input.value = "1";
+      input.required = true; // Campo requerido
+      input.className = "form-control";
 
-      // Añade el label y el input a la columna.
       col.appendChild(label);
       col.appendChild(input);
-      // Añade la columna a la fila.
       row.appendChild(col);
     }
 
-    // Añade la fila completa al contenedor principal de camas.
     bedsContainer.appendChild(row);
   }
 
-  // Verifica si los elementos existen antes de añadir el event listener.
+  // Asocia la función a la entrada de número de habitaciones si los elementos existen
   if (roomsInput && bedsContainer) {
-    // Añade un event listener al input de habitaciones para que llame a `generateBedInputs`
-    // cada vez que su valor cambie (ej. al escribir o usar las flechas).
     roomsInput.addEventListener("input", generateBedInputs);
-    // Llama a la función una vez al cargar la página para inicializar los campos
-    // si ya hay un valor por defecto o si se recargó la página con datos previos.
-    generateBedInputs(); 
   }
 
-  // --- Validación del Formulario ---
-
-  // Obtiene la referencia al formulario principal.
+  // ********** Validación del formulario **********
   const form = document.getElementById("apartmentForm");
 
-  // Añade un event listener para el evento 'submit' del formulario.
   form.addEventListener("submit", function (e) {
-    let isValid = true; // Bandera para controlar la validez general del formulario.
+    let isValid = true;
 
-    // Usa la validación nativa de HTML5 para los campos del formulario.
+    // Validación estándar de Bootstrap
     if (!form.checkValidity()) {
-      isValid = false; // Si hay campos no válidos según HTML5, el formulario no es válido.
+      isValid = false;
     }
 
-    // --- Validación específica para la subida de fotos ---
-    const errorFotoElement = document.querySelector(".errorFoto"); // Elemento para mostrar el error de foto.
-    const photoClickedInput = document.getElementById("photoButtonClicked"); // Input oculto que indica si se ha añadido alguna foto.
-    // Comprueba si el input oculto existe y si su valor es "true", indicando que al menos una foto fue añadida.
-    const fotoAgregada = photoClickedInput && photoClickedInput.value === "true";
+    // Validación personalizada para fotos
+    const errorFotoElement = document.querySelector(".errorFoto");
+    const photoClickedInput = document.getElementById("photoButtonClicked");
+    // Verificar si se ha añadido al menos un campo de foto (sea archivo o URL)
+    const totalPhotoFields = document.querySelectorAll('.photo-fieldset').length;
 
-    // Si no se ha añadido ninguna foto (`fotoAgregada` es false).
-    if (!fotoAgregada) {
-      // Muestra el mensaje de error de la foto.
+    if (totalPhotoFields === 0) { // Si no hay ningún campo de foto añadido
       if (errorFotoElement) errorFotoElement.style.display = "inline";
-      isValid = false; // El formulario no es válido.
+      isValid = false;
     } else {
-      // Si se añadió al menos una foto, oculta el mensaje de error.
+      // Si hay campos de foto, ocultar el mensaje de error si estaba visible
       if (errorFotoElement) errorFotoElement.style.display = "none";
+      // Asegurarse de que el input oculto de validación esté en 'true'
+      if (photoClickedInput) photoClickedInput.value = "true";
     }
 
-    // Si el formulario no es válido (ya sea por validación HTML5 o por la validación de fotos).
+    // Si la validación falla, prevenir el envío del formulario
     if (!isValid) {
-      e.preventDefault(); // Evita el envío del formulario.
-      e.stopPropagation(); // Detiene la propagación del evento para evitar comportamientos no deseados.
+      e.preventDefault();
+      e.stopPropagation();
     }
 
-    // Añade la clase 'was-validated' al formulario. Esto activa las clases de estilo de Bootstrap
-    // para mostrar retroalimentación visual de validación (ej. bordes rojos/verdes).
+    // Añade clases de Bootstrap para mostrar la retroalimentación de validación
     form.classList.add("was-validated");
   });
+
+
+  // Asegurarse de que el formulario tenga enctype="multipart/form-data" si no lo tiene (redundante si ya está en HTML)
+  // const form = document.getElementById('apartmentForm'); // Ya está definido arriba
+  if (form && !form.enctype) {
+    form.enctype = 'multipart/form-data';
+  }
+
+
+  // ********** Gestión de eliminar campos de fotos nuevas **********
+  // Este evento se delega al documento para capturar clics en botones
+  // que se añaden dinámicamente.
+  document.addEventListener("click", function(event) {
+    if (event.target.classList.contains("remove-new-photo-field")) {
+      event.target.closest(".photo-fieldset").remove();
+      // Opcional: Reajustar photoCount si se reordenan o se usan índices específicos,
+      // pero para "nuevas fotos" con nombres de array, no es estrictamente necesario.
+      // Aquí, solo eliminamos el elemento del DOM.
+    }
+  });
+
+
+  // Asegurarse de que el contador photoCount se inicialice correctamente.
+  // En la creación, siempre empezamos en 0 si no hay fotos precargadas.
+  //let photoCount = 0; // Esta línea debería estar fuera del DOMContentLoaded o ser global.
+  // Mover `photoCount` fuera de `DOMContentLoaded` o declararla sin `let` aquí
+  // si ya está declarada globalmente arriba, para que `addNewPhotoField` pueda acceder.
 });
 
-// --- Funcionalidad para Añadir Campos de Imagen ---
 
-// Variable global para llevar la cuenta de cuántos campos de foto se han añadido.
+// ********** Funciones Globales para añadir elementos dinámicamente **********
+// Declarar photoCount globalmente para que todas las funciones puedan acceder a ella.
 let photoCount = 0;
 
 /**
- * Añade un nuevo conjunto de campos (input de archivo, descripción, y radio para foto principal)
- * para subir una imagen de apartamento.
+ * Añade un nuevo campo para subir una foto (archivo o URL) al formulario.
  */
-function addPhotoField() {
-  // Marca el input oculto `photoButtonClicked` como 'true' para indicar que se añadió una foto.
-  const photoClickedInput = document.getElementById("photoButtonClicked");
-  if (photoClickedInput) {
-    photoClickedInput.value = "true";
-  }
+function addNewPhotoField() {
+    const photoClickedInput = document.getElementById("photoButtonClicked");
+    if (photoClickedInput) {
+        photoClickedInput.value = "true"; // Indica que se ha intentado añadir una foto
+    }
 
-  // Obtiene el contenedor donde se añadirán los nuevos campos de foto.
-  const container = document.getElementById("photosContainer");
-  // Crea un nuevo `fieldset` para agrupar los campos de una foto individual.
-  const fieldset = document.createElement("fieldset");
-  fieldset.className = "photo-fieldset"; // Clase para estilos CSS.
+    const container = document.getElementById("photosContainer");
+    const fieldset = document.createElement("fieldset");
+    fieldset.className = "photo-fieldset border p-3 mb-3 rounded"; // Añadimos estilos para mejor visualización
+    fieldset.id = `newPhotoFieldset_${photoCount}`; // Añadimos un ID para fácil referencia
 
-  // Define el contenido HTML del nuevo `fieldset` utilizando un template string.
-  fieldset.innerHTML = `
-    <legend>Foto ${photoCount + 1}</legend>
+    fieldset.innerHTML = `
+        <legend class="h6">Foto ${photoCount + 1}</legend>
 
-    <div class="mb-3">
-        <label for="apartmentPhotos_${photoCount}" class="form-label">Seleccionar archivo de foto:</label>
-        <input type="file" 
-               name="apartmentPhotos"   // Nombre para Multer (recibe un array de archivos).
-               id="apartmentPhotos_${photoCount}" 
-               class="form-control" 
-               accept="image/*"         // Solo permite seleccionar archivos de imagen.
-               required>                // Campo obligatorio.
-    </div>
+        <div class="mb-3">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="newPhotos[${photoCount}][uploadType]" id="uploadTypeFile_${photoCount}" value="file" onchange="toggleNewPhotoInput(${photoCount}, 'file')" checked>
+                <label class="form-check-label" for="uploadTypeFile_${photoCount}">Subir archivo</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="newPhotos[${photoCount}][uploadType]" id="uploadTypeUrl_${photoCount}" value="url" onchange="toggleNewPhotoInput(${photoCount}, 'url')">
+                <label class="form-check-label" for="uploadTypeUrl_${photoCount}">Usar URL</label>
+            </div>
+        </div>
 
-    <div class="mb-3">
-        <label for="photos[${photoCount}][description]" class="form-label">Descripción de la foto:</label>
-        <input type="text" 
-               name="photos[${photoCount}][description]" // Nombre para parsear la descripción como parte de un array de objetos.
-               id="photos[${photoCount}][description]"
-               class="form-control" />
-    </div>
+        <div id="newFileInputContainer_${photoCount}" class="mb-3">
+            <label for="newFileInput_${photoCount}" class="form-label">Seleccionar archivo de foto:</label>
+            <input type="file" 
+                   name="newPhotos[${photoCount}][file]" 
+                   id="newFileInput_${photoCount}" 
+                   class="form-control" 
+                   accept="image/*">
+        </div>
 
-    <div class="form-check">
-        <input type="radio" 
-               name="mainPhotoIndex"   // Todos los radios comparten el mismo nombre para que solo uno pueda ser seleccionado.
-               id="mainPhoto_${photoCount}"
-               value="${photoCount}"    // El valor es el índice de la foto.
-               class="form-check-input"
-               ${photoCount === 0 ? "checked" : ""}> // La primera foto añadida se marca como principal por defecto.
-        <label class="form-check-label" for="mainPhoto_${photoCount}">Foto Principal</label>
-    </div>
+        <div id="newUrlInputContainer_${photoCount}" class="mb-3" style="display:none;">
+            <label for="newUrlInput_${photoCount}" class="form-label">URL de la foto:</label>
+            <input type="url" 
+                   name="newPhotos[${photoCount}][url]" 
+                   id="newUrlInput_${photoCount}" 
+                   class="form-control" 
+                   placeholder="https://ejemplo.com/imagen.jpg">
+        </div>
 
-    <hr /> // Separador visual entre los fieldsets de fotos.
-  `;
-  // Añade el nuevo `fieldset` al contenedor de fotos.
-  container.appendChild(fieldset);
-  photoCount++; // Incrementa el contador de fotos.
+        <div class="mb-3">
+            <label for="newPhotoDescription_${photoCount}" class="form-label">Descripción de la foto:</label>
+            <input type="text" 
+                   name="newPhotos[${photoCount}][description]" 
+                   id="newPhotoDescription_${photoCount}"
+                   class="form-control" />
+        </div>
+
+        <div class="form-check mb-3">
+            <input type="radio" 
+                   name="mainPhotoIndex" 
+                   id="mainPhoto_${photoCount}"
+                   value="new_${photoCount}" 
+                   class="form-check-input"
+                   ${photoCount === 0 ? "checked" : ""}>
+            <label class="form-check-label" for="mainPhoto_${photoCount}">Foto Principal</label>
+        </div>
+
+        <button type="button" class="btn btn-outline-danger btn-sm remove-new-photo-field">
+            Eliminar esta foto
+        </button>
+    `;
+    container.appendChild(fieldset);
+    photoCount++;
 }
 
-// --- Funcionalidad para Añadir Campos de Reglas ---
-
-// Variable global para llevar la cuenta de cuántos campos de regla se han añadido.
-let ruleCount = 0;
-
 /**
- * Añade un nuevo campo de entrada de texto para una regla del apartamento.
+ * Alterna la visibilidad de los campos de input de archivo y URL.
+ * @param {number} index El índice del campo de foto actual.
+ * @param {string} type El tipo de subida seleccionado ('file' o 'url').
  */
+function toggleNewPhotoInput(index, type) {
+    const fileInputContainer = document.getElementById(`newFileInputContainer_${index}`);
+    const urlInputContainer = document.getElementById(`newUrlInputContainer_${index}`);
+    const fileInput = document.getElementById(`newFileInput_${index}`);
+    const urlInput = document.getElementById(`newUrlInput_${index}`);
+
+    if (type === 'file') {
+        fileInputContainer.style.display = 'block';
+        urlInputContainer.style.display = 'none';
+        urlInput.value = ''; // Limpiar el valor de la URL cuando se cambia a archivo
+        fileInput.required = true; // Hacer requerido el input de archivo
+        urlInput.required = false; // Quitar el requerido del input de URL
+    } else { // type === 'url'
+        fileInputContainer.style.display = 'none';
+        urlInputContainer.style.display = 'block';
+        // No limpiar el valor del archivo cuando se cambia a URL, ya que Multer lo ignorará si no se usa.
+        // Pero el input de archivo no se "limpia" de la misma manera que un input de texto/url.
+        fileInput.value = ''; // Esto sí limpia el archivo seleccionado
+        fileInput.required = false; // Quitar el requerido del input de archivo
+        urlInput.required = true; // Hacer requerido el input de URL
+    }
+}
+
+
+// ********** Función para añadir reglas **********
+let ruleCount = 0; // Se inicializa globalmente o al cargar el DOM
+
 function addRuleField() {
-  // Obtiene el contenedor donde se añadirán los nuevos campos de reglas.
   const container = document.getElementById("rulesContainer");
 
-  // Crea un nuevo div para agrupar el label y el input de la regla.
   const group = document.createElement("div");
-  group.className = "mb-2"; // Margen inferior.
+  group.className = "mb-2";
 
-  // Crea la etiqueta (label) para el input de la regla.
   const label = document.createElement("label");
-  label.setAttribute("for", `rules[${ruleCount}]`); // Asocia el label con el input.
-  label.textContent = `Regla #${ruleCount + 1}:`; // Texto del label.
+  label.setAttribute("for", `rules[${ruleCount}]`);
+  label.textContent = `Regla #${ruleCount + 1}:`;
   label.className = "form-label";
 
-  // Crea el input de texto para la regla.
   const input = document.createElement("input");
-  input.type = "text"; // Tipo de texto.
-  input.name = `rules[]`; // Nombre para que Express/Mongoose lo parseen como un array de cadenas.
-  input.placeholder = "Ej: CheckOut antes de las 12am."; // Texto de ejemplo.
-  input.className = "form-control"; // Clase de estilo de Bootstrap.
-  input.required = true; // El campo es obligatorio.
+  input.type = "text";
+  input.name = `rules[${ruleCount}]`; // Usar índice para el nombre para que el servidor lo reciba como un array
+  input.placeholder = "Ej: CheckOut antes de las 12am.";
+  input.className = "form-control";
+  input.required = true; // Campo requerido
 
-  // Añade el label y el input al grupo.
   group.appendChild(label);
   group.appendChild(input);
-  // Añade el grupo al contenedor principal de reglas.
   container.appendChild(group);
 
-  ruleCount++; // Incrementa el contador de reglas.
+  ruleCount++;
 }

@@ -1,17 +1,20 @@
+<!-- Incluye el encabezado de la página desde un archivo parcial, pasando el título como variable -->
 <%- include("partials/header", { title: title }) %>
 
-<!-- Leaflet CSS & JS -->
+<!-- Enlace a los archivos CSS y JS de Leaflet para el mapa -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 
+<!-- Estilos CSS para la página -->
 <style>
-
+  /* Estilo para el contenedor principal */
   .container {
     display: flex;
     height: 100vh;
     overflow: hidden;
   }
 
+  /* Estilo para la lista de apartamentos */
   #apartment-list {
     width: 300px;
     padding: 1rem;
@@ -22,12 +25,14 @@
     max-height: 90%;
   }
 
+  /* Estilo para el título de la lista de apartamentos */
   #apartment-list h2 {
     font-size: 1.4rem;
     margin-bottom: 1rem;
     color: #343a40;
   }
 
+  /* Estilo para cada elemento de la lista de apartamentos */
   .apartment-item {
     padding: 10px 15px;
     margin-bottom: 10px;
@@ -38,28 +43,33 @@
     cursor: pointer;
   }
 
+  /* Efecto hover para los elementos de la lista de apartamentos */
   .apartment-item:hover {
     background-color: #f1f1f1;
   }
 
+  /* Estilo para el elemento seleccionado de la lista de apartamentos -->
   .apartment-item.selected {
     background-color: #007bff;
     color: white;
     border-color: #007bff;
   }
 
+  /* Estilo para el texto en negrita dentro de los elementos de la lista -->
   .apartment-item strong {
     display: block;
     font-size: 1rem;
     margin-bottom: 3px;
   }
 
+  /* Estilo para el mapa -->
   #map {
     flex: 1;
     height: 100%;
     z-index: 0;
   }
 
+  /* Estilos para dispositivos móviles -->
   @media (max-width: 768px) {
     .container {
       flex-direction: column;
@@ -73,9 +83,12 @@
   }
 </style>
 
+<!-- Contenedor principal de la página -->
 <div class="container">
+  <!-- Lista de apartamentos -->
   <div id="apartment-list">
     <h2>Lista de Apartamentos</h2>
+    <!-- Genera la lista de apartamentos -->
     <% apartments.forEach(apartment => { %>
       <div class="apartment-item" data-id="<%= apartment._id %>">
         <strong><%= apartment.title %></strong>
@@ -84,28 +97,41 @@
     <% }) %>
   </div>
 
+  <!-- Mapa donde se mostrarán los apartamentos -->
   <div class="ratio ratio-1x1 rounded-circle overflow-hidden" id="map"></div>
 </div>
 
+<!-- Script para manejar la lógica del mapa y la lista de apartamentos -->
 <script>
   document.addEventListener('DOMContentLoaded', async () => {
+    // Inicializa el mapa y lo centra en España
     const map = L.map('map').setView([40.4168, -3.7038], 6);
 
+    // Añade una capa de mapa de OpenStreetMap
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
+    // Convierte los datos de los apartamentos a JSON
     const apartments = <%- JSON.stringify(apartments) %>;
+
+    // Obtiene todos los elementos de la lista de apartamentos
     const apartmentItems = document.querySelectorAll('.apartment-item');
+
+    // Array para almacenar los marcadores del mapa
     const markers = [];
 
+    // Función para geocodificar la dirección de un apartamento
     async function geocodeApartment(apartment) {
       const address = `${apartment.location.municipality.nm}, ${apartment.location.province.nm}, España`;
       const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
 
       try {
+        // Realiza una solicitud a Nominatim para obtener las coordenadas
         const response = await fetch(url);
         const data = await response.json();
+
+        // Si se obtienen datos, devuelve las coordenadas
         if (data && data.length > 0) {
           return {
             lat: parseFloat(data[0].lat),
@@ -115,31 +141,49 @@
       } catch (err) {
         console.error(`Error geocoding: ${address}`, err);
       }
-
       return null;
     }
 
+    // Función para colocar los marcadores en el mapa
     async function placeMarkers() {
       for (const apartment of apartments) {
+        // Obtiene las coordenadas del apartamento
         const coords = await geocodeApartment(apartment);
+
+        // Si se obtienen coordenadas, coloca un marcador en el mapa
         if (coords) {
           const marker = L.marker([coords.lat, coords.lon]).addTo(map);
+
+          // Añade un popup al marcador con información del apartamento
           marker.bindPopup(`
             <b>${apartment.title}</b><br>
             <a href="/apartments/${apartment._id}">Ver detalles</a>
           `);
+
+          // Guarda el marcador en el array de marcadores
           markers.push({ id: apartment._id, marker });
         }
-        await new Promise(resolve => setTimeout(resolve, 1000)); // evitar bloqueo por Nominatim
+
+        // Espera un segundo para evitar bloqueos por Nominatim
+        await new Promise(resolve => setTimeout(resolve, 1000));
       }
     }
 
+    // Añade un evento de clic a cada elemento de la lista de apartamentos
     apartmentItems.forEach(item => {
       item.addEventListener('click', () => {
         const id = item.dataset.id;
+
+        // Remueve la clase 'selected' de todos los elementos
         apartmentItems.forEach(i => i.classList.remove('selected'));
+
+        // Añade la clase 'selected' al elemento clickeado
         item.classList.add('selected');
+
+        // Encuentra el marcador correspondiente al apartamento clickeado
         const markerObj = markers.find(m => m.id === id);
+
+        // Si se encuentra el marcador, abre su popup y centra el mapa en él
         if (markerObj) {
           markerObj.marker.openPopup();
           map.setView(markerObj.marker.getLatLng(), 14);
@@ -147,8 +191,10 @@
       });
     });
 
+    // Llama a la función para colocar los marcadores en el mapa
     await placeMarkers();
   });
 </script>
 
+<!-- Incluye el pie de página desde un archivo parcial -->
 <%- include("partials/footer") %>

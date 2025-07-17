@@ -1,80 +1,55 @@
+<!-- Incluye el encabezado de la página desde un archivo parcial -->
 <%- include("partials/header.ejs") %>
 
+<!-- Contenedor principal del contenido -->
 <div class="container mt-5">
   <div class="row justify-content-center">
     <div class="col-md-6">
+      <!-- Tarjeta para el formulario de registro -->
       <div class="card shadow-sm my-5">
         <div class="card-body">
+          <!-- Título de la tarjeta -->
           <h3 class="card-title text-center mb-4">Registrarse</h3>
 
+          <!-- Incluye mensajes parciales, como notificaciones o alertas -->
           <%- include("partials/mensajes") %>
 
+          <!-- Formulario de registro -->
           <form action="/register" method="POST" id="registerForm" class="needs-validation" novalidate>
-            <!-- Nombre -->
+            <!-- Campo para el nombre -->
             <div class="mb-3">
               <label for="name" class="form-label">Nombre</label>
-              <input
-                type="text"
-                name="name"
-                id="name"
-                class="form-control"
-                placeholder="Nombre"
-                required
-              />
-              <div class="invalid-feedback">
-                Por favor, introduce tu nombre.
-              </div>
+              <input type="text" name="name" id="name" class="form-control" placeholder="Nombre" required>
+              <div class="invalid-feedback">Por favor, introduce tu nombre.</div>
             </div>
 
-            <!-- Email -->
+            <!-- Campo para el correo electrónico -->
             <div class="mb-3">
               <label for="email" class="form-label">Email</label>
-              <input
-                type="email"
-                name="email"
-                id="email"
-                class="form-control"
-                placeholder="Email"
-                required
-              />
-              <div class="invalid-feedback">
-                Por favor, introduce un email válido.
-              </div>
+              <input type="email" name="email" id="email" class="form-control" placeholder="Email" required>
+              <div class="invalid-feedback">Por favor, introduce un email válido.</div>
             </div>
 
-            <!-- Contraseña -->
+            <!-- Campo para la contraseña -->
             <div class="mb-3">
               <label for="password" class="form-label">Contraseña</label>
               <div class="d-flex align-items-center gap-2">
-                <input
-                  type="password"
-                  name="password"
-                  id="password"
-                  class="form-control"
-                  placeholder="Contraseña (8-16 caracteres)"
+                <input type="password" name="password" id="password" class="form-control" placeholder="Contraseña (8-16 caracteres)"
                   pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,16}$"
-                  title="Debe tener entre 8 y 16 caracteres, al menos una letra, un número y un símbolo."
-                  required
-                />
-                <i
-                  class="bi bi-eye-slash text-secondary"
-                  style="font-size: 1.2rem; cursor: pointer;"
-                  id="togglePassword"
-                  title="Mostrar/ocultar contraseña"
-                ></i>
+                  title="Debe tener entre 8 y 16 caracteres, al menos una letra, un número y un símbolo." required>
+                <!-- Icono para mostrar/ocultar la contraseña -->
+                <i class="bi bi-eye-slash text-secondary" style="font-size: 1.2rem; cursor: pointer;" id="togglePassword" title="Mostrar/ocultar contraseña"></i>
               </div>
-              <div class="invalid-feedback">
-                Debe tener entre 8 y 16 caracteres, al menos una letra, un número y un símbolo.
-              </div>
+              <div class="invalid-feedback">Debe tener entre 8 y 16 caracteres, al menos una letra, un número y un símbolo.</div>
             </div>
 
-            <!-- Botón -->
+            <!-- Botón para enviar el formulario -->
             <div class="d-grid">
               <button type="submit" class="btn btn-primary">Registrarse</button>
             </div>
           </form>
 
-          <!-- Enlace Login -->
+          <!-- Enlace para redirigir a la página de inicio de sesión -->
           <div class="mt-3 text-center">
             <a href="/login">¿Ya tienes cuenta? Inicia sesión</a>
           </div>
@@ -84,7 +59,7 @@
   </div>
 </div>
 
-<!-- Script de validación + toggle -->
+<!-- Script para la validación del formulario y el toggle de la contraseña -->
 <script>
   // Validación del formulario
   const form = document.getElementById('registerForm');
@@ -98,10 +73,9 @@
     });
   }
 
-  // Toggle contraseña
+  // Toggle para mostrar/ocultar la contraseña
   const passwordInput = document.getElementById("password");
   const toggleIcon = document.getElementById("togglePassword");
-
   if (toggleIcon && passwordInput) {
     toggleIcon.addEventListener("click", function () {
       const type = passwordInput.type === "password" ? "text" : "password";
@@ -112,4 +86,5 @@
   }
 </script>
 
+<!-- Incluye el pie de página desde un archivo parcial -->
 <%- include("partials/footer.ejs") %>

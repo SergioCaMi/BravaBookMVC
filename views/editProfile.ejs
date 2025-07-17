@@ -1,60 +1,89 @@
+<!-- Incluye el encabezado de la página desde un archivo parcial -->
 <%- include("partials/header") %>
-  <%- include("partials/mensajes") %>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm mb-4">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#">BravaBook Dashboard</a>
-        <div class="ms-auto">
-          <a href="/logout" class="btn btn-outline-primary">Cerrar sesión</a>
-        </div>
-      </div>
-    </nav>
-    <div class="container-fluid">
-      <div class="row">
-        <!-- Aside - Menú lateral -->
-        <aside class="col-md-3 col-lg-2 d-flex flex-column p-4 bg-light border-end">
-          <h5 class="mb-3">Menú</h5>
-          <ul class="nav nav-pills flex-column">
-            <li class="nav-item">
-              <a href="<%= user.role === 'admin' ? '/admin/dashboard' : '/dashboard' %>" class="nav-link">Perfil</a>
-            </li>
-            <li class="nav-item">
-              <a href="#" class="nav-link">Reservas</a>
-            </li>
-            <li class="nav-item">
-              <a href="/profile/edit" class="nav-link active">Configuración</a>
-            </li>
-          </ul>
-        </aside>
-        <!-- Main Content -->
-        <main class="col-md-9 col-lg-10 p-4">
-          <div class="container mt-5">
-            <h2 class="mb-4">Editar perfil</h2>
-            <form action="/profile/update" method="POST" enctype="multipart/form-data">
-              <div class="mb-3 text-center">
-                <img src="/uploads/<%= currentUser.avatar %>" class="rounded-circle"
-                  style="width: 200px; height: 200px; object-fit: cover;" alt="Avatar">
-                <p>Avatar</p>
-              </div>
-              <div class="mb-3">
-                <label for="avatar" class="form-label">Cambiar avatar</label>
-                <input type="file" name="avatar" id="avatar" class="form-control" accept="image/*">
-              </div>
-              <div class="mb-3">
-                <label for="name" class="form-label">Nombre</label>
-                <input type="text" name="name" id="name" class="form-control" value="<%= user.name %>" required>
-              </div>
-              <div class="mb-3">
-                <label for="email" class="form-label">Correo electrónico</label>
-                <input type="email" name="email" id="email" class="form-control" value="<%= user.email %>" required>
-              </div>
-              <div class="mb-3">
-                <label for="bio" class="form-label">Biografía</label>
-                <textarea name="bio" id="bio" class="form-control" rows="4"><%= user.bio || '' %></textarea>
-              </div>
-              <button type="submit" class="btn btn-success my-5">Guardar cambios</button>
-            </form>
-          </div>
-        </main>
-      </div>
+
+<!-- Incluye mensajes parciales, como notificaciones o alertas -->
+<%- include("partials/mensajes") %>
+
+<!-- Barra de navegación superior -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm mb-4">
+  <div class="container-fluid">
+    <!-- Logo o nombre de la marca -->
+    <a class="navbar-brand" href="#">BravaBook Dashboard</a>
+    <!-- Botón para cerrar sesión -->
+    <div class="ms-auto">
+      <a href="/logout" class="btn btn-outline-primary">Cerrar sesión</a>
     </div>
-    <%- include("partials/footer") %>
+  </div>
+</nav>
+
+<!-- Contenedor principal del contenido -->
+<div class="container-fluid">
+  <div class="row">
+    <!-- Menú lateral -->
+    <aside class="col-md-3 col-lg-2 d-flex flex-column p-4 bg-light border-end">
+      <h5 class="mb-3">Menú</h5>
+      <!-- Enlaces del menú lateral -->
+      <ul class="nav nav-pills flex-column">
+        <!-- Enlace al perfil, diferente según el rol del usuario -->
+        <li class="nav-item">
+          <a href="<%= user.role === 'admin' ? '/admin/dashboard' : '/dashboard' %>" class="nav-link">Perfil</a>
+        </li>
+        <!-- Enlace a las reservas -->
+        <li class="nav-item">
+          <a href="#" class="nav-link">Reservas</a>
+        </li>
+        <!-- Enlace a la configuración, activo -->
+        <li class="nav-item">
+          <a href="/profile/edit" class="nav-link active">Configuración</a>
+        </li>
+      </ul>
+    </aside>
+
+    <!-- Contenido principal -->
+    <main class="col-md-9 col-lg-10 p-4">
+      <div class="container mt-5">
+        <!-- Título de la página -->
+        <h2 class="mb-4">Editar perfil</h2>
+
+        <!-- Formulario para editar el perfil del usuario -->
+        <form action="/profile/update" method="POST" enctype="multipart/form-data">
+          <!-- Avatar del usuario -->
+          <div class="mb-3 text-center">
+            <img src="/uploads/<%= currentUser.avatar %>" class="rounded-circle" style="width: 200px; height: 200px; object-fit: cover;" alt="Avatar">
+            <p>Avatar</p>
+          </div>
+
+          <!-- Campo para cambiar el avatar -->
+          <div class="mb-3">
+            <label for="avatar" class="form-label">Cambiar avatar</label>
+            <input type="file" name="avatar" id="avatar" class="form-control" accept="image/*">
+          </div>
+
+          <!-- Campo para el nombre del usuario -->
+          <div class="mb-3">
+            <label for="name" class="form-label">Nombre</label>
+            <input type="text" name="name" id="name" class="form-control" value="<%= user.name %>" required>
+          </div>
+
+          <!-- Campo para el correo electrónico del usuario -->
+          <div class="mb-3">
+            <label for="email" class="form-label">Correo electrónico</label>
+            <input type="email" name="email" id="email" class="form-control" value="<%= user.email %>" required>
+          </div>
+
+          <!-- Campo para la biografía del usuario -->
+          <div class="mb-3">
+            <label for="bio" class="form-label">Biografía</label>
+            <textarea name="bio" id="bio" class="form-control" rows="4"><%= user.bio || '' %></textarea>
+          </div>
+
+          <!-- Botón para guardar los cambios -->
+          <button type="submit" class="btn btn-success my-5">Guardar cambios</button>
+        </form>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Incluye el pie de página desde un archivo parcial -->
+<%- include("partials/footer") %>

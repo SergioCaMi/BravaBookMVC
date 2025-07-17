@@ -143,7 +143,11 @@ export const postDeleteUser = async (req, res) => {
 
 
 
-//  Gestión de Apartamentos 
+// Asegúrate de importar los módulos necesarios al inicio de tu archivo:
+// import fs from 'fs/promises'; // Para operaciones con el sistema de archivos
+// import path from 'path';     // Para manejar rutas de archivos
+// import Apartment from '../models/apartment.js'; // Tu modelo de Apartamento
+// (Asegúrate de que 'Apartment' y 'fs', 'path' estén correctamente importados según tu estructura de proyecto)
 
 /**
  * Muestra el formulario para añadir un nuevo apartamento.
@@ -181,7 +185,10 @@ async function moveFile(oldPath, newPath) {
  */
 export const postNewApartment = async (req, res) => {
   console.log("Datos recibidos para nuevo apartamento (req.body):", req.body);
+  // req.files contendrá los archivos subidos a través de Multer.
+  // req.body.newPhotos contendrá los datos del formulario, incluyendo descripciones y URLs.
   console.log("Archivos temporales recibidos por Multer (req.files):", req.files);
+
   const tempUploadDir = req.tempUploadDir; // Directorio temporal de Multer
   let newApartment = null; // Se inicializa para limpieza en el 'finally'
 
@@ -194,7 +201,13 @@ export const postNewApartment = async (req, res) => {
       price,
       maxGuests,
       squareMeters,
+      mainPhotoIndex, // Este campo ahora puede ser 'new_0', 'new_1', etc.
     } = req.body;
+
+    // `req.body.newPhotos` será un objeto donde las claves son los índices
+    // del array en el frontend, y los valores son los objetos de foto.
+    // Ej: { '0': { uploadType: 'file', description: '...' }, '1': { uploadType: 'url', url: '...', description: '...' } }
+    const newPhotosData = req.body.newPhotos || {};
 
     const photosToSave = []; // Array para almacenar las URLs de las fotos finales
 
@@ -265,26 +278,32 @@ export const postNewApartment = async (req, res) => {
 
     await newApartment.save(); // Guarda el apartamento para obtener un ID
 
-    // Procesa y mueve las fotos subidas por Multer
-    if (req.files && req.files.length > 0) {
-      const finalApartmentPhotoDir = path.join(
-        "public",
-        "uploads",
-        "apartments",
-        newApartment._id.toString() // Usa el ID del apartamento para la carpeta
-      );
-      await fs.mkdir(finalApartmentPhotoDir, { recursive: true }); // Crea la carpeta del apartamento
+    const finalApartmentPhotoDir = path.join(
+      "public",
+      "uploads",
+      "apartments",
+      newApartment._id.toString() // Usa el ID del apartamento para la carpeta
+    );
+    await fs.mkdir(finalApartmentPhotoDir, { recursive: true }); // Crea la carpeta del apartamento si no existe
 
+    // 1. Procesar fotos subidas por archivo (a través de Multer)
+    if (req.files && req.files.length > 0) {
       for (let i = 0; i < req.files.length; i++) {
         const file = req.files[i];
+        // El 'originalname' de Multer contiene el nombre original del archivo.
+        // El 'filename' de Multer contiene el nombre que Multer le dio en el directorio temporal.
+        const originalIndex = parseInt(file.fieldname.match(/\[(\d+)\]/)[1], 10); // Extrae el índice del campo de Multer, ej: newPhotos[0][file] -> 0
+
         const oldFilePath = file.path;
-        const newFilePath = path.join(finalApartmentPhotoDir, file.filename);
-        const publicUrl = `/uploads/apartments/${newApartment._id.toString()}/${file.filename}`;
+        const newFileName = file.filename; // Multer ya debería haberle dado un nombre único
+        const newFilePath = path.join(finalApartmentPhotoDir, newFileName);
+        const publicUrl = `/uploads/apartments/${newApartment._id.toString()}/${newFileName}`;
 
         try {
-          await moveFile(oldFilePath, newFilePath); // Mueve el archivo
-          const descriptionPhoto = req.body.photos?.[i]?.description || ""; // Descripción de la foto desde el formulario
-          const isMainPhoto = String(i) === String(req.body.mainPhotoIndex); // Marca si es la foto principal
+          await moveFile(oldFilePath, newFilePath); // Mueve el archivo del temporal al final
+          const descriptionPhoto = newPhotosData[originalIndex]?.description || ""; // Obtiene la descripción del objeto 'newPhotosData'
+          // Compara con el valor del radio button principal (ej: 'new_0')
+          const isMainPhoto = `new_${originalIndex}` === mainPhotoIndex;
 
           photosToSave.push({
             url: publicUrl,
@@ -297,6 +316,33 @@ export const postNewApartment = async (req, res) => {
         }
       }
     }
+
+    // 2. Procesar fotos proporcionadas por URL
+    // Recorremos los datos de `newPhotosData` enviados desde el frontend.
+    for (const index in newPhotosData) {
+        const photoData = newPhotosData[index];
+
+        // Si la foto es de tipo 'url' y tiene una URL válida
+        if (photoData.uploadType === 'url' && photoData.url) {
+            const isMainPhoto = `new_${index}` === mainPhotoIndex;
+            photosToSave.push({
+                url: photoData.url,
+                description: photoData.description || "",
+                isMain: isMainPhoto,
+            });
+        }
+        // Nota: Las fotos de tipo 'file' ya se han procesado en el bloque anterior `req.files`.
+        // Evitamos duplicar la lógica para las subidas de archivos aquí.
+    }
+
+
+    // Ordena las fotos para que la principal quede al principio
+    // Esto es opcional, pero ayuda a la consistencia
+    photosToSave.sort((a, b) => {
+        if (a.isMain && !b.isMain) return -1;
+        if (!a.isMain && b.isMain) return 1;
+        return 0;
+    });
 
     // Actualiza el apartamento con las URLs de las fotos finales
     newApartment.photos = photosToSave;
@@ -324,7 +370,6 @@ export const postNewApartment = async (req, res) => {
     }
   }
 };
-
 /**
  * Obtiene y muestra el formulario para editar un apartamento existente.
  * @param {object} req - Objeto de solicitud de Express.

@@ -34,7 +34,7 @@ router.get('/reservations', requireAuth, requireAdmin, adminController.getReserv
 router.get("/apartment/new", requireAuth, requireAdmin, adminController.getNewApartment);
 
 // Enviar formulario de nuevo apartamento (con subida temporal de fotos)
-router.post("/apartment/new", uploadNewApartmentTempImages.array('apartmentPhotos'), adminController.postNewApartment);
+router.post("/apartment/new", uploadNewApartmentTempImages.any(), adminController.postNewApartment);
 
 //  Rutas Dinámicas (con Parámetros :id) 
 

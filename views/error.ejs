@@ -1,48 +1,57 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
+  <!-- Define el tipo de documento y la configuración básica del HTML -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Error 404 - Página no encontrada</title>
+
+  <!-- Estilos CSS para la página de error -->
   <style>
+    /* Estilo base para todos los elementos */
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
 
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: url('https://images.unsplash.com/photo-1663293761219-d8c9e5eef4c1?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')  no-repeat center center fixed;
-  background-size: cover; /* 👈 Esto hace que la imagen cubra toda la pantalla */
-  color: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  overflow: hidden;
-}
+    /* Estilo para el cuerpo de la página */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: url('https://images.unsplash.com/photo-1663293761219-d8c9e5eef4c1?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Estilo para el contenedor principal */
     .container {
       text-align: center;
       animation: fadeIn 1s ease-in-out;
       max-width: 90%;
       padding: 20px;
-      background-color: rgba(0, 0, 0, 0.5); 
+      background-color: rgba(0, 0, 0, 0.5);
       border-radius: 15px;
     }
 
+    /* Estilo para el encabezado h1 */
     h1 {
       font-size: 7rem;
       margin-bottom: 0.2em;
       animation: float 3s ease-in-out infinite;
     }
 
+    /* Estilo para los párrafos */
     p {
       font-size: 1.5rem;
       margin-bottom: 1em;
     }
 
+    /* Estilo para los enlaces */
     a {
       text-decoration: none;
       background: #fff;
@@ -54,43 +63,40 @@ body {
       display: inline-block;
     }
 
+    /* Efecto hover para los enlaces */
     a:hover {
       background: #e0e0e0;
       transform: scale(1.05);
     }
 
+    /* Animación de flotación para el encabezado h1 -->
     @keyframes float {
-
-      0%,
-      100% {
+      0%, 100% {
         transform: translateY(0);
       }
-
       50% {
         transform: translateY(-10px);
       }
     }
 
+    /* Animación de aparición para el contenedor principal -->
     @keyframes fadeIn {
       from {
         opacity: 0;
         transform: scale(0.95);
       }
-
       to {
         opacity: 1;
         transform: scale(1);
       }
     }
 
+    /* Animación de pulso para posibles elementos interactivos -->
     @keyframes pulse {
-
-      0%,
-      100% {
+      0%, 100% {
         opacity: 1;
         transform: scale(1);
       }
-
       50% {
         opacity: 0.85;
         transform: scale(1.05);
@@ -98,13 +104,15 @@ body {
     }
   </style>
 </head>
-
 <body>
+  <!-- Contenedor principal con el mensaje de error -->
   <div class="container">
+    <!-- Muestra el código de estado del error -->
     <h1>Error <%= status %></h1>
+    <!-- Muestra el mensaje de error -->
     <p><%= message %></p>
+    <!-- Enlace para volver a la página principal -->
     <a href="/">Volver a la página principal</a>
   </div>
 </body>
-
 </html>
