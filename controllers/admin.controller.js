@@ -643,11 +643,11 @@ export const postDeleteApartment = async (req, res) => {
     }
     apartment.active = false; // Desactiva el apartamento en lugar de eliminarlo físicamente
     await apartment.save();
-    req.flash("success_msg", "Apartamento eliminado (desactivado) satisfactoriamente. 🗑️");
+    req.flash("success_msg", "Apartamento eliminado satisfactoriamente. ");
     return res.redirect("/seeApartments");
   } catch (error) {
-    console.error("Error al eliminar (desactivar) apartamento:", error);
-    req.flash("error_msg", "Error al eliminar (desactivar) el apartamento.");
+    console.error("Error al eliminar apartamento:", error);
+    req.flash("error_msg", "Error al eliminar el apartamento.");
     return res.redirect("/seeApartments");
   }
 };
@@ -668,7 +668,7 @@ export const postActiveApartment = async (req, res) => {
     }
     apartment.active = true; // Activa el apartamento
     await apartment.save();
-    req.flash("success_msg", "Apartamento activado satisfactoriamente. ✅");
+    req.flash("success_msg", "Apartamento activado satisfactoriamente.");
     return res.redirect("/seeApartments");
   } catch (error) {
     console.error("Error al activar el apartamento:", error);
@@ -834,4 +834,15 @@ export const putReservationEdit = async (req, res) => {
     );
     res.redirect(`/admin/reservation/edit/${id}`);
   }
+};
+
+
+
+export const getAllApartments = async (req, res) => {
+  try {
+    const apartments = await Apartment.find({ active: true }).
+    res.render("homeAdmin", { title: "admin", error: undefined, apartments });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };

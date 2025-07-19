@@ -1,0 +1,330 @@
+<%- include("partials/header") %>
+
+<a href="/admin" class="row justify-content-start">
+    <img src="/img/back.png" alt="Volver al panel" style="max-width: 70px; height: auto;" class="m-3">
+</a>
+
+<%- include("partials/mensajes") %>
+
+<div class="container-fluid my-5">
+    <div class="bg-white p-5 shadow rounded-4">
+        <h2 class="mb-4 text-center text-primary fw-bold">Gestión de Apartamentos</h2>
+
+        <div class="row justify-content-center">
+            <div class="col-12 col-xl-10"> <h3 class="mb-3 text-center text-secondary">Buscar y Filtrar Apartamentos</h3>
+
+                <form id="adminSearchForm" action="/admin/apartments/search" method="GET" onsubmit="updateHiddenFields()" class="mb-5 border p-4 rounded-3 bg-light">
+                    <div class="row g-3 mb-3">
+                        <div class="col-12 col-md-4">
+                            <label for="provinceSelect" class="form-label small mb-1">Provincia:</label>
+                            <select id="provinceSelect" class="form-control form-select">
+                                <option value="">-- Selecciona --</option>
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <label for="municipalitySelect" class="form-label small mb-1">Municipio:</label>
+                            <select id="municipalitySelect" class="form-control form-select">
+                                <option value="">-- Selecciona --</option>
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <label for="maxGuests" class="form-label small mb-1">Huéspedes:</label>
+                            <input type="number" name="maxGuests" id="maxGuests" class="form-control" min="1" placeholder="Ej: 2">
+                        </div>
+                        <input type="hidden" name="municipality[id]" id="municipalityIdInput">
+                        <input type="hidden" name="municipality[nm]" id="municipalityNameInput">
+                        <input type="hidden" name="province[id]" id="provinceIdInput">
+                        <input type="hidden" name="province[nm]" id="provinceNameInput">
+                    </div>
+
+                    <div class="row g-3 mb-3 align-items-end">
+                        <div class="col-12 col-md-4">
+                            <label for="minPrice" class="form-label small mb-1">Precio Mín. (€):</label>
+                            <input type="number" name="minPrice" id="minPrice" class="form-control" min="0" step="1" placeholder="Ej: 50">
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <label for="maxPrice" class="form-label small mb-1">Precio Máx. (€):</label>
+                            <input type="number" name="maxPrice" id="maxPrice" class="form-control" min="0" step="1" placeholder="Ej: 200">
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <label for="dateRange" class="form-label small mb-1">Rango de fechas (Disponibilidad):</label>
+                            <input type="text" id="dateRange" name="dateRange" class="form-control" readonly placeholder="Selecciona fechas">
+                            <input type="hidden" id="startDate" name="startDate">
+                            <input type="hidden" name="endDate" id="endDate">
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-4 align-items-center">
+                        <div class="col-12 col-md-8">
+                            <label class="form-label small mb-2 d-block text-start">Servicios:</label>
+                            <div class="row g-2">
+                                <div class="col-6 col-lg-4">
+                                    <div class="form-check d-flex align-items-center text-start">
+                                        <input type="checkbox" name="services.airConditioning" value="on" class="form-check-input" id="airConditioning">
+                                        <label class="ms-2 form-check-label d-flex align-items-center" for="airConditioning">
+                                            <span class="bg-white rounded-circle d-inline-flex align-items-center justify-content-center me-1 me-md-2" style="width: 20px; height: 20px">
+                                                <i class="bi bi-snow text-black"></i>
+                                            </span>
+                                            <small><span>Aire Acondicionado</span></small>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-lg-4">
+                                    <div class="form-check d-flex align-items-center text-start">
+                                        <input type="checkbox" name="services.heating" value="on" class="form-check-input" id="heating">
+                                        <label class="ms-2 form-check-label d-flex align-items-center" for="heating">
+                                            <span class="bg-white rounded-circle d-inline-flex align-items-center justify-content-center me-1 me-md-2" style="width: 20px; height: 20px">
+                                                <i class="bi bi-fire text-black"></i>
+                                            </span>
+                                            <small><span>Calefacción</span></small>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-lg-4">
+                                    <div class="form-check d-flex align-items-center text-start">
+                                        <input type="checkbox" name="services.accessibility" value="on" class="form-check-input" id="accessibility">
+                                        <label class="ms-2 form-check-label d-flex align-items-center" for="accessibility">
+                                            <span class="bg-white rounded-circle d-inline-flex align-items-center justify-content-center me-1 me-md-2" style="width: 20px; height: 20px">
+                                                <i class="bi bi-person-wheelchair text-black"></i>
+                                            </span>
+                                            <small><span>Accesibilidad</span></small>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-lg-4">
+                                    <div class="form-check d-flex align-items-center text-start">
+                                        <input type="checkbox" name="services.television" value="on" class="form-check-input" id="television">
+                                        <label class="ms-2 form-check-label d-flex align-items-center" for="television">
+                                            <span class="bg-white rounded-circle d-inline-flex align-items-center justify-content-center me-1 me-md-2" style="width: 20px; height: 20px">
+                                                <i class="bi bi-tv text-black"></i>
+                                            </span>
+                                            <small><span>Televisión</span></small>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-lg-4">
+                                    <div class="form-check d-flex align-items-center text-start">
+                                        <input type="checkbox" name="services.kitchen" value="on" class="form-check-input" id="kitchen">
+                                        <label class="ms-2 form-check-label d-flex align-items-center" for="kitchen">
+                                            <span class="bg-white rounded-circle d-inline-flex align-items-center justify-content-center me-1 me-md-2" style="width: 20px; height: 20px">
+                                                <i class="bi bi-cup-hot text-black"></i>
+                                            </span>
+                                            <small><span>Cocina</span></small>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-lg-4">
+                                    <div class="form-check d-flex align-items-center text-start">
+                                        <input type="checkbox" name="services.internet" value="on" class="form-check-input" id="internet">
+                                        <label class="ms-2 form-check-label d-flex align-items-center" for="internet">
+                                            <span class="bg-white rounded-circle d-inline-flex align-items-center justify-content-center me-1 me-md-2" style="width: 20px; height: 20px">
+                                                <i class="bi bi-wifi text-black"></i>
+                                            </span>
+                                            <small><span>Internet</span></small>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <label for="sortPrice" class="form-label small mb-1">Ordenar por precio:</label>
+                            <select id="sortPrice" class="form-select" name="sortPrice">
+                                <option value="">-- Selecciona orden --</option>
+                                <option value="1">Precio ascendente</option>
+                                <option value="-1">Precio descendente</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="submit" class="btn btn-primary py-2 px-4 rounded-pill">Aplicar Filtros</button>
+                        <a href="/admin/apartments" class="btn btn-outline-secondary py-2 px-4 rounded-pill">Limpiar Filtros</a>
+                    </div>
+                </form>
+
+                <div class="mt-4 pt-3 border-top border-secondary">
+                    <h5 class="text-dark mb-3">Búsqueda con IA:</h5>
+                    <form action="/admin/apartments/search-ai" method="POST" class="d-flex flex-column align-items-center">
+                        <div class="col-12 col-md-8 col-lg-6">
+                            <input type="text" name="query" class="form-control form-control-lg" placeholder="Ej: Apartamento con 3 habitaciones en Madrid" required>
+                        </div>
+                        <button type="submit" class="btn btn-info btn-lg mt-3">Buscar con IA</button>
+                    </form>
+                </div>
+
+                <hr class="my-5">
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="text-primary fw-bold mb-0">Listado de Apartamentos</h3>
+                    <a href="/apartments/new" class="btn btn-success rounded-pill px-4">
+                        <i class="bi bi-plus-circle me-2"></i>Añadir Nuevo Apartamento
+                    </a>
+                </div>
+
+                <div id="apartmentsAdminList">
+                    <% if (apartments && apartments.length > 0) { %>
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Título</th>
+                                    <th scope="col">Ubicación</th>
+                                    <th scope="col">Huéspedes</th>
+                                    <th scope="col">Precio (€)</th>
+                                    <th scope="col">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% apartments.forEach((apartment, index) => { %>
+                                <tr>
+                                    <th scope="row"><%= index + 1 %></th>
+                                    <td><%= apartment.title %></td>
+                                    <td><%= apartment.location.municipality.nm %>, <%= apartment.location.province.nm %></td>
+                                    <td><%= apartment.maxGuests %></td>
+                                    <td><%= apartment.price.toLocaleString() %></td>
+                                    <td>
+                                        <div class="d-flex gap-2">
+                                            <a href="/apartments/<%= apartment._id %>" class="btn btn-info btn-sm" data-bs-toggle="tooltip" title="Ver Detalles">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a href="/apartments/<%= apartment._id %>/edit" class="btn btn-warning btn-sm" data-bs-toggle="tooltip" title="Editar">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <form action="/apartments/<%= apartment._id %>?_method=DELETE" method="POST" onsubmit="return confirm('¿Estás seguro de que quieres eliminar este apartamento? Esta acción es irreversible.');">
+                                                <button type="submit" class="btn btn-danger btn-sm" data-bs-toggle="tooltip" title="Eliminar">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                    <% } else if (apartments && apartments.length === 0 && (Object.keys(query || {}).length > 0 || Object.keys(req.body || {}).length > 0)) { %>
+                    <div class="alert alert-info text-center" role="alert">
+                        No se encontraron apartamentos que coincidan con los criterios de búsqueda.
+                    </div>
+                    <% } else { %>
+                    <div class="alert alert-warning text-center" role="alert">
+                        No hay apartamentos registrados en el sistema. ¡Añade uno nuevo!
+                    </div>
+                    <% } %>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateHiddenFields() {
+        const provinceSelect = document.getElementById("provinceSelect");
+        const municipalitySelect = document.getElementById("municipalitySelect");
+        const provinceIdInput = document.getElementById("provinceIdInput");
+        const provinceNameInput = document.getElementById("provinceNameInput");
+        const municipalityIdInput = document.getElementById("municipalityIdInput");
+        const municipalityNameInput = document.getElementById("municipalityNameInput");
+
+        const selectedProvince = provinceSelect.options[provinceSelect.selectedIndex];
+        const selectedMunicipality = municipalitySelect.options[municipalitySelect.selectedIndex];
+
+        if (selectedProvince && selectedProvince.value) {
+            provinceIdInput.value = selectedProvince.value;
+            provinceNameInput.value = selectedProvince.text;
+        } else {
+            provinceIdInput.value = '';
+            provinceNameInput.value = '';
+        }
+
+        if (selectedMunicipality && selectedMunicipality.value) {
+            municipalityIdInput.value = selectedMunicipality.value;
+            municipalityNameInput.value = selectedMunicipality.text;
+        } else {
+            municipalityIdInput.value = '';
+            municipalityNameInput.value = '';
+        }
+    }
+</script>
+
+<script>
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        $("#dateRange").daterangepicker(
+            {
+                locale: {
+                    format: "YYYY-MM-DD",
+                    applyLabel: "Aplicar",
+                    cancelLabel: "Cancelar",
+                    fromLabel: "Desde",
+                    toLabel: "Hasta",
+                    customRangeLabel: "Rango Personalizado",
+                    weekLabel: "S",
+                    daysOfWeek: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"],
+                    monthNames: [
+                        "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+                        "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+                    ],
+                    firstDay: 1 // Lunes
+                },
+                startDate: moment(),
+                endDate: moment().add(1, "days"),
+                autoUpdateInput: false, // Importante para que no muestre "Invalid date" inicialmente
+                ranges: {
+                    'Hoy': [moment(), moment()],
+                    'Mañana': [moment().add(1, "days"), moment().add(1, "days")],
+                    'Próximos 7 días': [moment(), moment().add(6, "days")],
+                    'Este mes': [moment().startOf('month'), moment().endOf('month')],
+                    'Próximo mes': [moment().add(1, 'month').startOf('month'), moment().add(1, 'month').endOf('month')]
+                },
+                alwaysShowCalendars: true, // Siempre muestra los calendarios
+            },
+            function (start, end, label) {
+                $("#startDate").val(start.format("YYYY-MM-DD"));
+                $("#endDate").val(end.format("YYYY-MM-DD"));
+                // Actualiza el campo visible con las fechas seleccionadas
+                $("#dateRange").val(start.format("YYYY-MM-DD") + ' - ' + end.format("YYYY-MM-DD"));
+            }
+        );
+
+        // Si el campo de fecha está vacío al cargar, no mostrar "Invalid date"
+        if (!$("#startDate").val() || !$("#endDate").val()) {
+             $("#dateRange").val('');
+        }
+
+        $("#dateRange").on("apply.daterangepicker", function (ev, picker) {
+            $("#startDate").val(picker.startDate.format("YYYY-MM-DD"));
+            $("#endDate").val(picker.endDate.format("YYYY-MM-DD"));
+            $(this).val(picker.startDate.format("YYYY-MM-DD") + ' - ' + picker.endDate.format("YYYY-MM-DD"));
+        });
+
+        // Limpiar el campo de fecha al cancelar o al cargar si no hay fechas previas
+        $("#dateRange").on('cancel.daterangepicker', function(ev, picker) {
+            $(this).val('');
+            $("#startDate").val('');
+            $("#endDate").val('');
+        });
+
+        // Este código es para asegurar que si ya hay fechas en los hidden inputs (por un envío previo del formulario),
+        // el daterangepicker las muestre.
+        const initialStartDate = $("#startDate").val();
+        const initialEndDate = $("#endDate").val();
+        if (initialStartDate && initialEndDate) {
+            $("#dateRange").data('daterangepicker').setStartDate(initialStartDate);
+            $("#dateRange").data('daterangepicker').setEndDate(initialEndDate);
+            $("#dateRange").val(initialStartDate + ' - ' + initialEndDate);
+        }
+    });
+</script>
+
+<script src="/js/municipiAndProvince.js"></script>
+
+<%- include("partials/footer") %>

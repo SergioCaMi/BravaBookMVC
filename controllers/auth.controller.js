@@ -144,9 +144,7 @@ export const postUpdateProfile = async (req, res) => {
 // Obtener todos los apartamentos para la página principal
 export const getAllApartments = async (req, res) => {
   try {
-    const apartments = await Apartment.find({ active: true })
-      .sort({ price: -1 }) // Ordena por precio descendente
-      .limit(30); // Limita a 30 apartamentos
+    const apartments = await Apartment.find({ active: true });
     res.render("home", { title: "home", error: undefined, apartments });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -293,7 +291,7 @@ export const getApartmentSearch = async (req, res) => {
   try {
     const apartments = await Apartment.find(query).sort({ price: sortvalue });
     console.log(apartments._id); // Esto imprimirá 'undefined' si 'apartments' es un array
-    res.render("seeApartments.ejs", {
+    res.render("partials/seeApartments.ejs", {
       title: "home",
       apartments,
     });

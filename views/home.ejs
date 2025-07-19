@@ -31,7 +31,7 @@
           <h1 class="display-6 display-md-4 fw-bold mb-4">La forma más fácil de encontrar tu lugar para lo que necesites</h1>
 
           <!-- Formulario de búsqueda de apartamentos -->
-          <form action="/apartments/search" method="GET" onsubmit="updateHiddenFields()" class="mb-4">
+          <form id="busquedaForm" action="/apartments/search" method="GET" onsubmit="buscarApartamentos(event)" class="mb-4">
             <!-- Primera fila de campos del formulario -->
             <div class="row g-2 g-md-3 mb-3">
               <!-- Selector de provincia -->
@@ -210,7 +210,7 @@
 
     <!-- Contenedor de tarjetas de apartamentos -->
     <div class="d-flex overflow-auto gap-4 pb-4 px-2" style="scroll-snap-type: x mandatory;">
-      <% apartments.forEach(apartment => { %>
+      <% apartments.slice(0, 15).forEach(apartment => { %>
         <div class="flex-shrink-0" style="width: 300px; scroll-snap-align: start;">
           <div class="card border-0 shadow-lg rounded-4 h-100 d-flex flex-column">
             <!-- Enlace a la página de detalles del apartamento -->
@@ -276,6 +276,29 @@
     </div>
   </div>
 </div>
+<!-- Script para búsqueda de apartamentos unicamente rellenaremos el div con el HTML devuelto por el backend -->
+ <div id="apartmentsPartial">
+  <%- include("partials/seeApartments") %>
+</div>
+
+<script>
+function buscarApartamentos(e) {
+  e.preventDefault();
+  const form = document.getElementById('busquedaForm');
+  const params = new URLSearchParams(new FormData(form)).toString();
+  fetch('/apartments/search?' + params, {
+    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+  })
+    .then(res => res.text())
+    .then(html => {
+      const partial = document.getElementById('apartmentsPartial');
+      partial.innerHTML = html;
+      // Scroll suave al partial actualizado
+      partial.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    })
+    .catch(() => alert('Error al buscar apartamentos.'));
+}
+</script>
 
 <!-- Script para inicializar tooltips de Bootstrap -->
 <script>
