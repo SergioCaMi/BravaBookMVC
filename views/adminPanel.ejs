@@ -1,103 +1,826 @@
-<!-- Incluye el encabezado de la página desde un archivo parcial, pasando el título como variable -->
+<!-- Incluye el encabezado de la página desde un archivo parcial -->
 <%- include("partials/header", { title }) %>
 
 <!-- Incluye mensajes parciales, como notificaciones o alertas -->
 <%- include("partials/mensajes") %>
 
-<!-- Barra de navegación para el panel de administración -->
-<nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm mb-4">
-  <div class="container d-flex justify-content-between align-items-center">
-    <!-- Contenedor para el avatar y la información del usuario -->
-    <div class="d-flex align-items-center">
-      <!-- Imagen del avatar del usuario -->
-      <img src="/uploads/<%= currentUser.avatar %>" alt="Avatar de <%= currentUser.name %>"
-        class="img-thumbnail rounded-circle me-3 shadow" style="width: 60px; height: 60px; object-fit: cover;">
-      <div>
-        <!-- Nombre del usuario -->
-        <h6 class="mb-0 fw-bold text-primary"><%= currentUser.name %></h6>
-        <!-- Rol del usuario -->
-        <small class="text-uppercase text-muted">Administrador</small><br>
-        <!-- Correo electrónico del usuario -->
-        <small class="text-muted"><%= currentUser.email %></small>
-      </div>
-    </div>
-    <!-- Texto del panel de administración -->
-    <span class="navbar-text fw-semibold text-secondary d-none d-md-inline">Panel de Administración</span>
-  </div>
-</nav>
-
-<!-- Panel de acciones con diferentes tarjetas -->
-<div class="container">
-  <div class="row row-cols-1 row-cols-md-2 g-4 justify-content-center">
-    <!-- Tarjeta para listado de usuarios -->
-    <div class="col">
-      <div class="card border-0 shadow rounded-4 h-100">
-        <!-- Imagen de la tarjeta -->
-        <img src="/img/usersList.jpg" class="card-img-top rounded-top-4" alt="Listado de usuarios"
-          style="height: 200px; object-fit: cover;">
-        <div class="card-body d-flex flex-column">
-          <!-- Título de la tarjeta -->
-          <h5 class="card-title text-dark fw-semibold">Usuarios</h5>
-          <!-- Descripción de la tarjeta -->
-          <p class="card-text text-muted small">Consulta y gestiona todos los usuarios disponibles.</p>
-          <!-- Enlace para ver usuarios -->
-          <a href="/admin/users" class="btn btn-outline-primary mt-auto w-100">Ver usuarios</a>
+<!-- Hero section del dashboard -->
+<div class="admin-hero position-relative overflow-hidden">
+  <div class="hero-background position-absolute top-0 start-0 w-100 h-100"
+       style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+  
+  <div class="hero-content position-relative py-5">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-8">
+          <div class="admin-welcome text-white" style="animation: fadeInLeft 0.8s ease-out;">
+            <div class="welcome-badge mb-3">
+              <span class="badge bg-light text-primary px-4 py-2 rounded-pill fs-6 fw-medium">
+                <i class="bi bi-shield-check me-2"></i>Panel de Administración
+              </span>
+            </div>
+            
+            <h1 class="display-4 fw-bold mb-3">
+              Bienvenido, <%= currentUser.name %>
+            </h1>
+            
+            <p class="lead mb-4 text-light">
+              Gestiona tu plataforma de apartamentos desde este panel centralizado
+            </p>
+            
+            <div class="admin-stats d-flex flex-wrap gap-4">
+              <div class="stat-item d-flex align-items-center">
+                <div class="stat-icon bg-success bg-gradient rounded-circle d-flex align-items-center justify-content-center me-3"
+                     style="width: 50px; height: 50px;">
+                  <i class="bi bi-people text-white fs-4"></i>
+                </div>
+                <div>
+                  <div class="stat-number h4 fw-bold mb-0">1,234</div>
+                  <small class="text-light">Usuarios Activos</small>
+                </div>
+              </div>
+              
+              <div class="stat-item d-flex align-items-center">
+                <div class="stat-icon bg-info bg-gradient rounded-circle d-flex align-items-center justify-content-center me-3"
+                     style="width: 50px; height: 50px;">
+                  <i class="bi bi-house text-white fs-4"></i>
+                </div>
+                <div>
+                  <div class="stat-number h4 fw-bold mb-0">567</div>
+                  <small class="text-light">Apartamentos</small>
+                </div>
+              </div>
+              
+              <div class="stat-item d-flex align-items-center">
+                <div class="stat-icon bg-warning bg-gradient rounded-circle d-flex align-items-center justify-content-center me-3"
+                     style="width: 50px; height: 50px;">
+                  <i class="bi bi-calendar-check text-white fs-4"></i>
+                </div>
+                <div>
+                  <div class="stat-number h4 fw-bold mb-0">89</div>
+                  <small class="text-light">Reservas Hoy</small>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-
-    <!-- Tarjeta para crear un nuevo apartamento -->
-    <div class="col">
-      <div class="card border-0 shadow rounded-4 h-100">
-        <!-- Imagen de la tarjeta -->
-        <img src="/img/createNew.jpg" class="card-img-top rounded-top-4" alt="Crear nuevo apartamento"
-          style="height: 200px; object-fit: cover;">
-        <div class="card-body d-flex flex-column">
-          <!-- Título de la tarjeta -->
-          <h5 class="card-title text-dark fw-semibold">Crear un nuevo apartamento</h5>
-          <!-- Descripción de la tarjeta -->
-          <p class="card-text text-muted small">Añade un nuevo apartamento al sistema.</p>
-          <!-- Enlace para crear un nuevo apartamento -->
-          <a href="/admin/apartment/new" class="btn btn-outline-primary mt-auto w-100">Crear apartamento</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tarjeta para editar apartamentos -->
-    <div class="col">
-      <div class="card border-0 shadow rounded-4 h-100">
-        <!-- Imagen de la tarjeta -->
-        <img src="/img/edit.jpg" class="card-img-top rounded-top-4" alt="Editar apartamentos"
-          style="height: 200px; object-fit: cover;">
-        <div class="card-body d-flex flex-column">
-          <!-- Título de la tarjeta -->
-          <h5 class="card-title text-dark fw-semibold">Apartamentos</h5>
-          <!-- Descripción de la tarjeta -->
-          <p class="card-text text-muted small">Consulta y gestiona todos los apartamentos disponibles.</p>
-          <!-- Enlace para ver apartamentos -->
-          <a href="/seeApartments" class="btn btn-outline-primary mt-auto w-100">Ver apartamentos</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tarjeta para listado de reservas -->
-    <div class="col">
-      <div class="card border-0 shadow rounded-4 h-100">
-        <!-- Imagen de la tarjeta -->
-        <img src="/img/reservationsList.jpg" class="card-img-top rounded-top-4" alt="Listado de reservas"
-          style="height: 200px; object-fit: cover;">
-        <div class="card-body d-flex flex-column">
-          <!-- Título de la tarjeta -->
-          <h5 class="card-title text-dark fw-semibold">Reservas</h5>
-          <!-- Descripción de la tarjeta -->
-          <p class="card-text text-muted small">Revisa y gestiona todas las reservas realizadas por los usuarios.</p>
-          <!-- Enlace para ver reservas -->
-          <a href="/admin/reservations" class="btn btn-outline-primary mt-auto w-100">Ver reservas</a>
+        
+        <!-- Perfil del administrador -->
+        <div class="col-lg-4 text-center text-lg-end">
+          <div class="admin-profile backdrop-blur rounded-4 p-4 shadow-lg border border-light border-opacity-25"
+               style="background: rgba(255, 255, 255, 0.1); animation: slideInRight 0.8s ease-out 0.3s both;">
+            
+            <div class="profile-avatar position-relative d-inline-block mb-3">
+              <img src="/uploads/<%= currentUser.avatar %>" 
+                   alt="Avatar de <%= currentUser.name %>"
+                   class="img-fluid rounded-circle shadow-lg border border-light border-3"
+                   style="width: 100px; height: 100px; object-fit: cover;">
+              <div class="status-indicator position-absolute bottom-0 end-0 bg-success border border-light border-3 rounded-circle"
+                   style="width: 25px; height: 25px;"></div>
+            </div>
+            
+            <h4 class="text-white fw-bold mb-1"><%= currentUser.name %></h4>
+            <p class="text-light mb-2">
+              <i class="bi bi-shield-fill me-1"></i>Administrador
+            </p>
+            <p class="text-light small mb-3">
+              <i class="bi bi-envelope me-1"></i><%= currentUser.email %>
+            </p>
+            
+            <div class="profile-actions d-flex gap-2 justify-content-center">
+              <a href="/profile" class="btn btn-light btn-sm rounded-pill px-3">
+                <i class="bi bi-person-gear me-1"></i>Perfil
+              </a>
+              <a href="/logout" class="btn btn-outline-light btn-sm rounded-pill px-3">
+                <i class="bi bi-box-arrow-right me-1"></i>Salir
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<!-- Panel de acciones principal -->
+<div class="admin-dashboard py-5" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+  <div class="container">
+    <!-- Header de sección -->
+    <div class="section-header text-center mb-5">
+      <h2 class="display-5 fw-bold text-dark mb-3" style="animation: fadeInUp 0.8s ease-out;">
+        Panel de Control
+      </h2>
+      <p class="lead text-muted mb-0" style="animation: fadeInUp 0.8s ease-out 0.2s both;">
+        Accede rápidamente a todas las funciones administrativas
+      </p>
+    </div>
+    
+    <!-- Grid de tarjetas de acciones -->
+    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-4 justify-content-center">
+      
+      <!-- Tarjeta: Gestión de Usuarios -->
+      <div class="col">
+        <div class="admin-card card border-0 shadow-lg rounded-4 h-100 overflow-hidden transition-all"
+             style="animation: slideInUp 0.6s ease-out 0.1s both;">
+          
+          <div class="card-img-container position-relative overflow-hidden">
+            <img src="/img/usersList.jpg" class="card-img-top transition-all" 
+                 alt="Gestión de usuarios" style="height: 200px; object-fit: cover;">
+            <div class="card-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center opacity-0 transition-all">
+              <div class="overlay-content text-center">
+                <div class="overlay-icon bg-primary bg-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2"
+                     style="width: 60px; height: 60px;">
+                  <i class="bi bi-people text-white fs-3"></i>
+                </div>
+                <p class="text-white fw-bold mb-0">Gestionar</p>
+              </div>
+            </div>
+            
+            <!-- Badge de categoría -->
+            <div class="position-absolute top-0 start-0 m-3">
+              <span class="badge bg-primary bg-gradient px-3 py-2 rounded-pill shadow-sm">
+                <i class="bi bi-people me-1"></i>Usuarios
+              </span>
+            </div>
+          </div>
+          
+          <div class="card-body p-4 d-flex flex-column">
+            <div class="card-header-info mb-3">
+              <h5 class="card-title text-dark fw-bold mb-2">Gestión de Usuarios</h5>
+              <p class="card-text text-muted small mb-0">
+                Consulta, edita y gestiona todos los usuarios registrados en la plataforma.
+              </p>
+            </div>
+            
+            <!-- Estadísticas rápidas -->
+            <div class="quick-stats d-flex justify-content-between mb-3 p-2 bg-light rounded-3">
+              <div class="stat text-center">
+                <div class="stat-number fw-bold text-primary">1,234</div>
+                <small class="text-muted">Total</small>
+              </div>
+              <div class="stat text-center">
+                <div class="stat-number fw-bold text-success">1,180</div>
+                <small class="text-muted">Activos</small>
+              </div>
+              <div class="stat text-center">
+                <div class="stat-number fw-bold text-warning">54</div>
+                <small class="text-muted">Nuevos</small>
+              </div>
+            </div>
+            
+            <a href="/admin/users" class="btn btn-primary btn-lg w-100 mt-auto rounded-pill fw-bold transition-all hover-lift">
+              <i class="bi bi-arrow-right-circle me-2"></i>Ver Usuarios
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Tarjeta: Crear Apartamento -->
+      <div class="col">
+        <div class="admin-card card border-0 shadow-lg rounded-4 h-100 overflow-hidden transition-all"
+             style="animation: slideInUp 0.6s ease-out 0.2s both;">
+          
+          <div class="card-img-container position-relative overflow-hidden">
+            <img src="/img/createNew.jpg" class="card-img-top transition-all" 
+                 alt="Crear apartamento" style="height: 200px; object-fit: cover;">
+            <div class="card-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center opacity-0 transition-all">
+              <div class="overlay-content text-center">
+                <div class="overlay-icon bg-success bg-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2"
+                     style="width: 60px; height: 60px;">
+                  <i class="bi bi-plus-circle text-white fs-3"></i>
+                </div>
+                <p class="text-white fw-bold mb-0">Crear Nuevo</p>
+              </div>
+            </div>
+            
+            <div class="position-absolute top-0 start-0 m-3">
+              <span class="badge bg-success bg-gradient px-3 py-2 rounded-pill shadow-sm">
+                <i class="bi bi-plus-circle me-1"></i>Nuevo
+              </span>
+            </div>
+          </div>
+          
+          <div class="card-body p-4 d-flex flex-column">
+            <div class="card-header-info mb-3">
+              <h5 class="card-title text-dark fw-bold mb-2">Crear Apartamento</h5>
+              <p class="card-text text-muted small mb-0">
+                Añade nuevas propiedades al catálogo con toda la información necesaria.
+              </p>
+            </div>
+            
+            <!-- Proceso de creación -->
+            <div class="creation-steps mb-3 p-2 bg-light rounded-3">
+              <div class="step-item d-flex align-items-center mb-1">
+                <i class="bi bi-1-circle text-success me-2"></i>
+                <small class="text-muted">Información básica</small>
+              </div>
+              <div class="step-item d-flex align-items-center mb-1">
+                <i class="bi bi-2-circle text-success me-2"></i>
+                <small class="text-muted">Fotos y servicios</small>
+              </div>
+              <div class="step-item d-flex align-items-center">
+                <i class="bi bi-3-circle text-success me-2"></i>
+                <small class="text-muted">Publicación</small>
+              </div>
+            </div>
+            
+            <a href="/admin/apartment/new" class="btn btn-success btn-lg w-100 mt-auto rounded-pill fw-bold transition-all hover-lift">
+              <i class="bi bi-plus-circle me-2"></i>Crear Apartamento
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Tarjeta: Gestión de Apartamentos -->
+      <div class="col">
+        <div class="admin-card card border-0 shadow-lg rounded-4 h-100 overflow-hidden transition-all"
+             style="animation: slideInUp 0.6s ease-out 0.3s both;">
+          
+          <div class="card-img-container position-relative overflow-hidden">
+            <img src="/img/edit.jpg" class="card-img-top transition-all" 
+                 alt="Gestión de apartamentos" style="height: 200px; object-fit: cover;">
+            <div class="card-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center opacity-0 transition-all">
+              <div class="overlay-content text-center">
+                <div class="overlay-icon bg-info bg-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2"
+                     style="width: 60px; height: 60px;">
+                  <i class="bi bi-house-gear text-white fs-3"></i>
+                </div>
+                <p class="text-white fw-bold mb-0">Gestionar</p>
+              </div>
+            </div>
+            
+            <div class="position-absolute top-0 start-0 m-3">
+              <span class="badge bg-info bg-gradient px-3 py-2 rounded-pill shadow-sm">
+                <i class="bi bi-house me-1"></i>Propiedades
+              </span>
+            </div>
+          </div>
+          
+          <div class="card-body p-4 d-flex flex-column">
+            <div class="card-header-info mb-3">
+              <h5 class="card-title text-dark fw-bold mb-2">Gestión de Apartamentos</h5>
+              <p class="card-text text-muted small mb-0">
+                Edita, activa o desactiva apartamentos existentes en el catálogo.
+              </p>
+            </div>
+            
+            <!-- Estadísticas de apartamentos -->
+            <div class="apartment-stats d-flex justify-content-between mb-3 p-2 bg-light rounded-3">
+              <div class="stat text-center">
+                <div class="stat-number fw-bold text-info">567</div>
+                <small class="text-muted">Total</small>
+              </div>
+              <div class="stat text-center">
+                <div class="stat-number fw-bold text-success">523</div>
+                <small class="text-muted">Activos</small>
+              </div>
+              <div class="stat text-center">
+                <div class="stat-number fw-bold text-warning">44</div>
+                <small class="text-muted">Pausados</small>
+              </div>
+            </div>
+            
+            <a href="/seeApartments" class="btn btn-info btn-lg w-100 mt-auto rounded-pill fw-bold transition-all hover-lift">
+              <i class="bi bi-house-gear me-2"></i>Ver Apartamentos
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Tarjeta: Gestión de Reservas -->
+      <div class="col">
+        <div class="admin-card card border-0 shadow-lg rounded-4 h-100 overflow-hidden transition-all"
+             style="animation: slideInUp 0.6s ease-out 0.4s both;">
+          
+          <div class="card-img-container position-relative overflow-hidden">
+            <img src="/img/reservationsList.jpg" class="card-img-top transition-all" 
+                 alt="Gestión de reservas" style="height: 200px; object-fit: cover;">
+            <div class="card-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center opacity-0 transition-all">
+              <div class="overlay-content text-center">
+                <div class="overlay-icon bg-warning bg-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2"
+                     style="width: 60px; height: 60px;">
+                  <i class="bi bi-calendar-check text-white fs-3"></i>
+                </div>
+                <p class="text-white fw-bold mb-0">Gestionar</p>
+              </div>
+            </div>
+            
+            <div class="position-absolute top-0 start-0 m-3">
+              <span class="badge bg-warning bg-gradient px-3 py-2 rounded-pill shadow-sm">
+                <i class="bi bi-calendar-check me-1"></i>Reservas
+              </span>
+            </div>
+          </div>
+          
+          <div class="card-body p-4 d-flex flex-column">
+            <div class="card-header-info mb-3">
+              <h5 class="card-title text-dark fw-bold mb-2">Gestión de Reservas</h5>
+              <p class="card-text text-muted small mb-0">
+                Revisa, confirma y gestiona todas las reservas de la plataforma.
+              </p>
+            </div>
+            
+            <!-- Estadísticas de reservas -->
+            <div class="reservation-stats d-flex justify-content-between mb-3 p-2 bg-light rounded-3">
+              <div class="stat text-center">
+                <div class="stat-number fw-bold text-warning">89</div>
+                <small class="text-muted">Hoy</small>
+              </div>
+              <div class="stat text-center">
+                <div class="stat-number fw-bold text-success">156</div>
+                <small class="text-muted">Semana</small>
+              </div>
+              <div class="stat text-center">
+                <div class="stat-number fw-bold text-info">2,341</div>
+                <small class="text-muted">Total</small>
+              </div>
+            </div>
+            
+            <a href="/admin/reservations" class="btn btn-warning btn-lg w-100 mt-auto rounded-pill fw-bold transition-all hover-lift">
+              <i class="bi bi-calendar-check me-2"></i>Ver Reservas
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Sección de acciones rápidas -->
+    <div class="quick-actions mt-5">
+      <div class="section-header text-center mb-4">
+        <h3 class="fw-bold text-dark mb-2">Acciones Rápidas</h3>
+        <p class="text-muted mb-0">Funciones frecuentemente utilizadas</p>
+      </div>
+      
+      <div class="row g-3 justify-content-center">
+        <div class="col-auto">
+          <a href="/admin/reports" class="btn btn-outline-primary btn-lg rounded-pill px-4 transition-all hover-lift">
+            <i class="bi bi-graph-up me-2"></i>Reportes
+          </a>
+        </div>
+        <div class="col-auto">
+          <a href="/admin/settings" class="btn btn-outline-secondary btn-lg rounded-pill px-4 transition-all hover-lift">
+            <i class="bi bi-gear me-2"></i>Configuración
+          </a>
+        </div>
+        <div class="col-auto">
+          <a href="/admin/backup" class="btn btn-outline-info btn-lg rounded-pill px-4 transition-all hover-lift">
+            <i class="bi bi-cloud-download me-2"></i>Respaldo
+          </a>
+        </div>
+        <div class="col-auto">
+          <a href="/admin/logs" class="btn btn-outline-warning btn-lg rounded-pill px-4 transition-all hover-lift">
+            <i class="bi bi-file-text me-2"></i>Logs
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Estilos CSS personalizados -->
+<style>
+/* Efectos de transición globales */
+.transition-all {
+  transition: all 0.3s ease !important;
+}
+
+.hover-lift:hover {
+  transform: translateY(-5px) !important;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.15) !important;
+}
+
+/* Hero section del admin */
+.admin-hero {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.hero-background {
+  background-attachment: fixed;
+}
+
+/* Perfil del administrador */
+.profile-avatar {
+  transition: all 0.3s ease;
+}
+
+.profile-avatar:hover {
+  transform: scale(1.05);
+}
+
+.status-indicator {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.7; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Glassmorphism effects */
+.backdrop-blur {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Tarjetas de administración */
+.admin-card {
+  transition: all 0.4s ease;
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.admin-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15) !important;
+}
+
+.admin-card:hover .card-img-top {
+  transform: scale(1.05);
+}
+
+.admin-card:hover .card-overlay {
+  opacity: 1 !important;
+  background: rgba(0,0,0,0.7);
+}
+
+.card-img-top {
+  transition: transform 0.4s ease;
+}
+
+.card-overlay {
+  transition: all 0.4s ease;
+}
+
+/* Estadísticas */
+.admin-stats .stat-item {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.admin-stats .stat-item:nth-child(1) { animation-delay: 0.1s; }
+.admin-stats .stat-item:nth-child(2) { animation-delay: 0.2s; }
+.admin-stats .stat-item:nth-child(3) { animation-delay: 0.3s; }
+
+.stat-icon {
+  transition: all 0.3s ease;
+}
+
+.stat-item:hover .stat-icon {
+  transform: scale(1.1);
+}
+
+/* Estadísticas en tarjetas */
+.quick-stats,
+.apartment-stats,
+.reservation-stats {
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef) !important;
+}
+
+.quick-stats .stat:hover,
+.apartment-stats .stat:hover,
+.reservation-stats .stat:hover {
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
+}
+
+/* Botones mejorados */
+.btn {
+  transition: all 0.3s ease;
+  border-width: 2px;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #0d6efd, #6610f2);
+  border: none;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #0b5ed7, #520dc2);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #198754, #20c997);
+  border: none;
+}
+
+.btn-success:hover {
+  background: linear-gradient(135deg, #157347, #1aa179);
+}
+
+.btn-info {
+  background: linear-gradient(135deg, #0dcaf0, #6f42c1);
+  border: none;
+}
+
+.btn-info:hover {
+  background: linear-gradient(135deg, #0aa2c0, #59359a);
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, #ffc107, #fd7e14);
+  border: none;
+}
+
+.btn-warning:hover {
+  background: linear-gradient(135deg, #cc9a06, #ca6510);
+}
+
+/* Acciones rápidas */
+.quick-actions {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Animaciones de entrada */
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Badges mejorados */
+.badge {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Pasos de creación */
+.creation-steps {
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef) !important;
+}
+
+.step-item {
+  transition: all 0.3s ease;
+}
+
+.step-item:hover {
+  transform: translateX(5px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .admin-hero {
+    min-height: 80vh;
+  }
+  
+  .admin-welcome h1 {
+    font-size: 2.5rem !important;
+  }
+  
+  .admin-stats {
+    justify-content: center;
+    text-align: center;
+  }
+  
+  .admin-stats .stat-item {
+    margin-bottom: 1rem;
+  }
+  
+  .admin-profile {
+    margin-top: 2rem;
+  }
+  
+  .quick-actions {
+    padding: 1.5rem;
+  }
+  
+  .quick-actions .row {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .quick-actions .col-auto {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+  
+  .quick-actions .btn {
+    width: 100%;
+  }
+}
+
+/* Efectos adicionales */
+.section-header {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.admin-dashboard {
+  position: relative;
+}
+
+.admin-dashboard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+}
+
+/* Hover effects para estadísticas */
+.stat-number {
+  transition: all 0.3s ease;
+}
+
+.stat:hover .stat-number {
+  transform: scale(1.1);
+  color: #0d6efd !important;
+}
+
+/* Loading states */
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Mejoras en overlays */
+.overlay-icon {
+  animation: bounceIn 0.6s ease-out;
+}
+
+@keyframes bounceIn {
+  0% { transform: scale(0.3); opacity: 0; }
+  50% { transform: scale(1.05); }
+  70% { transform: scale(0.9); }
+  100% { transform: scale(1); opacity: 1; }
+}
+</style>
+
+<!-- Scripts mejorados -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Animación de números en estadísticas
+  const observerOptions = {
+    threshold: 0.5,
+    rootMargin: '0px 0px -100px 0px'
+  };
+  
+  const observer = new IntersectionObserver(function(entries) {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const statNumbers = entry.target.querySelectorAll('.stat-number');
+        statNumbers.forEach(stat => {
+          const finalNumber = parseInt(stat.textContent.replace(/,/g, ''));
+          if (!isNaN(finalNumber)) {
+            animateNumber(stat, 0, finalNumber, 2000);
+          }
+        });
+        observer.unobserve(entry.target);
+      }
+    });
+  }, observerOptions);
+  
+  // Observar secciones de estadísticas
+  const statSections = document.querySelectorAll('.admin-stats, .quick-stats, .apartment-stats, .reservation-stats');
+  statSections.forEach(section => {
+    observer.observe(section);
+  });
+  
+  function animateNumber(element, start, end, duration) {
+    const startTime = performance.now();
+    const originalText = element.textContent;
+    
+    const update = (currentTime) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const current = Math.floor(start + (end - start) * progress);
+      
+      // Mantener formato con comas
+      element.textContent = current.toLocaleString();
+      
+      if (progress < 1) {
+        requestAnimationFrame(update);
+      }
+    };
+    requestAnimationFrame(update);
+  }
+  
+  // Efectos de hover mejorados para tarjetas
+  const adminCards = document.querySelectorAll('.admin-card');
+  adminCards.forEach(card => {
+    card.addEventListener('mouseenter', function() {
+      this.style.transform = 'translateY(-10px) scale(1.02)';
+    });
+    
+    card.addEventListener('mouseleave', function() {
+      this.style.transform = 'translateY(0) scale(1)';
+    });
+  });
+  
+  // Efectos de click en botones
+  const buttons = document.querySelectorAll('.btn');
+  buttons.forEach(button => {
+    button.addEventListener('click', function(e) {
+      // Crear efecto ripple
+      const ripple = document.createElement('span');
+      const rect = this.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      const x = e.clientX - rect.left - size / 2;
+      const y = e.clientY - rect.top - size / 2;
+      
+      ripple.style.width = ripple.style.height = size + 'px';
+      ripple.style.left = x + 'px';
+      ripple.style.top = y + 'px';
+      ripple.classList.add('ripple');
+      
+      this.appendChild(ripple);
+      
+      setTimeout(() => {
+        ripple.remove();
+      }, 600);
+    });
+  });
+  
+  // Actualizar estadísticas en tiempo real (simulado)
+  function updateStats() {
+    const statNumbers = document.querySelectorAll('.stat-number');
+    statNumbers.forEach(stat => {
+      const currentValue = parseInt(stat.textContent.replace(/,/g, ''));
+      if (!isNaN(currentValue) && Math.random() > 0.7) {
+        const change = Math.floor(Math.random() * 5) - 2; // -2 a +2
+        const newValue = Math.max(0, currentValue + change);
+        stat.textContent = newValue.toLocaleString();
+        
+        // Efecto visual de cambio
+        stat.style.color = change > 0 ? '#198754' : change < 0 ? '#dc3545' : '';
+        setTimeout(() => {
+          stat.style.color = '';
+        }, 1000);
+      }
+    });
+  }
+  
+  // Actualizar estadísticas cada 30 segundos
+  setInterval(updateStats, 30000);
+});
+</script>
+
+<!-- Estilos adicionales para efectos -->
+<style>
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  transform: scale(0);
+  animation: ripple-animation 0.6s linear;
+  pointer-events: none;
+}
+
+@keyframes ripple-animation {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+</style>
 
 <!-- Incluye el pie de página desde un archivo parcial -->
 <%- include("partials/footer") %>

@@ -644,11 +644,11 @@ export const postDeleteApartment = async (req, res) => {
     apartment.active = false; // Desactiva el apartamento en lugar de eliminarlo físicamente
     await apartment.save();
     req.flash("success_msg", "Apartamento eliminado satisfactoriamente. ");
-    return res.redirect("/seeApartments");
+    return res.redirect("/");
   } catch (error) {
     console.error("Error al eliminar apartamento:", error);
     req.flash("error_msg", "Error al eliminar el apartamento.");
-    return res.redirect("/seeApartments");
+    return res.redirect("/");
   }
 };
 

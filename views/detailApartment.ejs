@@ -1,250 +1,794 @@
 <!-- Incluye el encabezado de la página desde un archivo parcial -->
 <%- include("partials/header") %>
 
-<!-- Enlace para volver atrás en la navegación -->
-<a href="#" onclick="window.history.back()" class="row justify-content-start">
-  <img src="/img/back.png" alt="Volver atrás" style="max-width: 70px; height: auto;" class="m-3" />
-</a>
-
 <!-- Incluye mensajes parciales, como notificaciones o alertas -->
 <%- include("partials/mensajes") %>
 
+<!-- Botón de volver atrás mejorado -->
+<!-- <div class="back-button-container position-fixed top-50 start-0 translate-middle-y ms-3" style="z-index: 1020;">
+  <button onclick="window.history.back()" 
+          class="btn btn-primary btn-lg rounded-circle shadow-lg back-btn d-flex align-items-center justify-content-center"
+          data-bs-toggle="tooltip" title="Volver atrás"
+          style="width: 60px; height: 60px;">
+    <i class="bi bi-arrow-left fs-4"></i>
+  </button>
+</div> -->
+
+<!-- Hero section con información básica -->
+<% if (apartments) { %>
+<div class="apartment-hero position-relative overflow-hidden d-flex justify-content-center align-items-center" style="min-height: 50vh;">
+  <div class="hero-background position-absolute top-0 start-0 w-100 h-100"
+       style="background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('<%= apartments.photos.find(p => p.isMain)?.url || apartments.photos[0]?.url || '/img/default.jpg' %>'); 
+              background-size: cover; background-position: center; filter: blur(2px);"></div>
+  
+  <div class="hero-content position-relative py-5 w-100">
+    <div class="container text-center">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="hero-info text-white" style="animation: fadeInUp 0.8s ease-out;">
+            <div class="mb-3">
+              <% if (apartments.active) { %>
+                <span class="badge bg-success bg-gradient px-4 py-2 rounded-pill fs-6 shadow-lg">
+                  <i class="bi bi-check-circle me-2"></i>Disponible
+                </span>
+              <% } else { %>
+                <span class="badge bg-warning bg-gradient px-4 py-2 rounded-pill fs-6 shadow-lg">
+                  <i class="bi bi-pause-circle me-2"></i>No Disponible
+                </span>
+              <% } %>
+            </div>
+            
+            <h1 class="display-4 fw-bold mb-3 text-shadow">
+              <%= apartments.title %>
+            </h1>
+            
+            <p class="lead mb-4 d-flex align-items-center justify-content-center">
+              <i class="bi bi-geo-alt-fill text-warning me-3 fs-4"></i>
+              <%= apartments.location.municipality.nm %>, <%= apartments.location.province.nm %>
+            </p>
+            
+            <div class="quick-info d-flex flex-wrap gap-4 mb-4 justify-content-center">
+              <div class="info-item d-flex align-items-center">
+                <div class="info-icon bg-primary bg-gradient rounded-circle d-flex align-items-center justify-content-center me-2"
+                     style="width: 40px; height: 40px;">
+                  <i class="bi bi-door-closed text-white"></i>
+                </div>
+                <div>
+                  <div class="fw-bold"><%= apartments.rooms %></div>
+                  <small class="text-light">Habitaciones</small>
+                </div>
+              </div>
+              
+              <div class="info-item d-flex align-items-center">
+                <div class="info-icon bg-info bg-gradient rounded-circle d-flex align-items-center justify-content-center me-2"
+                     style="width: 40px; height: 40px;">
+                  <i class="bi bi-droplet text-white"></i>
+                </div>
+                <div>
+                  <div class="fw-bold"><%= apartments.bathrooms %></div>
+                  <small class="text-light">Baños</small>
+                </div>
+              </div>
+              
+              <div class="info-item d-flex align-items-center">
+                <div class="info-icon bg-success bg-gradient rounded-circle d-flex align-items-center justify-content-center me-2"
+                     style="width: 40px; height: 40px;">
+                  <i class="bi bi-people text-white"></i>
+                </div>
+                <div>
+                  <div class="fw-bold"><%= apartments.maxGuests %></div>
+                  <small class="text-light">Huéspedes</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+</div>
+<% } %>
 <!-- Contenedor principal del contenido -->
-<main class="container my-5">
-  <!-- Tarjeta principal que contiene las pestañas -->
-  <div class="card shadow-sm" style="min-height: 80vh;">
-    <!-- Encabezado de la tarjeta con pestañas de navegación -->
-    <div class="card-header">
-      <ul class="nav nav-tabs card-header-tabs" id="apartmentTab" role="tablist">
-        <!-- Pestaña para Fotos y Descripción -->
-        <li class="nav-item" role="presentation">
-          <button class="nav-link active" id="photos-tab" data-bs-toggle="tab" data-bs-target="#photos" type="button" role="tab" aria-controls="photos" aria-selected="true">
-            Fotos y Descripción
-          </button>
-        </li>
-        <!-- Pestaña para Detalles -->
-        <li class="nav-item" role="presentation">
-          <button class="nav-link" id="details-tab" data-bs-toggle="tab" data-bs-target="#details" type="button" role="tab" aria-controls="details" aria-selected="false">
-            Detalles
-          </button>
-        </li>
-        <!-- Pestaña para Mapa -->
-        <li class="nav-item" role="presentation">
-          <button class="nav-link" id="location-tab" data-bs-toggle="tab" data-bs-target="#location" type="button" role="tab" aria-controls="location" aria-selected="false">
-            Mapa
-          </button>
-        </li>
-        <!-- Pestaña para Reserva, solo visible si hay un usuario autenticado y el apartamento está activo -->
-        <% if (currentUser && apartments.active == true) { %>
+<main class="apartment-details-section py-5" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+  <div class="container">
+    <!-- Tarjeta principal mejorada -->
+    <div class="details-card backdrop-blur rounded-4 shadow-lg border border-light border-opacity-25 overflow-hidden"
+         style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px);">
+      
+      <!-- Navegación por pestañas moderna -->
+      <div class="tabs-header p-4 pb-0">
+        <ul class="nav nav-pills nav-fill modern-tabs" id="apartmentTab" role="tablist">
           <li class="nav-item" role="presentation">
-            <button class="nav-link" id="reservation-tab" data-bs-toggle="tab" data-bs-target="#reservation" type="button" role="tab" aria-controls="reservation" aria-selected="false">
-              Reserva
+            <button class="nav-link active rounded-pill px-4 py-3 fw-semibold transition-all" 
+                    id="photos-tab" data-bs-toggle="tab" data-bs-target="#photos" 
+                    type="button" role="tab" aria-controls="photos" aria-selected="true">
+              <i class="bi bi-images me-2"></i>Fotos y Descripción
             </button>
           </li>
-        <% } %>
-      </ul>
-    </div>
-
-    <!-- Contenido de las pestañas -->
-    <div class="card-body tab-content" id="apartmentTabContent">
-      <!-- Contenido de la pestaña Fotos y Descripción -->
-      <div class="tab-pane fade show active" id="photos" role="tabpanel" aria-labelledby="photos-tab">
-        <% if (apartments) { %>
-          <!-- Carrusel de fotos del apartamento -->
-          <div id="apartmentCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
-            <div class="carousel-inner">
-              <% apartments.photos.forEach((photo, index) => { %>
-                <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
-                  <img src="<%= photo.url %>" class="d-block w-100" alt="<%= photo.description %>" style="object-fit: cover; height: 500px" />
-                  <div class="carousel-caption d-none d-md-block">
-                    <p><%= photo.description %></p>
-                  </div>
-                </div>
-              <% }) %>
-            </div>
-            <!-- Controles del carrusel -->
-            <button class="carousel-control-prev" type="button" data-bs-target="#apartmentCarousel" data-bs-slide="prev">
-              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Anterior</span>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link rounded-pill px-4 py-3 fw-semibold transition-all" 
+                    id="details-tab" data-bs-toggle="tab" data-bs-target="#details" 
+                    type="button" role="tab" aria-controls="details" aria-selected="false">
+              <i class="bi bi-info-circle me-2"></i>Detalles
             </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#apartmentCarousel" data-bs-slide="next">
-              <span class="carousel-control-next-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Siguiente</span>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link rounded-pill px-4 py-3 fw-semibold transition-all" 
+                    id="location-tab" data-bs-toggle="tab" data-bs-target="#location" 
+                    type="button" role="tab" aria-controls="location" aria-selected="false">
+              <i class="bi bi-geo-alt me-2"></i>Ubicación
             </button>
-          </div>
-          <!-- Título y descripción del apartamento -->
-          <h3><%= apartments.title %></h3>
-          <p><%= apartments.description %></p>
-        <% } else { %>
-          <p class="alert alert-warning">No hay apartamentos disponibles.</p>
-        <% } %>
-      </div>
-
-      <!-- Contenido de la pestaña Detalles -->
-      <div class="tab-pane fade" id="details" role="tabpanel" aria-labelledby="details-tab">
-        <% if (apartments) { %>
-          <!-- Características del apartamento -->
-          <h5 class="mb-3">Características</h5>
-          <ul class="list-group mb-4">
-            <li class="list-group-item"><strong>Habitaciones:</strong> <%= apartments.rooms %></li>
-            <li class="list-group-item"><strong>Baños:</strong> <%= apartments.bathrooms %></li>
-            <li class="list-group-item"><strong>Precio por noche:</strong> <%= apartments.price %> €</li>
-            <li class="list-group-item"><strong>Máximo de huéspedes:</strong> <%= apartments.maxGuests %></li>
-            <li class="list-group-item"><strong>Metros cuadrados:</strong> <%= apartments.squareMeters %> m²</li>
-          </ul>
-
-          <!-- Camas por habitación -->
-          <h5 class="mb-3">Camas por habitación</h5>
-          <% if (apartments.bedsPerRoom && apartments.bedsPerRoom.length > 0) { %>
-            <ul class="list-group mb-4">
-              <% apartments.bedsPerRoom.forEach((beds, idx) => { %>
-                <li class="list-group-item">Habitación <%= idx + 1 %>: <%= beds %> cama<%= beds > 1 ? 's' : '' %></li>
-              <% }) %>
-            </ul>
-          <% } else { %>
-            <p class="mb-4">No hay información de camas disponibles.</p>
+          </li>
+          <% if (currentUser && apartments.active == true) { %>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link rounded-pill px-4 py-3 fw-semibold transition-all" 
+                      id="reservation-tab" data-bs-toggle="tab" data-bs-target="#reservation" 
+                      type="button" role="tab" aria-controls="reservation" aria-selected="false">
+                <i class="bi bi-calendar-check me-2"></i>Reservar
+              </button>
+            </li>
           <% } %>
-
-          <!-- Reglas de la casa -->
-          <h5 class="mb-3">Reglas de la casa</h5>
-          <% if (apartments.rules && apartments.rules.length > 0) { %>
-            <ul class="list-group mb-4">
-              <% apartments.rules.forEach(rule => { %>
-                <li class="list-group-item"><%= rule %></li>
-              <% }) %>
-            </ul>
-          <% } else { %>
-            <p class="mb-4">No hay reglas especificadas.</p>
-          <% } %>
-
-          <!-- Servicios del apartamento -->
-          <h5 class="mb-3">Servicios</h5>
-          <div class="mb-4">
-            <% if (apartments.services.airConditioning) { %>
-              <i class="bi bi-snow text-primary me-3" data-bs-toggle="tooltip" title="Aire Acondicionado" style="font-size: 1.8rem;"></i>
-            <% } %>
-            <% if (apartments.services.heating) { %>
-              <i class="bi bi-fire text-danger me-3" data-bs-toggle="tooltip" title="Calefacción" style="font-size: 1.8rem;"></i>
-            <% } %>
-            <% if (apartments.services.accessibility) { %>
-              <i class="bi bi-person-wheelchair text-secondary me-3" data-bs-toggle="tooltip" title="Accesibilidad" style="font-size: 1.8rem;"></i>
-            <% } %>
-            <% if (apartments.services.television) { %>
-              <i class="bi bi-tv text-info me-3" data-bs-toggle="tooltip" title="Televisión" style="font-size: 1.8rem;"></i>
-            <% } %>
-            <% if (apartments.services.kitchen) { %>
-              <i class="bi bi-cup-hot text-warning me-3" data-bs-toggle="tooltip" title="Cocina" style="font-size: 1.8rem;"></i>
-            <% } %>
-            <% if (apartments.services.internet) { %>
-              <i class="bi bi-wifi text-success me-3" data-bs-toggle="tooltip" title="Internet" style="font-size: 1.8rem;"></i>
-            <% } %>
-            <% const hasServices = apartments.services.airConditioning || apartments.services.heating || apartments.services.accessibility || apartments.services.television || apartments.services.kitchen || apartments.services.internet; %>
-            <% if (!hasServices) { %>
-              <p>No hay servicios disponibles.</p>
-            <% } %>
-          </div>
-
-          <!-- Ubicación del apartamento -->
-          <h5 class="mb-3">Ubicación</h5>
-          <p><strong>Municipio:</strong> <%= apartments.location.municipality.nm %></p>
-          <p><strong>Provincia:</strong> <%= apartments.location.province.nm %></p>
-        <% } else { %>
-          <p class="alert alert-warning">No hay apartamentos disponibles.</p>
-        <% } %>
+        </ul>
       </div>
-
-      <!-- Contenido de la pestaña Mapa -->
-      <div class="tab-pane fade" id="location" role="tabpanel" aria-labelledby="location-tab">
-        <% if (apartments) { %>
-          <h5>Ubicación en el mapa</h5>
-          <!-- Mapa de Google Maps -->
-          <div style="width: 100%; height: 400px">
-            <iframe width="100%" height="600" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"
-              src="https://maps.google.com/maps?q=<%= encodeURIComponent(apartments.location.municipality + ', ' + apartments.location.province) %>&t=&z=13&ie=UTF8&iwloc=&output=embed">
-            </iframe>
-          </div>
-        <% } else { %>
-          <p class="alert alert-warning">No hay datos de ubicación disponibles.</p>
-        <% } %>
-      </div>
-
-      <!-- Contenido de la pestaña Reserva -->
-      <% if (currentUser && apartments.active == true) { %>
-        <div class="tab-pane fade" id="reservation" role="tabpanel" aria-labelledby="reservation-tab">
+      
+      <!-- Contenido de las pestañas -->
+      <div class="tab-content p-4" id="apartmentTabContent">
+        
+        <!-- Pestaña: Fotos y Descripción -->
+        <div class="tab-pane fade show active" id="photos" role="tabpanel" aria-labelledby="photos-tab">
           <% if (apartments) { %>
-            <h5 class="mb-4">Formulario de Reserva</h5>
-            <div class="row">
-              <!-- Columna izquierda: Formulario de reserva -->
-              <div class="col-md-6">
-                <form action="/reservations/new-reservation" method="POST">
-                  <input type="hidden" name="apartmentId" value="<%= apartments._id %>" />
-                  <input type="hidden" name="user" value="<%= currentUser._id %>" />
-                  <div class="mb-3">
-                    <label for="guestName" class="form-label">Nombre completo del huésped</label>
-                    <input type="text" class="form-control" id="guestName" name="guestName" required />
-                  </div>
-                  <div class="mb-3">
-                    <label for="guestEmail" class="form-label">Correo electrónico</label>
-                    <input type="email" class="form-control" id="guestEmail" name="guestEmail" required />
-                  </div>
-                  <div class="mb-3">
-                    <label for="dateRange" class="form-label">Selecciona el rango de fechas:</label>
-                    <input type="text" id="dateRange" name="dateRange" class="form-control" readonly />
-                  </div>
-                  <button type="submit" class="btn btn-primary">Confirmar Reserva</button>
-                </form>
-              </div>
-              <!-- Columna derecha: Calendario -->
-              <div class="col-md-6">
-                <div id="calendar" style="min-height: 500px; background-color: #f8f9fa;" class="rounded p-3 shadow-sm">
-                  <!-- Aquí se renderiza el calendario -->
+            <!-- Carrusel de fotos mejorado -->
+            <div class="photos-section mb-5">
+              <div id="apartmentCarousel" class="carousel slide rounded-4 overflow-hidden shadow-lg" data-bs-ride="carousel">
+                <!-- Indicadores del carrusel -->
+                <div class="carousel-indicators">
+                  <% apartments.photos.forEach((photo, index) => { %>
+                    <button type="button" data-bs-target="#apartmentCarousel" data-bs-slide-to="<%= index %>" 
+                            class="<%= index === 0 ? 'active' : '' %>" aria-label="Foto <%= index + 1 %>"></button>
+                  <% }) %>
                 </div>
+                
+                <div class="carousel-inner">
+                  <% apartments.photos.forEach((photo, index) => { %>
+                    <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+                      <img src="<%= photo.url %>" class="d-block w-100 carousel-image" 
+                           alt="<%= photo.description %>" style="height: 500px; object-fit: cover;" />
+                      <div class="carousel-caption d-none d-md-block">
+                        <div class="caption-content backdrop-blur rounded-3 p-3"
+                             style="background: rgba(0, 0, 0, 0.6);">
+                          <p class="mb-0 fw-medium"><%= photo.description %></p>
+                        </div>
+                      </div>
+                    </div>
+                  <% }) %>
+                </div>
+                
+                <!-- Controles del carrusel -->
+                <button class="carousel-control-prev" type="button" data-bs-target="#apartmentCarousel" data-bs-slide="prev">
+                  <div class="control-icon bg-dark bg-opacity-50 rounded-circle d-flex align-items-center justify-content-center"
+                       style="width: 50px; height: 50px;">
+                    <i class="bi bi-chevron-left text-white fs-4"></i>
+                  </div>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#apartmentCarousel" data-bs-slide="next">
+                  <div class="control-icon bg-dark bg-opacity-50 rounded-circle d-flex align-items-center justify-content-center"
+                       style="width: 50px; height: 50px;">
+                    <i class="bi bi-chevron-right text-white fs-4"></i>
+                  </div>
+                </button>
+              </div>
+            </div>
+            
+            <!-- Descripción mejorada -->
+            <div class="description-section">
+              <div class="section-header mb-4">
+                <h3 class="section-title fw-bold text-dark mb-2">
+                  <i class="bi bi-file-text text-primary me-2"></i>Descripción
+                </h3>
+                <div class="section-divider"></div>
+              </div>
+              <div class="description-content p-4 bg-light rounded-3">
+                <p class="lead mb-0 lh-lg"><%= apartments.description %></p>
               </div>
             </div>
           <% } else { %>
-            <p class="alert alert-warning">No se puede realizar una reserva sin datos del apartamento.</p>
+            <div class="alert alert-warning rounded-3 border-0 shadow-sm">
+              <i class="bi bi-exclamation-triangle me-2"></i>
+              No hay apartamentos disponibles.
+            </div>
           <% } %>
         </div>
-      <% } %>
+        
+        <!-- Pestaña: Detalles -->
+        <div class="tab-pane fade" id="details" role="tabpanel" aria-labelledby="details-tab">
+          <% if (apartments) { %>
+            <div class="row g-4">
+              <!-- Características principales -->
+              <div class="col-lg-6">
+                <div class="details-card bg-light rounded-3 p-4 h-100">
+                  <h5 class="section-title fw-bold text-dark mb-4">
+                    <i class="bi bi-house text-primary me-2"></i>Características
+                  </h5>
+                  <div class="characteristics-list">
+                    <div class="characteristic-item d-flex align-items-center mb-3 p-3 bg-white rounded-3 shadow-sm">
+                      <div class="char-icon bg-primary bg-gradient rounded-circle d-flex align-items-center justify-content-center me-3"
+                           style="width: 45px; height: 45px;">
+                        <i class="bi bi-door-closed text-white"></i>
+                      </div>
+                      <div>
+                        <div class="char-label text-muted small">Habitaciones</div>
+                        <div class="char-value fw-bold fs-5"><%= apartments.rooms %></div>
+                      </div>
+                    </div>
+                    
+                    <div class="characteristic-item d-flex align-items-center mb-3 p-3 bg-white rounded-3 shadow-sm">
+                      <div class="char-icon bg-info bg-gradient rounded-circle d-flex align-items-center justify-content-center me-3"
+                           style="width: 45px; height: 45px;">
+                        <i class="bi bi-droplet text-white"></i>
+                      </div>
+                      <div>
+                        <div class="char-label text-muted small">Baños</div>
+                        <div class="char-value fw-bold fs-5"><%= apartments.bathrooms %></div>
+                      </div>
+                    </div>
+                    
+                    <div class="characteristic-item d-flex align-items-center mb-3 p-3 bg-white rounded-3 shadow-sm">
+                      <div class="char-icon bg-success bg-gradient rounded-circle d-flex align-items-center justify-content-center me-3"
+                           style="width: 45px; height: 45px;">
+                        <i class="bi bi-people text-white"></i>
+                      </div>
+                      <div>
+                        <div class="char-label text-muted small">Máximo huéspedes</div>
+                        <div class="char-value fw-bold fs-5"><%= apartments.maxGuests %></div>
+                      </div>
+                    </div>
+                    
+                    <div class="characteristic-item d-flex align-items-center mb-3 p-3 bg-white rounded-3 shadow-sm">
+                      <div class="char-icon bg-warning bg-gradient rounded-circle d-flex align-items-center justify-content-center me-3"
+                           style="width: 45px; height: 45px;">
+                        <i class="bi bi-rulers text-white"></i>
+                      </div>
+                      <div>
+                        <div class="char-label text-muted small">Metros cuadrados</div>
+                        <div class="char-value fw-bold fs-5"><%= apartments.squareMeters %> m²</div>
+                      </div>
+                    </div>
+                    
+                    <div class="characteristic-item d-flex align-items-center p-3 bg-white rounded-3 shadow-sm">
+                      <div class="char-icon bg-danger bg-gradient rounded-circle d-flex align-items-center justify-content-center me-3"
+                           style="width: 45px; height: 45px;">
+                        <i class="bi bi-currency-euro text-white"></i>
+                      </div>
+                      <div>
+                        <div class="char-label text-muted small">Precio por noche</div>
+                        <div class="char-value fw-bold fs-5"><%= apartments.price %> €</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Servicios -->
+              <div class="col-lg-6">
+                <div class="services-card bg-light rounded-3 p-4 h-100">
+                  <h5 class="section-title fw-bold text-dark mb-4">
+                    <i class="bi bi-gear text-primary me-2"></i>Servicios Incluidos
+                  </h5>
+                  <div class="services-grid">
+                    <% const services = [
+                      { key: 'airConditioning', icon: 'bi-snow', label: 'Aire Acondicionado', color: 'primary' },
+                      { key: 'heating', icon: 'bi-fire', label: 'Calefacción', color: 'danger' },
+                      { key: 'accessibility', icon: 'bi-person-wheelchair', label: 'Accesibilidad', color: 'info' },
+                      { key: 'television', icon: 'bi-tv', label: 'Televisión', color: 'secondary' },
+                      { key: 'kitchen', icon: 'bi-cup-hot', label: 'Cocina', color: 'warning' },
+                      { key: 'internet', icon: 'bi-wifi', label: 'Internet', color: 'success' }
+                    ]; %>
+                    
+                    <% services.forEach(service => { %>
+                      <div class="service-item d-flex align-items-center mb-3 p-3 bg-white rounded-3 shadow-sm transition-all">
+                        <div class="service-icon bg-<%= service.color %> bg-gradient rounded-circle d-flex align-items-center justify-content-center me-3"
+                             style="width: 45px; height: 45px;">
+                          <i class="bi <%= service.icon %> text-white"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                          <div class="service-label fw-medium"><%= service.label %></div>
+                        </div>
+                        <div class="service-status">
+                          <% if (apartments.services[service.key]) { %>
+                            <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                          <% } else { %>
+                            <i class="bi bi-x-circle-fill text-muted fs-5"></i>
+                          <% } %>
+                        </div>
+                      </div>
+                    <% }); %>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Camas por habitación -->
+            <div class="row g-4 mt-2">
+              <div class="col-lg-6">
+                <div class="beds-card bg-light rounded-3 p-4">
+                  <h5 class="section-title fw-bold text-dark mb-4">
+                    <i class="bi bi-bed text-primary me-2"></i>Distribución de Camas
+                  </h5>
+                  <% if (apartments.bedsPerRoom && apartments.bedsPerRoom.length > 0) { %>
+                    <div class="beds-list">
+                      <% apartments.bedsPerRoom.forEach((beds, idx) => { %>
+                        <div class="bed-item d-flex align-items-center mb-3 p-3 bg-white rounded-3 shadow-sm">
+                          <div class="bed-icon bg-info bg-gradient rounded-circle d-flex align-items-center justify-content-center me-3"
+                               style="width: 45px; height: 45px;">
+                            <i class="bi bi-bed text-white"></i>
+                          </div>
+                          <div>
+                            <div class="bed-room fw-medium">Habitación <%= idx + 1 %></div>
+                            <div class="bed-count text-muted"><%= beds %> cama<%= beds > 1 ? 's' : '' %></div>
+                          </div>
+                        </div>
+                      <% }) %>
+                    </div>
+                  <% } else { %>
+                    <div class="alert alert-info border-0 rounded-3">
+                      <i class="bi bi-info-circle me-2"></i>
+                      No hay información de camas disponible.
+                    </div>
+                  <% } %>
+                </div>
+              </div>
+              
+              <!-- Reglas de la casa -->
+              <div class="col-lg-6">
+                <div class="rules-card bg-light rounded-3 p-4">
+                  <h5 class="section-title fw-bold text-dark mb-4">
+                    <i class="bi bi-list-check text-primary me-2"></i>Reglas de la Casa
+                  </h5>
+                  <% if (apartments.rules && apartments.rules.length > 0) { %>
+                    <div class="rules-list">
+                      <% apartments.rules.forEach(rule => { %>
+                        <div class="rule-item d-flex align-items-start mb-3 p-3 bg-white rounded-3 shadow-sm">
+                          <div class="rule-icon me-3 mt-1">
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                          </div>
+                          <div class="rule-text"><%= rule %></div>
+                        </div>
+                      <% }) %>
+                    </div>
+                  <% } else { %>
+                    <div class="alert alert-info border-0 rounded-3">
+                      <i class="bi bi-info-circle me-2"></i>
+                      No hay reglas específicas para este apartamento.
+                    </div>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+          <% } else { %>
+            <div class="alert alert-warning rounded-3 border-0 shadow-sm">
+              <i class="bi bi-exclamation-triangle me-2"></i>
+              No hay apartamentos disponibles.
+            </div>
+          <% } %>
+        </div>
+        
+        <!-- Pestaña: Ubicación -->
+        <div class="tab-pane fade" id="location" role="tabpanel" aria-labelledby="location-tab">
+          <% if (apartments) { %>
+            <div class="location-section">
+              <div class="section-header mb-4">
+                <h3 class="section-title fw-bold text-dark mb-2">
+                  <i class="bi bi-geo-alt text-primary me-2"></i>Ubicación en el Mapa
+                </h3>
+                <p class="text-muted mb-0">
+                  <i class="bi bi-pin-map me-2"></i>
+                  <%= apartments.location.municipality.nm %>, <%= apartments.location.province.nm %>
+                </p>
+              </div>
+              
+              <!-- Mapa mejorado -->
+              <div class="map-container rounded-4 overflow-hidden shadow-lg">
+                <iframe width="100%" height="500" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"
+                        class="map-iframe"
+                        src="https://maps.google.com/maps?q=<%= encodeURIComponent(apartments.location.municipality.nm + ', ' + apartments.location.province.nm) %>&t=&z=13&ie=UTF8&iwloc=&output=embed">
+                </iframe>
+              </div>
+              
+              <!-- Información adicional de ubicación -->
+              <div class="location-info mt-4 p-4 bg-light rounded-3">
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <div class="info-item d-flex align-items-center">
+                      <i class="bi bi-building text-primary me-3 fs-4"></i>
+                      <div>
+                        <div class="fw-medium">Municipio</div>
+                        <div class="text-muted"><%= apartments.location.municipality.nm %></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="info-item d-flex align-items-center">
+                      <i class="bi bi-map text-primary me-3 fs-4"></i>
+                      <div>
+                        <div class="fw-medium">Provincia</div>
+                        <div class="text-muted"><%= apartments.location.province.nm %></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% } else { %>
+            <div class="alert alert-warning rounded-3 border-0 shadow-sm">
+              <i class="bi bi-exclamation-triangle me-2"></i>
+              No hay datos de ubicación disponibles.
+            </div>
+          <% } %>
+        </div>
+        
+        <!-- Pestaña: Reserva -->
+        <% if (currentUser && apartments.active == true) { %>
+          <div class="tab-pane fade" id="reservation" role="tabpanel" aria-labelledby="reservation-tab">
+            <% if (apartments) { %>
+              <div class="reservation-section">
+                <div class="section-header text-center mb-5">
+                  <h3 class="section-title fw-bold text-dark mb-2">
+                    <i class="bi bi-calendar-check text-primary me-2"></i>Realizar Reserva
+                  </h3>
+                  <p class="text-muted">Completa el formulario para reservar tu estancia</p>
+                </div>
+                
+                <div class="row g-4">
+                  <!-- Formulario de reserva -->
+                  <div class="col-lg-6">
+                    <div class="reservation-form bg-light rounded-3 p-4">
+                      <h5 class="fw-bold mb-4">
+                        <i class="bi bi-person-fill text-primary me-2"></i>Datos del Huésped
+                      </h5>
+                      
+                      <form action="/reservations/new-reservation" method="POST" class="reservation-form-content">
+                        <input type="hidden" name="apartmentId" value="<%= apartments._id %>" />
+                        <input type="hidden" name="user" value="<%= currentUser._id %>" />
+                        
+                        <div class="mb-4">
+                          <label for="guestName" class="form-label fw-semibold">
+                            <i class="bi bi-person me-2"></i>Nombre completo del huésped
+                          </label>
+                          <input type="text" class="form-control form-control-lg rounded-3 border-0 shadow-sm" 
+                                 id="guestName" name="guestName" required 
+                                 placeholder="Ingresa tu nombre completo" />
+                        </div>
+                        
+                        <div class="mb-4">
+                          <label for="guestEmail" class="form-label fw-semibold">
+                            <i class="bi bi-envelope me-2"></i>Correo electrónico
+                          </label>
+                          <input type="email" class="form-control form-control-lg rounded-3 border-0 shadow-sm" 
+                                 id="guestEmail" name="guestEmail" required 
+                                 placeholder="tu@email.com" />
+                        </div>
+                        
+                        <div class="mb-4">
+                          <label for="dateRange" class="form-label fw-semibold">
+                            <i class="bi bi-calendar-range me-2"></i>Selecciona el rango de fechas
+                          </label>
+                          <input type="text" id="dateRange" name="dateRange" 
+                                 class="form-control form-control-lg rounded-3 border-0 shadow-sm" 
+                                 readonly placeholder="Selecciona las fechas de tu estancia" />
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill fw-bold shadow-lg transition-all hover-lift">
+                          <i class="bi bi-check-circle me-2"></i>Confirmar Reserva
+                        </button>
+                      </form>
+                    </div>
+                  </div>
+                  
+                  <!-- Calendario -->
+                  <div class="col-lg-6">
+                    <div class="calendar-container bg-light rounded-3 p-4">
+                      <h5 class="fw-bold mb-4">
+                        <i class="bi bi-calendar3 text-primary me-2"></i>Disponibilidad
+                      </h5>
+                      <div id="calendar" class="calendar-wrapper bg-white rounded-3 p-3 shadow-sm" 
+                           style="min-height: 500px;">
+                        <!-- Calendario se renderiza aquí -->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% } else { %>
+              <div class="alert alert-warning rounded-3 border-0 shadow-sm">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                No se puede realizar una reserva sin datos del apartamento.
+              </div>
+            <% } %>
+          </div>
+        <% } %>
+      </div>
     </div>
   </div>
 </main>
 
+<!-- Estilos CSS personalizados -->
+<style>
+/* Efectos de transición globales */
+.transition-all {
+  transition: all 0.3s ease !important;
+}
+
+.hover-lift:hover {
+  transform: translateY(-5px) !important;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
+}
+
+/* Hero section */
+.apartment-hero {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+}
+
+.min-vh-50 {
+  min-height: 50vh;
+}
+
+.text-shadow {
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+/* Botón de volver atrás */
+.back-btn {
+  background: linear-gradient(135deg, #0d6efd, #6610f2);
+  border: none;
+  transition: all 0.3s ease;
+  animation: float 3s ease-in-out infinite;
+}
+
+.back-btn:hover {
+  background: linear-gradient(135deg, #0b5ed7, #520dc2);
+  transform: translateY(-3px) scale(1.05);
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+}
+
+/* Glassmorphism effects */
+.backdrop-blur {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Pestañas modernas */
+.modern-tabs .nav-link {
+  background: transparent;
+  border: 2px solid transparent;
+  color: #6c757d;
+  margin: 0 0.25rem;
+  transition: all 0.3s ease;
+}
+
+.modern-tabs .nav-link:hover {
+  background: rgba(13, 110, 253, 0.1);
+  color: #0d6efd;
+  transform: translateY(-2px);
+}
+
+.modern-tabs .nav-link.active {
+  background: linear-gradient(135deg, #0d6efd, #6610f2);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 4px 15px rgba(13, 110, 253, 0.3);
+}
+
+/* Carrusel mejorado */
+.carousel-image {
+  transition: transform 0.3s ease;
+}
+
+.carousel-item:hover .carousel-image {
+  transform: scale(1.02);
+}
+
+.control-icon {
+  transition: all 0.3s ease;
+}
+
+.control-icon:hover {
+  background: rgba(0, 0, 0, 0.8) !important;
+  transform: scale(1.1);
+}
+
+/* Secciones */
+.section-title {
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.section-divider {
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(135deg, #0d6efd, #6610f2);
+  border-radius: 2px;
+}
+
+/* Tarjetas de características */
+.characteristic-item,
+.service-item,
+.bed-item,
+.rule-item {
+  transition: all 0.3s ease;
+}
+
+.characteristic-item:hover,
+.service-item:hover,
+.bed-item:hover,
+.rule-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+}
+
+/* Mapa */
+.map-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.map-iframe {
+  transition: all 0.3s ease;
+}
+
+.map-container:hover .map-iframe {
+  transform: scale(1.02);
+}
+
+/* Formulario de reserva */
+.reservation-form-content .form-control:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+  transform: translateY(-2px);
+}
+
+/* Calendario */
+.calendar-wrapper {
+  transition: all 0.3s ease;
+}
+
+.calendar-wrapper:hover {
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+}
+
+/* Animaciones de entrada */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .apartment-hero {
+    min-height: 70vh;
+  }
+  
+  .hero-info h1 {
+    font-size: 2rem !important;
+  }
+  
+  .quick-info {
+    justify-content: center;
+  }
+  
+  .price-card {
+    margin-top: 2rem;
+  }
+  
+  .back-button-container {
+    position: fixed !important;
+    bottom: 20px !important;
+    right: 20px !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    margin: 0 !important;
+  }
+  
+  .modern-tabs {
+    flex-direction: column;
+  }
+  
+  .modern-tabs .nav-link {
+    margin: 0.25rem 0;
+  }
+}
+
+/* Estados de carga */
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Efectos adicionales */
+.details-card {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.tab-pane {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Mejoras en alertas */
+.alert {
+  border: none;
+  font-weight: 500;
+}
+
+.alert-warning {
+  background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+  color: #856404;
+}
+
+.alert-info {
+  background: linear-gradient(135deg, #d1ecf1, #74b9ff);
+  color: #0c5460;
+}
+</style>
+
+<!-- Scripts mejorados -->
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    // Inicializar tooltips de Bootstrap
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    tooltipTriggerList.map(function (el) {
-      return new bootstrap.Tooltip(el);
-    });
-
-    // Ir directamente a la pestaña de reservas si el hash es '#reservation'
-    if (window.location.hash === "#reservation") {
-      const tabElement = document.querySelector('button[data-bs-target="#reservation"]');
-      if (tabElement) {
-        const tab = new bootstrap.Tab(tabElement);
-        tab.show();
-      }
+document.addEventListener("DOMContentLoaded", () => {
+  // Inicializar tooltips
+  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  tooltipTriggerList.map(function (el) {
+    return new bootstrap.Tooltip(el);
+  });
+  
+  // Navegación directa a pestañas
+  if (window.location.hash === "#reservation") {
+    const tabElement = document.querySelector('button[data-bs-target="#reservation"]');
+    if (tabElement) {
+      const tab = new bootstrap.Tab(tabElement);
+      tab.show();
     }
-
-    // Obtener las reservas pasadas desde el backend en formato JSON
-    const reservations = <%- JSON.stringify(reservations) %>;
-
-    // Mapear reservas para crear eventos de FullCalendar
-    const events = reservations.map(res => {
-      const startDate = new Date(res.startDate).toISOString().split('T')[0];
-      const endDate = new Date(new Date(res.endDate).getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-      return {
-        start: startDate,
-        end: endDate,
-        display: 'background',
-        backgroundColor: 'rgba(255, 0, 0, 0.3)',
-        borderColor: 'rgba(255, 0, 0, 0.3)'
-      };
-    });
-
-    // Inicializar FullCalendar
-    const calendarEl = document.getElementById('calendar');
+  }
+  
+  // Configuración del calendario
+  const reservations = <%- JSON.stringify(reservations) %>;
+  const events = reservations.map(res => {
+    const startDate = new Date(res.startDate).toISOString().split('T')[0];
+    const endDate = new Date(new Date(res.endDate).getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+    return {
+      start: startDate,
+      end: endDate,
+      display: 'background',
+      backgroundColor: 'rgba(220, 53, 69, 0.3)',
+      borderColor: 'rgba(220, 53, 69, 0.5)'
+    };
+  });
+  
+  // Inicializar FullCalendar
+  const calendarEl = document.getElementById('calendar');
+  if (calendarEl) {
     const calendar = new FullCalendar.Calendar(calendarEl, {
       initialView: 'dayGridMonth',
       headerToolbar: {
@@ -252,18 +796,63 @@
         center: 'title',
         right: 'dayGridMonth'
       },
-      events: events
+      events: events,
+      height: 'auto',
+      locale: 'es',
+      firstDay: 1,
+      buttonText: {
+        today: 'Hoy',
+        month: 'Mes'
+      },
+      dayHeaderFormat: { weekday: 'short' }
     });
+    
     calendar.render();
-
-    // Redimensionar calendario al mostrar la pestaña de reservas
+    
+    // Redimensionar calendario al mostrar la pestaña
     const reservationTab = document.querySelector('#reservation-tab');
     if (reservationTab) {
       reservationTab.addEventListener('shown.bs.tab', () => {
-        calendar.updateSize();
+        setTimeout(() => {
+          calendar.updateSize();
+        }, 100);
       });
     }
+  }
+  
+  // Efectos de loading en formularios
+  const forms = document.querySelectorAll('form');
+  forms.forEach(form => {
+    form.addEventListener('submit', function() {
+      const submitBtn = this.querySelector('button[type="submit"]');
+      if (submitBtn) {
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Procesando...';
+        submitBtn.disabled = true;
+        
+        // Restaurar después de 5 segundos si no hay redirección
+        setTimeout(() => {
+          submitBtn.innerHTML = originalText;
+          submitBtn.disabled = false;
+        }, 5000);
+      }
+    });
   });
+  
+  // Smooth scroll para enlaces internos
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    });
+  });
+});
 </script>
 
 <!-- Script para el selector de rango de fechas -->

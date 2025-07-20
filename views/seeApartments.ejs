@@ -1,194 +1,443 @@
-<!-- Incluye el encabezado de la página desde un archivo parcial -->
-<%- include("partials/header", { title }) %>
+<% if (apartments && apartments.length > 0) { %>
+<div class="search-results-section py-5 py-md-6 bg-light" id="search-results" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); min-height: 100vh; padding-bottom: 5.5rem;">
+  <div class="container-fluid px-3 px-md-5">
+    <div class="row mb-5 align-items-center">
+<%- include("partials/footer") %>
+<style>
+/* Animaciones personalizadas */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
-<!-- Enlace para volver atrás en la navegación -->
-<a href="#" onclick="window.history.back()" class="row justify-content-start">
-  <img src="/img/back.png" alt="Volver atrás" style="max-width: 70px; height: auto;" class="m-3">
-</a>
+.apartments-section .lead {
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
 
-<!-- Incluye mensajes parciales, como notificaciones o alertas -->
-<%- include("partials/mensajes") %>
+/* Estadísticas rápidas */
+.stats-container {
+  font-family: 'Poppins', sans-serif;
+}
 
-<!-- Configuración para la paginación -->
-<% const chunkSize = 12; const totalPages = Math.ceil(apartments.length / chunkSize); const currentPage = 0; %>
+.stats-container .stat-item {
+  min-width: 100px;
+}
 
-<!-- Contenedor principal del contenido -->
-<div class="container-fluid my-5">
-  <div class="bg-white p-4 shadow rounded-4">
-    <!-- Título de la página -->
-    <h2 class="text-center text-primary fw-bold mb-4">Apartamentos disponibles</h2>
+.stats-container .stat-number {
+  font-size: 2.5rem;
+}
 
-    <!-- Verifica si hay apartamentos disponibles -->
-    <% if (apartments) { %>
+.stats-container .stat-label {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
 
-    <!-- Carrusel para mostrar los apartamentos -->
-    <div id="apartmentsCarousel" class="carousel slide" data-bs-interval="false" data-carousel-id="apartments">
-      <div class="carousel-inner">
-        <!-- Itera sobre las páginas de apartamentos -->
-        <% for (let i = 0; i < totalPages; i++) {
-          const currentChunk = apartments.slice(i * chunkSize, (i + 1) * chunkSize); %>
+.stats-container .stat-divider {
+  width: 1px;
+  background-color: rgba(0, 0, 0, 0.1);
+  margin: 0 1rem;
+}
 
-        <!-- Página del carrusel -->
-        <div class="carousel-item <%= i === 0 ? 'active' : '' %>">
-          <div class="row row-cols-1 row-cols-md-3 g-4">
-            <!-- Itera sobre los apartamentos de la página actual -->
-            <% currentChunk.forEach(apartment => { %>
-            <div class="col">
-              <div class="card h-100 shadow-sm">
-                <!-- Enlace a la página de detalles del apartamento -->
-                <a href="/apartments/<%= apartment._id %>">
-                  <img src="<%= apartment.photos.find(p => p.isMain)?.url || '/img/default.jpg' %>" class="card-img-top object-fit-cover" style="height: 200px;" alt="Imagen principal">
-                </a>
-                <div class="card-body">
-                  <!-- Título del apartamento -->
-                  <h5 class="card-title text-primary"><%= apartment.title %></h5>
-                  <!-- Ubicación del apartamento -->
-                  <p class="card-text small text-muted">
-                    <%= apartment.location.municipality.nm %>, <%= apartment.location.province.nm %>
-                  </p>
-                  <!-- Precio del apartamento -->
-                  <p class="card-text fw-bold mb-2"><%= apartment.price.toLocaleString() %>€</p>
-                  <!-- Detalles de habitaciones y baños -->
-                  <div class="d-flex justify-content-between mb-3 small">
-                    <span><i class="icon-bed me-1"></i><%= apartment.rooms %> habs</span>
-                    <span><i class="icon-bath me-1"></i><%= apartment.bathrooms %> baños</span>
-                  </div>
-                  <!-- Servicios del apartamento -->
-                  <% const s = apartment.services; %>
-                  <div class="mb-3 d-flex flex-wrap gap-2 small text-secondary">
-                    <% if (s.airConditioning) { %>
-                      <span data-bs-toggle="tooltip" title="Aire acondicionado">
-                        <i class="bi bi-snow text-black me-1"></i>
-                      </span>
-                    <% } %>
-                    <% if (s.heating) { %>
-                      <span data-bs-toggle="tooltip" title="Calefacción">
-                        <i class="bi bi-fire text-black me-1"></i>
-                      </span>
-                    <% } %>
-                    <% if (s.accessibility) { %>
-                      <span data-bs-toggle="tooltip" title="Accesibilidad">
-                        <i class="bi bi-person-wheelchair text-black me-1"></i>
-                      </span>
-                    <% } %>
-                    <% if (s.television) { %>
-                      <span data-bs-toggle="tooltip" title="Televisión">
-                        <i class="bi bi-tv text-black me-1"></i>
-                      </span>
-                    <% } %>
-                    <% if (s.kitchen) { %>
-                      <span data-bs-toggle="tooltip" title="Cocina">
-                        <i class="bi bi-cup-hot text-black me-1"></i>
-                      </span>
-                    <% } %>
-                    <% if (s.internet) { %>
-                      <span data-bs-toggle="tooltip" title="Internet">
-                        <i class="bi bi-wifi text-black me-1"></i>
-                      </span>
-                    <% } %>
-                    <span data-bs-toggle="tooltip" title="Aire acondicionado" style="visibility: hidden">
-                      <i class="bi bi-snow text-black me-1"></i>
-                    </span>
-                  </div>
-                  <!-- Enlace para ver detalles del apartamento -->
-                  <a href="/apartments/<%= apartment._id %>" class="btn btn-outline-primary btn-sm w-100">Ver detalles</a>
+/* Contenedor principal con glassmorphism */
+.apartments-container {
+  position: relative;
+  z-index: 1;
+}
 
-                  <!-- Opciones para administradores -->
-                  <% if (currentUser && currentUser.role === 'admin') { %>
-                  <div class="d-flex flex-column flex-sm-row gap-2 my-3">
-                    <!-- Botón para editar el apartamento -->
-                    <a href="/admin/apartments/edit/<%= apartment._id %>" class="btn btn-warning btn-sm d-flex align-items-center justify-content-center flex-fill">
-                      <i class="bi bi-pencil-square"></i>
-                    </a>
-                    <% if (apartment.active == true) { %>
-                      <!-- Botón para eliminar el apartamento -->
-                      <button class="btn btn-danger btn-sm d-flex align-items-center justify-content-center flex-fill" data-bs-toggle="modal" data-bs-target="#deleteModal-<%= apartment._id %>">
-                        <i class="bi bi-trash3"></i>
-                      </button>
-                    <% } else { %>
-                      <!-- Botón para activar el apartamento -->
-                      <form action="/admin/apartments/active/<%= apartment._id %>" method="POST" class="d-flex flex-fill">
-                        <button type="submit" class="btn btn-success btn-sm d-flex align-items-center justify-content-center flex-fill">
-                          <i class="bi bi-check-circle"></i>
-                        </button>
-                      </form>
-                    <% } %>
-                  </div>
+/* Estilos de la tarjeta de apartamento */
+.apartment-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
 
-                  <!-- Modal para confirmar eliminación -->
-                  <div class="modal fade" id="deleteModal-<%= apartment._id %>" tabindex="-1" aria-labelledby="deleteModalLabel-<%= apartment._id %>" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                      <div class="modal-content">
-                        <div class="modal-header bg-danger text-white">
-                          <h5 class="modal-title" id="deleteModalLabel-<%= apartment._id %>">Confirmar eliminación</h5>
-                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                        </div>
-                        <div class="modal-body">
-                          ¿Estás seguro de que deseas eliminar <strong><%= apartment.title %></strong>?
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                          <form action="/admin/apartments/delete/<%= apartment._id %>" method="POST">
-                            <button type="submit" class="btn btn-danger">Sí, eliminar</button>
-                          </form>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <% } %>
-                </div>
-              </div>
-            </div>
-            <% }); %>
-          </div>
-        </div>
-        <% } %>
+.apartment-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15) !important;
+}
+
+.apartment-card .card-img-container {
+  position: relative;
+}
+
+.apartment-card .card-img-container img {
+  transform: scale(1);
+}
+
+.apartment-card .card-img-container:hover img {
+  transform: scale(1.05);
+}
+
+.apartment-card .image-overlay {
+  background: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.apartment-card .card-img-container:hover .image-overlay {
+  opacity: 1;
+}
+
+.apartment-card .overlay-content {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.apartment-card .card-img-container:hover .overlay-content {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.apartment-card .price-badge {
+  background: linear-gradient(45deg, #1abc9c, #16a085);
+}
+
+.apartment-card .apartment-details .detail-item {
+  padding: 0.5rem 0.8rem;
+}
+
+.apartment-card .apartment-details .detail-divider {
+  width: 1px;
+  background-color: rgba(0, 0, 0, 0.1);
+  margin: 0 0.5rem;
+}
+
+.apartment-card .services-section .services-title {
+  color: #6c757d;
+}
+
+.apartment-card .service-badge {
+  font-size: 0.75rem;
+}
+
+.apartment-card .admin-controls .admin-title {
+  font-size: 0.9rem;
+}
+
+/* No apartments message */
+.no-apartments-container {
+  border: 2px dashed #dee2e6;
+  border-radius: 1rem;
+  padding: 3rem;
+  background-color: #f8f9fa;
+}
+
+.no-apartments-container .no-apartments-icon {
+  color: #adb5bd;
+}
+
+.no-apartments-container h3 {
+  font-weight: 600;
+}
+
+/* Tooltip custom style */
+.tooltip-inner {
+  background-color: #343a40;
+  color: #fff;
+  border-radius: 0.3rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+}
+
+.tooltip.bs-tooltip-auto[data-popper-placement^=top] .tooltip-arrow::before,
+.tooltip.bs-tooltip-top .tooltip-arrow::before {
+  border-top-color: #343a40;
+}
+
+.tooltip.bs-tooltip-auto[data-popper-placement^=bottom] .tooltip-arrow::before,
+.tooltip.bs-tooltip-bottom .tooltip-arrow::before {
+  border-bottom-color: #343a40;
+}
+
+/* Indicadores y controles de carrusel personalizados */
+.custom-indicators {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+.custom-indicator-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #222 !important;
+  border: 2px solid #222 !important;
+  opacity: 0.6;
+  margin: 0 2px;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.custom-indicator-btn.active,
+.custom-indicator-btn:focus,
+.custom-indicator-btn:hover {
+  background: #000 !important;
+  border-color: #000 !important;
+  opacity: 1;
+  outline: 2px solid #0d6efd;
+}
+.custom-carousel-control {
+  background: #fff;
+  border: 2px solid #222;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  transition: background 0.2s, border 0.2s;
+  margin: 0 0.5rem;
+  opacity: 0.85;
+}
+.custom-carousel-control:hover,
+.custom-carousel-control:focus {
+  background: #222;
+  border-color: #000;
+  opacity: 1;
+}
+.custom-arrow {
+  filter: invert(1) grayscale(1) brightness(0.2);
+  width: 1.5rem;
+  height: 1.5rem;
+}
+@media (max-width: 600px) {
+  .custom-indicator-btn {
+    width: 16px;
+    height: 16px;
+  }
+  .custom-carousel-control {
+    width: 28px;
+    height: 28px;
+  }
+}
+footer {
+  margin-top: 3.5rem !important;
+}
+</style>
+          <span class="carousel-control-next-icon custom-arrow" aria-hidden="true"></span>
+        </button>
       </div>
     </div>
-
-    <!-- Controles de paginación personalizados -->
-    <div class="d-flex justify-content-center gap-3 mt-4">
-      <button id="jumpBackBtn" class="btn btn-outline-secondary">&laquo; -5</button>
-      <button id="prevPageBtn" class="btn btn-outline-primary">Anterior</button>
-      <% for (let i = 0; i < totalPages; i++) { %>
-        <button class="btn btn-outline-primary page-btn" data-index="<%= i %>"><%= i + 1 %></button>
-      <% } %>
-      <button id="nextPageBtn" class="btn btn-outline-primary">Siguiente</button>
-      <button id="jumpForwardBtn" class="btn btn-outline-secondary">+5 &raquo;</button>
-    </div>
-
-    <!-- Indicadores del carrusel -->
-    <div class="d-flex justify-content-center mt-3">
-      <div class="carousel-indicators position-static">
-        <% for (let i = 0; i < totalPages; i++) { %>
-          <button type="button" data-bs-target="#apartmentsCarousel" data-bs-slide-to="<%= i %>" class="<%= i === 0 ? 'active' : '' %>" aria-label="Página <%= i + 1 %>"></button>
-        <% } %>
-      </div>
-    </div>
-    <% } else { %>
-      <!-- Mensaje si no hay apartamentos disponibles -->
-      <div class="alert alert-info text-center">No hay apartamentos disponibles.</div>
     <% } %>
   </div>
 </div>
 
-<!-- Configuración para la paginación -->
+<style>
+/* Indicadores y controles de carrusel personalizados */
+.custom-indicators {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+.custom-indicator-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #222 !important;
+  border: 2px solid #222 !important;
+  opacity: 0.6;
+  margin: 0 2px;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.custom-indicator-btn.active,
+.custom-indicator-btn:focus,
+.custom-indicator-btn:hover {
+  background: #000 !important;
+  border-color: #000 !important;
+  opacity: 1;
+  outline: 2px solid #0d6efd;
+}
+.custom-carousel-control {
+  background: #fff;
+  border: 2px solid #222;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  transition: background 0.2s, border 0.2s;
+  margin: 0 0.5rem;
+  opacity: 0.85;
+}
+.custom-carousel-control:hover,
+.custom-carousel-control:focus {
+  background: #222;
+  border-color: #000;
+  opacity: 1;
+}
+.custom-arrow {
+  filter: invert(1) grayscale(1) brightness(0.2);
+  width: 1.5rem;
+  height: 1.5rem;
+}
+@media (max-width: 600px) {
+  .custom-indicator-btn {
+    width: 16px;
+    height: 16px;
+  }
+  .custom-carousel-control {
+    width: 28px;
+    height: 28px;
+  }
+}
+footer {
+  margin-top: 3.5rem !important;
+}
+</style>
+
 <script>
-  window.paginationConfig = {
-    carouselId: 'apartmentsCarousel',
-    totalPages: <%= Math.ceil(apartments.length / 12) %>,
-    currentPage: 0
-  };
+  // Solo inicializa tooltips y asegura modales interactivos
+<style>
+/* Indicadores y controles de carrusel personalizados */
+.custom-indicators {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+.custom-indicator-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #222 !important;
+  border: 2px solid #222 !important;
+  opacity: 0.6;
+  margin: 0 2px;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.custom-indicator-btn.active,
+.custom-indicator-btn:focus,
+.custom-indicator-btn:hover {
+  background: #000 !important;
+  border-color: #000 !important;
+  opacity: 1;
+  outline: 2px solid #0d6efd;
+}
+.custom-carousel-control {
+  background: #fff;
+  border: 2px solid #222;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  transition: background 0.2s, border 0.2s;
+  margin: 0 0.5rem;
+  opacity: 0.85;
+}
+.custom-carousel-control:hover,
+.custom-carousel-control:focus {
+  background: #222;
+  border-color: #000;
+  opacity: 1;
+}
+.custom-arrow {
+  filter: invert(1) grayscale(1) brightness(0.2);
+  width: 1.5rem;
+  height: 1.5rem;
+}
+@media (max-width: 600px) {
+  .custom-indicator-btn {
+    width: 16px;
+    height: 16px;
+  }
+  .custom-carousel-control {
+    width: 28px;
+    height: 28px;
+  }
+}
+footer {
+  margin-top: 3.5rem !important;
+}
+</style>
+.apartment-card .overlay-content {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
 
-  // Inicializa los tooltips de Bootstrap
-  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-  var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-    return new bootstrap.Tooltip(tooltipTriggerEl);
-  });
-</script>
+.apartment-card .card-img-container:hover .overlay-content {
+  opacity: 1;
+  transform: translateY(0);
+}
 
-<!-- Script para la paginación -->
-<script src="/js/pagination.js"></script>
+.apartment-card .price-badge {
+  background: linear-gradient(45deg, #1abc9c, #16a085);
+}
 
-<!-- Incluye el pie de página desde un archivo parcial -->
-<%- include("partials/footer") %>
+.apartment-card .apartment-details .detail-item {
+  padding: 0.5rem 0.8rem;
+}
+
+.apartment-card .apartment-details .detail-divider {
+  width: 1px;
+  background-color: rgba(0, 0, 0, 0.1);
+  margin: 0 0.5rem;
+}
+
+.apartment-card .services-section .services-title {
+  color: #6c757d;
+}
+
+.apartment-card .service-badge {
+  font-size: 0.75rem;
+}
+
+.apartment-card .admin-controls .admin-title {
+  font-size: 0.9rem;
+}
+
+
+
+/* No apartments message */
+.no-apartments-container {
+  border: 2px dashed #dee2e6;
+  border-radius: 1rem;
+  padding: 3rem;
+  background-color: #f8f9fa;
+}
+
+.no-apartments-container .no-apartments-icon {
+  color: #adb5bd;
+}
+
+.no-apartments-container h3 {
+  font-weight: 600;
+}
+
+/* Tooltip custom style */
+.tooltip-inner {
+  background-color: #343a40;
+  color: #fff;
+  border-radius: 0.3rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+}
+
+.tooltip.bs-tooltip-auto[data-popper-placement^=top] .tooltip-arrow::before,
+.tooltip.bs-tooltip-top .tooltip-arrow::before {
+  border-top-color: #343a40;
+}
+
+.tooltip.bs-tooltip-auto[data-popper-placement^=bottom] .tooltip-arrow::before,
+.tooltip.bs-tooltip-bottom .tooltip-arrow::before {
+  border-bottom-color: #343a40;
+}
+</style>
+<style>
+footer {
+  margin-top: 3.5rem !important;
+}
+</style>

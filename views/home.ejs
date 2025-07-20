@@ -1,192 +1,255 @@
-<!-- Incluye el encabezado de la página desde un archivo parcial -->
 <%- include("partials/header") %>
 
-<!-- Incluye mensajes parciales, como notificaciones o alertas -->
 <%- include("partials/mensajes") %>
 
-<!-- Sección Hero con carrusel de imágenes -->
-<div id="heroCarousel" class="carousel slide position-relative w-100" data-bs-ride="carousel">
-  <!-- Contenedor de imágenes del carrusel -->
+<div id="heroCarousel" class="carousel slide position-relative w-100" data-bs-ride="carousel" data-bs-interval="5000">
+
+  <div class="carousel-indicators">
+    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
+    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+  </div>
+
   <div class="carousel-inner">
-    <!-- Primera imagen del carrusel -->
     <div class="carousel-item active">
-      <div class="img overlay" style="background-image: url('/img/hero_bg_1.jpg'); height: 80vh; background-size: cover; background-position: center;"></div>
+      <div class="hero-slide position-relative" style="background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('/img/hero_bg_1.jpg'); height: 110vh; background-size: cover; background-position: center; background-attachment: fixed;"></div>
     </div>
-    <!-- Segunda imagen del carrusel -->
     <div class="carousel-item">
-      <div class="img overlay" style="background-image: url('/img/hero_bg_2.jpg'); height: 80vh; background-size: cover; background-position: center;"></div>
+      <div class="hero-slide position-relative" style="background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('/img/hero_bg_2.jpg'); height: 110vh; background-size: cover; background-position: center; background-attachment: fixed;"></div>
     </div>
-    <!-- Tercera imagen del carrusel -->
     <div class="carousel-item">
-      <div class="img overlay" style="background-image: url('/img/hero_bg_3.jpg'); height: 80vh; background-size: cover; background-position: center;"></div>
+      <div class="hero-slide position-relative" style="background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('/img/hero_bg_3.jpg'); height: 110vh; background-size: cover; background-position: center; background-attachment: fixed;"></div>
     </div>
   </div>
 
-  <!-- Contenido fijo encima del carrusel -->
-  <div class="position-absolute top-50 start-50 translate-middle w-100 px-3" style="max-width: 960px">
+  <div class="position-absolute top-50 start-50 translate-middle w-100 px-3" style="max-width: 1200px; z-index: 10; transform: translate(-50%, -40%);">
     <div class="container text-white text-center">
       <div class="row justify-content-center">
-        <div class="col-12 col-lg-12 bg-dark bg-opacity-75 p-3 p-md-4 rounded">
-          <!-- Título principal -->
-          <h1 class="display-6 display-md-4 fw-bold mb-4">La forma más fácil de encontrar tu lugar para lo que necesites</h1>
+        <div class="col-12 col-xl-11">
+          <div class="hero-content-card backdrop-blur rounded-4 p-4 p-md-5 shadow-lg border border-light border-opacity-25"
+               style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); animation: fadeInUp 1s ease-out;">
 
-          <!-- Formulario de búsqueda de apartamentos -->
-          <form id="busquedaForm" action="/apartments/search" method="GET" onsubmit="buscarApartamentos(event)" class="mb-4">
-            <!-- Primera fila de campos del formulario -->
-            <div class="row g-2 g-md-3 mb-3">
-              <!-- Selector de provincia -->
-              <div class="col-12 col-md-4">
-                <label for="provinceSelect" class="form-label small mb-1">Provincia:</label>
-                <select id="provinceSelect" class="form-control form-select">
-                  <option value="">-- Selecciona --</option>
-                </select>
-              </div>
-              <!-- Selector de municipio -->
-              <div class="col-12 col-md-4">
-                <label for="municipalitySelect" class="form-label small mb-1">Municipio:</label>
-                <select id="municipalitySelect" class="form-control form-select">
-                  <option value="">-- Selecciona --</option>
-                </select>
-              </div>
-              <!-- Campo para número de huéspedes -->
-              <div class="col-12 col-md-4">
-                <label for="maxGuests" class="form-label small mb-1">Huéspedes:</label>
-                <input type="number" name="maxGuests" id="maxGuests" class="form-control" min="1" placeholder="Ej: 2">
-              </div>
-              <!-- Campos ocultos para municipio y provincia -->
-              <input type="hidden" name="municipality[id]" id="municipalityIdInput">
-              <input type="hidden" name="municipality[nm]" id="municipalityNameInput">
-              <input type="hidden" name="province[id]" id="provinceIdInput">
-              <input type="hidden" name="province[nm]" id="provinceNameInput">
+            <div class="hero-title-container mb-4">
+              <h1 class="display-4 display-md-3 fw-bold mb-3 text-shadow"
+                  style="animation: fadeInDown 1s ease-out 0.3s both; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">
+                La forma más fácil de encontrar tu lugar perfecto
+              </h1>
+              <p class="lead fs-5 mb-3 text-light"
+                  style="animation: fadeInUp 1s ease-out 0.6s both;">
+                Descubre apartamentos únicos en los mejores destinos
+              </p>
             </div>
 
-            <!-- Segunda fila de campos del formulario -->
-            <div class="row g-2 g-md-3 mb-3 align-items-end">
-              <!-- Campo para precio mínimo -->
-              <div class="col-12 col-md-4">
-                <label for="minPrice" class="form-label small mb-1">Precio Mín. (€):</label>
-                <input type="number" name="minPrice" id="minPrice" class="form-control" min="0" step="1" placeholder="Ej: 50">
-              </div>
-              <!-- Campo para precio máximo -->
-              <div class="col-12 col-md-4">
-                <label for="maxPrice" class="form-label small mb-1">Precio Máx. (€):</label>
-                <input type="number" name="maxPrice" id="maxPrice" class="form-control" min="0" step="1" placeholder="Ej: 200">
-              </div>
-              <!-- Campo para rango de fechas -->
-              <div class="col-12 col-md-4">
-                <label for="dateRange" class="form-label small mb-1">Rango de fechas:</label>
-                <input type="text" id="dateRange" name="dateRange" class="form-control" readonly placeholder="Selecciona fechas">
-                <input type="hidden" id="startDate" name="startDate">
-                <input type="hidden" name="endDate" id="endDate">
-              </div>
-            </div>
+            <form id="busquedaForm" action="/apartments/search" method="GET" onsubmit="buscarApartamentos(event)"
+                  class="search-form p-3 p-md-4 rounded-3 shadow-lg"
+                  style="background: rgba(255, 255, 255, 0.95); animation: slideInUp 1s ease-out 0.9s both;">
 
-            <!-- Tercera fila de campos del formulario -->
-            <div class="row g-2 g-md-3 mb-4 align-items-center">
-              <!-- Checkboxes para servicios -->
-              <div class="col-12 col-md-8">
-                <label class="form-label small mb-2 d-block text-start">Servicios:</label>
-                <div class="row g-2">
-                  <!-- Checkbox para aire acondicionado -->
-                  <div class="col-6 col-lg-4">
-                    <div class="form-check d-flex align-items-center text-start">
-                      <input type="checkbox" name="services.airConditioning" value="on" class="form-check-input" id="airConditioning">
-                      <label class="ms-2 form-check-label d-flex align-items-center" for="airConditioning">
-                        <span class="bg-white rounded-circle d-inline-flex align-items-center justify-content-center me-1 me-md-2" style="width: 20px; height: 20px">
-                          <i class="bi bi-snow text-black"></i>
-                        </span>
-                        <small><span>Aire Acondicionado</span></small>
-                      </label>
+              <div class="row g-3 mb-3">
+                <div class="col-12 col-md-4">
+                  <label for="provinceSelect" class="form-label fw-semibold text-dark mb-1">
+                    <i class="bi bi-geo-alt-fill text-primary me-2"></i>Provincia
+                  </label>
+                  <select id="provinceSelect" class="form-select form-select-lg border-0 shadow-sm rounded-3 transition-all">
+                    <option value="">Selecciona provincia</option>
+                  </select>
+                </div>
+
+                <div class="col-12 col-md-4">
+                  <label for="municipalitySelect" class="form-label fw-semibold text-dark mb-1">
+                    <i class="bi bi-building text-primary me-2"></i>Municipio
+                  </label>
+                  <select id="municipalitySelect" class="form-select form-select-lg border-0 shadow-sm rounded-3 transition-all">
+                    <option value="">Selecciona municipio</option>
+                  </select>
+                </div>
+
+                <div class="col-12 col-md-4">
+                  <label for="maxGuests" class="form-label fw-semibold text-dark mb-1">
+                    <i class="bi bi-people-fill text-primary me-2"></i>Huéspedes
+                  </label>
+                  <input type="number" name="maxGuests" id="maxGuests"
+                         class="form-control form-control-lg border-0 shadow-sm rounded-3 transition-all"
+                         min="1" placeholder="Número de huéspedes">
+                </div>
+
+                <input type="hidden" name="municipality[id]" id="municipalityIdInput">
+                <input type="hidden" name="municipality[nm]" id="municipalityNameInput">
+                <input type="hidden" name="province[id]" id="provinceIdInput">
+                <input type="hidden" name="province[nm]" id="provinceNameInput">
+              </div>
+
+              <div class="row g-3 mb-3">
+                <div class="col-12 col-md-4">
+                  <label for="minPrice" class="form-label fw-semibold text-dark mb-1">
+                    <i class="bi bi-currency-euro text-success me-2"></i>Precio Mínimo
+                  </label>
+                  <input type="number" name="minPrice" id="minPrice"
+                         class="form-control form-control-lg border-0 shadow-sm rounded-3 transition-all"
+                         min="0" step="1" placeholder="Desde €">
+                </div>
+
+                <div class="col-12 col-md-4">
+                  <label for="maxPrice" class="form-label fw-semibold text-dark mb-1">
+                    <i class="bi bi-currency-euro text-success me-2"></i>Precio Máximo
+                  </label>
+                  <input type="number" name="maxPrice" id="maxPrice"
+                         class="form-control form-control-lg border-0 shadow-sm rounded-3 transition-all"
+                         min="0" step="1" placeholder="Hasta €">
+                </div>
+
+                <div class="col-12 col-md-4">
+                  <label for="dateRange" class="form-label fw-semibold text-dark mb-1">
+                    <i class="bi bi-calendar-range text-info me-2"></i>Fechas
+                  </label>
+                  <input type="text" id="dateRange" name="dateRange"
+                         class="form-control form-control-lg border-0 shadow-sm rounded-3 transition-all"
+                         readonly placeholder="Selecciona fechas">
+                  <input type="hidden" id="startDate" name="startDate">
+                  <input type="hidden" name="endDate" id="endDate">
+                </div>
+              </div>
+
+              <div class="row g-3 mb-4">
+                <div class="col-12 col-lg-8">
+                  <label class="form-label fw-semibold text-dark mb-2 d-block">
+                    <i class="bi bi-gear-fill text-warning me-2"></i>Servicios incluidos
+                  </label>
+                  <div class="row g-2">
+                    <div class="col-6 col-lg-4">
+                      <div class="service-checkbox p-2 rounded-3 border border-light-subtle transition-all">
+                        <input type="checkbox" name="services.airConditioning" value="on"
+                               class="form-check-input me-2" id="airConditioning">
+                        <label class="form-check-label d-flex align-items-center" for="airConditioning">
+                          <span class="service-icon bg-primary bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center me-2"
+                                 style="width: 24px; height: 24px;">
+                            <i class="bi bi-snow text-white"></i>
+                          </span>
+                          <small class="fw-medium text-dark">Aire Acondicionado</small>
+                        </label>
+                      </div>
                     </div>
-                  </div>
-                  <!-- Checkbox para calefacción -->
-                  <div class="col-6 col-lg-4">
-                    <div class="form-check d-flex align-items-center text-start">
-                      <input type="checkbox" name="services.heating" value="on" class="form-check-input" id="heating">
-                      <label class="ms-2 form-check-label d-flex align-items-center" for="heating">
-                        <span class="bg-white rounded-circle d-inline-flex align-items-center justify-content-center me-1 me-md-2" style="width: 20px; height: 20px">
-                          <i class="bi bi-fire text-black"></i>
-                        </span>
-                        <small><span>Calefacción</span></small>
-                      </label>
+
+                    <div class="col-6 col-lg-4">
+                      <div class="service-checkbox p-2 rounded-3 border border-light-subtle transition-all">
+                        <input type="checkbox" name="services.heating" value="on"
+                               class="form-check-input me-2" id="heating">
+                        <label class="form-check-label d-flex align-items-center" for="heating">
+                          <span class="service-icon bg-danger bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center me-2"
+                                 style="width: 24px; height: 24px;">
+                            <i class="bi bi-fire text-white"></i>
+                          </span>
+                          <small class="fw-medium text-dark">Calefacción</small>
+                        </label>
+                      </div>
                     </div>
-                  </div>
-                  <!-- Checkbox para accesibilidad -->
-                  <div class="col-6 col-lg-4">
-                    <div class="form-check d-flex align-items-center text-start">
-                      <input type="checkbox" name="services.accessibility" value="on" class="form-check-input" id="accessibility">
-                      <label class="ms-2 form-check-label d-flex align-items-center" for="accessibility">
-                        <span class="bg-white rounded-circle d-inline-flex align-items-center justify-content-center me-1 me-md-2" style="width: 20px; height: 20px">
-                          <i class="bi bi-person-wheelchair text-black"></i>
-                        </span>
-                        <small><span>Accesibilidad</span></small>
-                      </label>
+
+                    <div class="col-6 col-lg-4">
+                      <div class="service-checkbox p-2 rounded-3 border border-light-subtle transition-all">
+                        <input type="checkbox" name="services.accessibility" value="on"
+                               class="form-check-input me-2" id="accessibility">
+                        <label class="form-check-label d-flex align-items-center" for="accessibility">
+                          <span class="service-icon bg-info bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center me-2"
+                                 style="width: 24px; height: 24px;">
+                            <i class="bi bi-person-wheelchair text-white"></i>
+                          </span>
+                          <small class="fw-medium text-dark">Accesibilidad</small>
+                        </label>
+                      </div>
                     </div>
-                  </div>
-                  <!-- Checkbox para televisión -->
-                  <div class="col-6 col-lg-4">
-                    <div class="form-check d-flex align-items-center text-start">
-                      <input type="checkbox" name="services.television" value="on" class="form-check-input" id="television">
-                      <label class="ms-2 form-check-label d-flex align-items-center" for="television">
-                        <span class="bg-white rounded-circle d-inline-flex align-items-center justify-content-center me-1 me-md-2" style="width: 20px; height: 20px">
-                          <i class="bi bi-tv text-black"></i>
-                        </span>
-                        <small><span>Televisión</span></small>
-                      </label>
+
+                    <div class="col-6 col-lg-4">
+                      <div class="service-checkbox p-2 rounded-3 border border-light-subtle transition-all">
+                        <input type="checkbox" name="services.television" value="on"
+                               class="form-check-input me-2" id="television">
+                        <label class="form-check-label d-flex align-items-center" for="television">
+                          <span class="service-icon bg-secondary bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center me-2"
+                                 style="width: 24px; height: 24px;">
+                            <i class="bi bi-tv text-white"></i>
+                          </span>
+                          <small class="fw-medium text-dark">Televisión</small>
+                        </label>
+                      </div>
                     </div>
-                  </div>
-                  <!-- Checkbox para cocina -->
-                  <div class="col-6 col-lg-4">
-                    <div class="form-check d-flex align-items-center text-start">
-                      <input type="checkbox" name="services.kitchen" value="on" class="form-check-input" id="kitchen">
-                      <label class="ms-2 form-check-label d-flex align-items-center" for="kitchen">
-                        <span class="bg-white rounded-circle d-inline-flex align-items-center justify-content-center me-1 me-md-2" style="width: 20px; height: 20px">
-                          <i class="bi bi-cup-hot text-black"></i>
-                        </span>
-                        <small><span>Cocina</span></small>
-                      </label>
+
+                    <div class="col-6 col-lg-4">
+                      <div class="service-checkbox p-2 rounded-3 border border-light-subtle transition-all">
+                        <input type="checkbox" name="services.kitchen" value="on"
+                               class="form-check-input me-2" id="kitchen">
+                        <label class="form-check-label d-flex align-items-center" for="kitchen">
+                          <span class="service-icon bg-warning bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center me-2"
+                                 style="width: 24px; height: 24px;">
+                            <i class="bi bi-cup-hot text-white"></i>
+                          </span>
+                          <small class="fw-medium text-dark">Cocina</small>
+                        </label>
+                      </div>
                     </div>
-                  </div>
-                  <!-- Checkbox para internet -->
-                  <div class="col-6 col-lg-4">
-                    <div class="form-check d-flex align-items-center text-start">
-                      <input type="checkbox" name="services.internet" value="on" class="form-check-input" id="internet">
-                      <label class="ms-2 form-check-label d-flex align-items-center" for="internet">
-                        <span class="bg-white rounded-circle d-inline-flex align-items-center justify-content-center me-1 me-md-2" style="width: 20px; height: 20px">
-                          <i class="bi bi-wifi text-black"></i>
-                        </span>
-                        <small><span>Internet</span></small>
-                      </label>
+
+                    <div class="col-6 col-lg-4">
+                      <div class="service-checkbox p-2 rounded-3 border border-light-subtle transition-all">
+                        <input type="checkbox" name="services.internet" value="on"
+                               class="form-check-input me-2" id="internet">
+                        <label class="form-check-label d-flex align-items-center" for="internet">
+                          <span class="service-icon bg-success bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center me-2"
+                                 style="width: 24px; height: 24px;">
+                            <i class="bi bi-wifi text-white"></i>
+                          </span>
+                          <small class="fw-medium text-dark">Internet</small>
+                        </label>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <!-- Selector para ordenar por precio -->
-              <div class="col-12 col-md-4">
-                <label for="sortPrice" class="form-label small mb-1">Ordenar por precio:</label>
-                <select id="sortPrice" class="form-select" name="sortPrice">
-                  <option value="">-- Selecciona orden --</option>
-                  <option value="1">Precio ascendente</option>
-                  <option value="-1">Precio descendente</option>
-                </select>
-              </div>
-            </div>
 
-            <!-- Botón para buscar apartamentos -->
-            <div class="d-grid">
-              <button type="submit" class="btn btn-primary py-2 rounded-pill">Buscar apartamentos</button>
-            </div>
-          </form>
-
-          <!-- Formulario de búsqueda con IA -->
-          <div class="mt-4 pt-3 border-top border-secondary">
-            <h5 class="text-white mb-3">¿Buscas algo específico? Prueba nuestra búsqueda con IA:</h5>
-            <form action="/apartments/search" method="POST" class="d-flex flex-column align-items-center">
-              <div class="col-12 col-md-8 col-lg-6">
-                <input type="text" name="query" class="form-control form-control-lg" placeholder="Ej: Busco apartamento barato con wifi en Almería" required>
+                <div class="col-12 col-lg-4">
+                  <label for="sortPrice" class="form-label fw-semibold text-dark mb-1">
+                    <i class="bi bi-sort-numeric-down text-primary me-2"></i>Ordenar por precio
+                  </label>
+                  <select id="sortPrice" class="form-select form-select-lg border-0 shadow-sm rounded-3 transition-all" name="sortPrice">
+                    <option value="">Selecciona orden</option>
+                    <option value="1">Precio: Menor a Mayor</option>
+                    <option value="-1">Precio: Mayor a Menor</option>
+                  </select>
+                </div>
               </div>
-              <button type="submit" class="btn btn-secondary btn-lg mt-3">Buscar con IA</button>
+
+              <div class="d-grid">
+                <button type="submit" class="btn btn-primary btn-lg py-3 rounded-pill fw-bold text-uppercase tracking-wide shadow-lg transition-all hover-lift">
+                  <i class="bi bi-search me-2"></i>Buscar Apartamentos
+                </button>
+              </div>
             </form>
+
+            <div class="ai-search-section mt-4 pt-3 border-top border-light border-opacity-50">
+              <div class="text-center mb-3">
+                <h4 class="text-white fw-bold mb-2">
+                  <i class="bi bi-robot text-warning me-2"></i>
+                  Búsqueda Inteligente con IA
+                </h4>
+                <p class="text-light mb-0"><small>Describe lo que buscas y nuestra IA encontrará el apartamento perfecto</small></p>
+              </div>
+
+              <form action="/apartments/search" method="POST" class="ai-form">
+                <div class="row justify-content-center">
+                  <div class="col-12 col-lg-8">
+                    <div class="input-group input-group-lg shadow-lg">
+                      <span class="input-group-text bg-warning border-0 rounded-start-pill">
+                        <i class="bi bi-magic text-dark"></i>
+                      </span>
+                      <input type="text" name="query"
+                             class="form-control border-0 rounded-end-pill transition-all"
+                             placeholder="Ej: Busco apartamento barato con wifi en Almería cerca de la playa"
+                             required>
+                    </div>
+                  </div>
+                  <div class="col-12 col-lg-4 mt-3 mt-lg-0">
+                    <button type="submit" class="btn btn-warning btn-lg w-100 rounded-pill fw-bold shadow-lg transition-all hover-lift">
+                      <i class="bi bi-sparkles me-2"></i>Buscar con IA
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       </div>
@@ -194,98 +257,311 @@
   </div>
 </div>
 
-<!-- Sección de apartamentos recomendados -->
-<div class="section py-4 py-md-5 bg-light">
+<div class="recommended-section py-5 py-md-6" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
   <div class="container-fluid px-3 px-md-5">
-    <div class="row mb-3 mb-md-4 align-items-center">
-      <div class="col-12 col-lg-6 text-center text-lg-start mb-2 mb-lg-0">
-        <h2 class="text-primary fw-bold fs-5 fs-md-4">Apartamentos recomendados</h2>
+    <div class="row mb-5 align-items-center">
+      <div class="col-12 col-lg-6 text-center text-lg-start mb-3 mb-lg-0">
+        <div class="section-header">
+          <span class="badge bg-primary bg-gradient px-3 py-2 rounded-pill mb-3 fw-medium">
+            <i class="bi bi-star-fill me-1"></i>Destacados
+          </span>
+          <h2 class="display-5 fw-bold text-dark mb-2">Apartamentos Recomendados</h2>
+          <p class="text-muted fs-5 mb-0">Los mejores apartamentos seleccionados especialmente para ti</p>
+        </div>
       </div>
       <div class="col-12 col-lg-6 text-center text-lg-end">
-        <!-- Enlaces para ver todos los apartamentos o ver en el mapa -->
-        <a href="/seeApartments" class="btn btn-primary text-white py-2 px-4 rounded-pill m-2">Ver todos</a>
-        <a href="/map" class="btn btn-primary text-white py-2 px-4 rounded-pill m-2">Mapa</a>
+        <div class="action-buttons">
+          <a href="/seeApartments" class="btn btn-primary btn-lg rounded-pill px-4 py-2 me-2 mb-2 shadow-sm transition-all hover-lift">
+            <i class="bi bi-grid-3x3-gap-fill me-2"></i>Ver Todos
+          </a>
+          <a href="/map" class="btn btn-outline-primary btn-lg rounded-pill px-4 py-2 mb-2 shadow-sm transition-all hover-lift">
+            <i class="bi bi-map me-2"></i>Ver Mapa
+          </a>
+        </div>
       </div>
     </div>
 
-    <!-- Contenedor de tarjetas de apartamentos -->
-    <div class="d-flex overflow-auto gap-4 pb-4 px-2" style="scroll-snap-type: x mandatory;">
-      <% apartments.slice(0, 15).forEach(apartment => { %>
-        <div class="flex-shrink-0" style="width: 300px; scroll-snap-align: start;">
-          <div class="card border-0 shadow-lg rounded-4 h-100 d-flex flex-column">
-            <!-- Enlace a la página de detalles del apartamento -->
-            <a href="/apartments/<%= apartment._id %>" class="position-relative">
-              <img src="<%= apartment.photos.find(p => p.isMain)?.url || '/img/default.jpg' %>" class="card-img-top rounded-top-4 object-fit-cover" style="height: 180px; object-fit: cover;" alt="Imagen principal">
-              <span class="badge bg-primary position-absolute top-0 end-0 m-2 px-2 py-1 fs-75">Destacado</span>
-            </a>
-            <div class="card-body d-flex flex-column p-3">
-              <!-- Título del apartamento -->
-              <h5 class="card-title text-dark mb-1 fw-semibold"><%= apartment.title %></h5>
-              <!-- Ubicación del apartamento -->
-              <p class="text-muted mb-2 small">
-                <i class="bi bi-geo-alt-fill me-1 text-primary"></i>
-                <%= apartment.location.municipality.nm %>, <%= apartment.location.province.nm %>
-              </p>
-              <!-- Precio del apartamento -->
-              <p class="fw-bold text-success fs-5 mb-2"><%= apartment.price.toLocaleString() %>€</p>
-              <!-- Detalles de habitaciones y baños -->
-              <div class="d-flex justify-content-between mb-3 small text-secondary">
-                <span><i class="bi bi-door-closed me-1"></i><%= apartment.rooms %> habs</span>
-                <span><i class="bi bi-droplet me-1"></i><%= apartment.bathrooms %> baños</span>
+    <div class="apartments-carousel position-relative">
+      <div class="d-flex overflow-auto gap-4 pb-4 px-2"
+           style="scroll-snap-type: x mandatory; scrollbar-width: thin;">
+        <% apartments.slice(0, 15).forEach((apartment, index) => { %>
+          <div class="apartment-card-wrapper flex-shrink-0"
+               style="width: 320px; scroll-snap-align: start; animation: slideInUp 0.6s ease-out <%= index * 0.1 %>s both;">
+            <div class="apartment-card card border-0 shadow-lg rounded-4 h-100 overflow-hidden transition-all hover-lift">
+              <div class="card-img-container position-relative overflow-hidden">
+                <a href="/apartments/<%= apartment._id %>" class="d-block">
+                  <img src="<%= apartment.photos.find(p => p.isMain)?.url || '/img/default.jpg' %>"
+                       class="card-img-top transition-all"
+                       style="height: 220px; object-fit: cover; transition: transform 0.3s ease;"
+                       alt="<%= apartment.title %>">
+                  <div class="image-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center opacity-0 transition-all">
+                    <span class="btn btn-light btn-lg rounded-circle shadow-lg">
+                      <i class="bi bi-eye-fill"></i>
+                    </span>
+                  </div>
+                </a>
+
+                <div class="position-absolute top-0 end-0 m-3">
+                  <span class="badge bg-primary bg-gradient px-3 py-2 rounded-pill shadow-sm">
+                    <i class="bi bi-star-fill me-1"></i>Destacado
+                  </span>
+                </div>
+
+                <div class="position-absolute bottom-0 start-0 m-3">
+                  <span class="badge bg-success bg-gradient px-3 py-2 rounded-pill shadow-lg fs-6 fw-bold">
+                    <%= apartment.price.toLocaleString() %>€
+                  </span>
+                </div>
               </div>
-              <!-- Servicios del apartamento -->
-              <% const s = apartment.services; %>
-              <div class="d-flex flex-wrap gap-2 mb-3 text-secondary small">
-                <% if (s.airConditioning) { %>
-                  <span data-bs-toggle="tooltip" title="Aire acondicionado">
-                    <i class="bi bi-snow"></i>
-                  </span>
-                <% } %>
-                <% if (s.heating) { %>
-                  <span data-bs-toggle="tooltip" title="Calefacción">
-                    <i class="bi bi-fire"></i>
-                  </span>
-                <% } %>
-                <% if (s.accessibility) { %>
-                  <span data-bs-toggle="tooltip" title="Accesibilidad">
-                    <i class="bi bi-person-wheelchair"></i>
-                  </span>
-                <% } %>
-                <% if (s.television) { %>
-                  <span data-bs-toggle="tooltip" title="Televisión">
-                    <i class="bi bi-tv"></i>
-                  </span>
-                <% } %>
-                <% if (s.kitchen) { %>
-                  <span data-bs-toggle="tooltip" title="Cocina">
-                    <i class="bi bi-cup-hot"></i>
-                  </span>
-                <% } %>
-                <% if (s.internet) { %>
-                  <span data-bs-toggle="tooltip" title="Internet">
-                    <i class="bi bi-wifi"></i>
-                  </span>
-                <% } %>
+
+              <div class="card-body p-4 d-flex flex-column">
+                <div class="mb-3">
+                  <h5 class="card-title text-dark mb-2 fw-bold lh-sm">
+                    <%= apartment.title %>
+                  </h5>
+                  <p class="text-muted mb-0 d-flex align-items-center">
+                    <i class="bi bi-geo-alt-fill text-primary me-2"></i>
+                    <small><%= apartment.location.municipality.nm %>, <%= apartment.location.province.nm %></small>
+                  </p>
+                </div>
+
+                <div class="apartment-details d-flex justify-content-between mb-3 p-2 bg-light rounded-3">
+                  <div class="detail-item text-center">
+                    <i class="bi bi-door-closed text-primary d-block mb-1"></i>
+                    <small class="fw-medium text-dark"><%= apartment.rooms %> habs</small>
+                  </div>
+                  <div class="detail-item text-center">
+                    <i class="bi bi-droplet text-info d-block mb-1"></i>
+                    <small class="fw-medium text-dark"><%= apartment.bathrooms %> baños</small>
+                  </div>
+                  <div class="detail-item text-center">
+                    <i class="bi bi-people text-success d-block mb-1"></i>
+                    <small class="fw-medium text-dark"><%= apartment.maxGuests || 'N/A' %> huésp.</small>
+                  </div>
+                </div>
+
+                <% const s = apartment.services; %>
+                <div class="services-icons d-flex flex-wrap gap-2 mb-4">
+                  <% if (s.airConditioning) { %>
+                    <span class="service-badge badge bg-primary bg-gradient rounded-pill px-2 py-1"
+                          data-bs-toggle="tooltip" title="Aire acondicionado">
+                      <i class="bi bi-snow"></i>
+                    </span>
+                  <% } %>
+                  <% if (s.heating) { %>
+                    <span class="service-badge badge bg-danger bg-gradient rounded-pill px-2 py-1"
+                          data-bs-toggle="tooltip" title="Calefacción">
+                      <i class="bi bi-fire"></i>
+                    </span>
+                  <% } %>
+                  <% if (s.accessibility) { %>
+                    <span class="service-badge badge bg-info bg-gradient rounded-pill px-2 py-1"
+                          data-bs-toggle="tooltip" title="Accesibilidad">
+                      <i class="bi bi-person-wheelchair"></i>
+                    </span>
+                  <% } %>
+                  <% if (s.television) { %>
+                    <span class="service-badge badge bg-secondary bg-gradient rounded-pill px-2 py-1"
+                          data-bs-toggle="tooltip" title="Televisión">
+                      <i class="bi bi-tv"></i>
+                    </span>
+                  <% } %>
+                  <% if (s.kitchen) { %>
+                    <span class="service-badge badge bg-warning bg-gradient rounded-pill px-2 py-1"
+                          data-bs-toggle="tooltip" title="Cocina">
+                      <i class="bi bi-cup-hot"></i>
+                    </span>
+                  <% } %>
+                  <% if (s.internet) { %>
+                    <span class="service-badge badge bg-success bg-gradient rounded-pill px-2 py-1"
+                          data-bs-toggle="tooltip" title="Internet">
+                      <i class="bi bi-wifi"></i>
+                    </span>
+                  <% } %>
+                </div>
+
+                <a href="/apartments/<%= apartment._id %>"
+                   class="btn btn-primary btn-lg w-100 mt-auto rounded-pill fw-bold transition-all hover-lift shadow-sm">
+                  <i class="bi bi-arrow-right-circle me-2"></i>Ver Detalles
+                </a>
               </div>
-              <!-- Enlace para ver detalles del apartamento -->
-              <a href="/apartments/<%= apartment._id %>" class="btn btn-primary btn-sm w-100 mt-auto rounded-pill">Ver detalles</a>
             </div>
           </div>
-        </div>
-      <% }) %>
+        <% }) %>
+      </div>
+
+      <div class="scroll-indicator text-center mt-3">
+        <small class="text-muted">
+          <i class="bi bi-arrow-left-right me-1"></i>
+          Desliza para ver más apartamentos
+        </small>
+      </div>
     </div>
   </div>
 </div>
-<!-- Script para búsqueda de apartamentos unicamente rellenaremos el div con el HTML devuelto por el backend -->
- <div id="apartmentsPartial">
+
+<div id="apartmentsPartial" class="search-results-section">
   <%- include("partials/seeApartments") %>
 </div>
+
+<style>
+  /* Animaciones personalizadas */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideInUp {
+    from {
+      opacity: 0;
+      transform: translateY(50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Efectos de transición */
+  .transition-all {
+    transition: all 0.3s ease !important;
+  }
+
+  /* Efecto hover lift */
+  .hover-lift:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
+  }
+
+  /* Efectos para las tarjetas de apartamentos */
+  .apartment-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;
+  }
+
+  .apartment-card:hover .card-img-top {
+    transform: scale(1.05);
+  }
+
+  .apartment-card:hover .image-overlay {
+    opacity: 1 !important;
+    background: rgba(0,0,0,0.4);
+  }
+
+  /* Efectos para checkboxes de servicios */
+  .service-checkbox:hover {
+    background-color: rgba(13, 110, 253, 0.1) !important;
+    border-color: rgba(13, 110, 253, 0.3) !important;
+    transform: translateY(-2px);
+  }
+
+  .service-checkbox input:checked + label {
+    color: #0d6efd !important;
+  }
+
+  /* Efectos para formularios */
+  .form-control:focus,
+  .form-select:focus {
+    border-color: #0d6efd !important;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15) !important;
+    transform: translateY(-2px);
+  }
+
+  /* Efectos para botones */
+  .btn:hover {
+    transform: translateY(-2px);
+  }
+
+  /* Efectos para badges de servicios */
+  .service-badge:hover {
+    transform: scale(1.1);
+  }
+
+  /* Scrollbar personalizado */
+  .apartments-carousel .d-flex::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .apartments-carousel .d-flex::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+
+  .apartments-carousel .d-flex::-webkit-scrollbar-thumb {
+    background: linear-gradient(45deg, #0d6efd, #6610f2);
+    border-radius: 10px;
+  }
+
+  .apartments-carousel .d-flex::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(45deg, #0b5ed7, #520dc2);
+  }
+
+  /* Efectos para el carrusel hero */
+  .hero-slide {
+    transition: transform 0.6s ease-in-out;
+  }
+
+  .carousel-item.active .hero-slide {
+    animation: zoomIn 8s ease-out infinite alternate;
+  }
+
+  @keyframes zoomIn {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.05); }
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .hero-content-card {
+      margin: 0 10px;
+    }
+
+    .display-4 {
+      font-size: 2rem !important;
+    }
+
+    .apartment-card-wrapper {
+      width: 280px !important;
+    }
+  }
+
+  /* Glassmorphism effect */
+  .backdrop-blur {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+</style>
 
 <script>
 function buscarApartamentos(e) {
   e.preventDefault();
+
+  // Añadir efecto de loading al botón
+  const submitBtn = e.target.querySelector('button[type="submit"]');
+  const originalText = submitBtn.innerHTML;
+  submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Buscando...';
+  submitBtn.disabled = true;
+
   const form = document.getElementById('busquedaForm');
   const params = new URLSearchParams(new FormData(form)).toString();
+
   fetch('/apartments/search?' + params, {
     headers: { 'X-Requested-With': 'XMLHttpRequest' }
   })
@@ -293,22 +569,47 @@ function buscarApartamentos(e) {
     .then(html => {
       const partial = document.getElementById('apartmentsPartial');
       partial.innerHTML = html;
+
+      // Añadir animación a los resultados
+      partial.style.animation = 'fadeInUp 0.6s ease-out';
+
+      // Reinicializar tooltips de Bootstrap
+      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+      var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+      });
+
+      // Reinicializar modales de Bootstrap (por si hay nuevos modales en el partial)
+      var modalElements = partial.querySelectorAll('.modal');
+      modalElements.forEach(function(modalEl) {
+        if (!bootstrap.Modal.getInstance(modalEl)) {
+          new bootstrap.Modal(modalEl);
+        }
+      });
+
       // Scroll suave al partial actualizado
       partial.scrollIntoView({ behavior: 'smooth', block: 'start' });
     })
-    .catch(() => alert('Error al buscar apartamentos.'));
+    .catch(() => {
+      alert('Error al buscar apartamentos.');
+    })
+    .finally(() => {
+      // Restaurar botón
+      submitBtn.innerHTML = originalText;
+      submitBtn.disabled = false;
+    });
 }
 </script>
 
-<!-- Script para inicializar tooltips de Bootstrap -->
 <script>
-  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-  var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-    return new bootstrap.Tooltip(tooltipTriggerEl);
+  document.addEventListener('DOMContentLoaded', function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
   });
 </script>
 
-<!-- Script para inicializar el selector de rango de fechas -->
 <script>
   $(document).ready(function () {
     $("#dateRange").daterangepicker(
@@ -338,9 +639,7 @@ function buscarApartamentos(e) {
   });
 </script>
 
-<!-- Scripts adicionales para funcionalidades -->
 <script src="js/municipiAndProvince.js"></script>
 <script src="js/dateRangePicker.js"></script>
 
-<!-- Incluye el pie de página desde un archivo parcial -->
 <%- include("partials/footer") %>

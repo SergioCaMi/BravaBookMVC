@@ -101,7 +101,7 @@
                                   <div class="modal fade" id="deleteModal-<%= apartment._id %>" tabindex="-1"
                                     aria-labelledby="deleteModalLabel-<%= apartment._id %>" aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered">
-                                      <div class="modal-content">
+                                     <div class="modal-content" data-bs-backdrop="static" data-bs-keyboard="true">
                                         <div class="modal-header bg-danger text-white">
                                           <h5 class="modal-title" id="deleteModalLabel-<%= apartment._id %>">Confirmar
                                             eliminación</h5>
@@ -135,20 +135,7 @@
               </div>
             </div>
 
-            <!-- Controles de carrusel -->
-            <div class="d-flex justify-content-center gap-3 mt-4">
-              <button id="jumpBackBtn" class="btn btn-outline-secondary">&laquo; -5</button>
-              <button id="prevPageBtn" class="btn btn-outline-primary">Anterior</button>
 
-              <% for (let i=0; i < totalPages; i++) { %>
-                <button class="btn btn-outline-primary page-btn" data-index="<%= i %>">
-                  <%= i + 1 %>
-                </button>
-                <% } %>
-
-                  <button id="nextPageBtn" class="btn btn-outline-primary">Siguiente</button>
-                  <button id="jumpForwardBtn" class="btn btn-outline-secondary">+5 &raquo;</button>
-            </div>
 
             <!-- Indicadores (opcional) -->
             <div class="d-flex justify-content-center mt-3">
@@ -166,20 +153,6 @@
         </div>
       </div>
 
-      <script>
-        window.paginationConfig = {
-          carouselId: 'apartmentsCarousel',
-          totalPages: <%= Math.ceil(apartments.length / 12) %>,
-          currentPage: 0
-        };
 
-        var tooltipTriggerList = [].slice.call(
-          document.querySelectorAll('[data-bs-toggle="tooltip"]')
-        );
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-          return new bootstrap.Tooltip(tooltipTriggerEl);
-        });
-      </script>
-      <script src="/js/pagination.js"></script>
 
       <%- include("partials/footer") %>
