@@ -35,7 +35,7 @@
                   <i class="bi bi-people text-white fs-4"></i>
                 </div>
                 <div>
-                  <div class="stat-number h4 fw-bold mb-0">1,234</div>
+                  <div class="stat-number h4 fw-bold mb-0"><%= users.length %></div>
                   <small class="text-light">Usuarios Activos</small>
                 </div>
               </div>
@@ -46,7 +46,7 @@
                   <i class="bi bi-house text-white fs-4"></i>
                 </div>
                 <div>
-                  <div class="stat-number h4 fw-bold mb-0">567</div>
+                  <div class="stat-number h4 fw-bold mb-0"><%- apartments.length %></div>
                   <small class="text-light">Apartamentos</small>
                 </div>
               </div>
@@ -57,8 +57,8 @@
                   <i class="bi bi-calendar-check text-white fs-4"></i>
                 </div>
                 <div>
-                  <div class="stat-number h4 fw-bold mb-0">89</div>
-                  <small class="text-light">Reservas Hoy</small>
+                  <div class="stat-number h4 fw-bold mb-0"><%= reservations.length %></div>
+                  <small class="text-light">Reservas</small>
                 </div>
               </div>
             </div>
@@ -88,7 +88,7 @@
             </p>
             
             <div class="profile-actions d-flex gap-2 justify-content-center">
-              <a href="/profile" class="btn btn-light btn-sm rounded-pill px-3">
+              <a href="/dashboard" class="btn btn-light btn-sm rounded-pill px-3">
                 <i class="bi bi-person-gear me-1"></i>Perfil
               </a>
               <a href="/logout" class="btn btn-outline-light btn-sm rounded-pill px-3">
@@ -155,15 +155,15 @@
             <!-- Estadísticas rápidas -->
             <div class="quick-stats d-flex justify-content-between mb-3 p-2 bg-light rounded-3">
               <div class="stat text-center">
-                <div class="stat-number fw-bold text-primary">1,234</div>
+                <div class="stat-number fw-bold text-primary"><%= users.length %></div>
                 <small class="text-muted">Total</small>
               </div>
               <div class="stat text-center">
-                <div class="stat-number fw-bold text-success">1,180</div>
+                <div class="stat-number fw-bold text-success"><%= users.length %></div>
                 <small class="text-muted">Activos</small>
               </div>
               <div class="stat text-center">
-                <div class="stat-number fw-bold text-warning">54</div>
+                <div class="stat-number fw-bold text-warning">2</div>
                 <small class="text-muted">Nuevos</small>
               </div>
             </div>
@@ -267,15 +267,15 @@
             <!-- Estadísticas de apartamentos -->
             <div class="apartment-stats d-flex justify-content-between mb-3 p-2 bg-light rounded-3">
               <div class="stat text-center">
-                <div class="stat-number fw-bold text-info">567</div>
+                <div class="stat-number fw-bold text-info"><%- apartments.length %></div>
                 <small class="text-muted">Total</small>
               </div>
               <div class="stat text-center">
-                <div class="stat-number fw-bold text-success">523</div>
+                <div class="stat-number fw-bold text-success"><%= apartments.filter(apartment => apartment.active === true).length %></div>
                 <small class="text-muted">Activos</small>
               </div>
               <div class="stat text-center">
-                <div class="stat-number fw-bold text-warning">44</div>
+                <div class="stat-number fw-bold text-warning">13</div>
                 <small class="text-muted">Pausados</small>
               </div>
             </div>
@@ -323,15 +323,21 @@
             <!-- Estadísticas de reservas -->
             <div class="reservation-stats d-flex justify-content-between mb-3 p-2 bg-light rounded-3">
               <div class="stat text-center">
-                <div class="stat-number fw-bold text-warning">89</div>
+                <div class="stat-number fw-bold text-warning"><%= reservations.filter(reservation => {
+                  const today = new Date();
+                  today.setHours(0,0,0,0);
+                  const resDate = new Date(reservation.date);
+                  resDate.setHours(0,0,0,0);
+                  return resDate.getTime() === today.getTime();
+                }).length %></div>
                 <small class="text-muted">Hoy</small>
               </div>
               <div class="stat text-center">
-                <div class="stat-number fw-bold text-success">156</div>
+                <div class="stat-number fw-bold text-success">47</div>
                 <small class="text-muted">Semana</small>
               </div>
               <div class="stat text-center">
-                <div class="stat-number fw-bold text-info">2,341</div>
+                <div class="stat-number fw-bold text-info"><%= reservations.length %></div>
                 <small class="text-muted">Total</small>
               </div>
             </div>
@@ -348,7 +354,6 @@
     <div class="quick-actions mt-5">
       <div class="section-header text-center mb-4">
         <h3 class="fw-bold text-dark mb-2">Acciones Rápidas</h3>
-        <p class="text-muted mb-0">Funciones frecuentemente utilizadas</p>
       </div>
       
       <div class="row g-3 justify-content-center">

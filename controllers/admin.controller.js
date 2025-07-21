@@ -141,9 +141,14 @@ export const postDeleteUser = async (req, res) => {
   }
 };
 
+export const getAdminPanel = async (req, res) => {
+    const apartments = await Apartment.find({});
+    const users = await User.find({});
+    const reservations = await Reservation.find({});
 
+    res.render('adminPanel', {title: "admin", apartments, reservations, users}); // Renderiza el panel de administración con los datos de apartamentos, reservas y usuarios
+}
 
-// Asegúrate de importar los módulos necesarios al inicio de tu archivo:
 // import fs from 'fs/promises'; // Para operaciones con el sistema de archivos
 // import path from 'path';     // Para manejar rutas de archivos
 // import Apartment from '../models/apartment.js'; // Tu modelo de Apartamento

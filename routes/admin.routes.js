@@ -11,9 +11,7 @@ const router = Router();
 router.get('/dashboard', requireAuth, requireAdmin, adminController.dashboard);
 
 // Panel de control principal del administrador
-router.get('/', requireAuth, requireAdmin, (req, res) => {
-  res.render('adminPanel', {title: "home"}); 
-});
+router.get('/', requireAuth, requireAdmin, adminController.getAdminPanel);
 
 // Editar perfil de usuario (GET)
 router.get('/profile/edit', requireAuth, requireAdmin, adminController.getEditProfile);
