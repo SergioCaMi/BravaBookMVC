@@ -561,6 +561,9 @@ function buscarApartamentos(e) {
 
   const form = document.getElementById('busquedaForm');
   const params = new URLSearchParams(new FormData(form)).toString();
+  
+  // Guardar parámetros de búsqueda para uso posterior
+  window.lastSearchParams = params;
 
   fetch('/apartments/search?' + params, {
     headers: { 'X-Requested-With': 'XMLHttpRequest' }
@@ -579,18 +582,14 @@ function buscarApartamentos(e) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
       });
 
-      // Reinicializar modales de Bootstrap (por si hay nuevos modales en el partial)
-      var modalElements = partial.querySelectorAll('.modal');
-      modalElements.forEach(function(modalEl) {
-        if (!bootstrap.Modal.getInstance(modalEl)) {
-          new bootstrap.Modal(modalEl);
-        }
-      });
-
       // Reinicializar la paginación del carrusel después de cargar nuevos resultados
       setTimeout(() => {
         initializeCarouselPagination();
-      }, 100); // Pequeño delay para asegurar que el DOM se ha actualizado
+        // Reinicializar componentes del partial
+        if (typeof reinitializeComponents === 'function') {
+          reinitializeComponents();
+        }
+      }, 100);
 
       // Scroll suave al partial actualizado
       partial.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -625,12 +624,9 @@ let paginationEventHandlers = {
 
 // Función para inicializar la paginación del carrusel
 function initializeCarouselPagination() {
-  console.log('Inicializando paginación del carrusel...');
-  
   const apartmentsCarouselElement = document.getElementById('apartmentsCarousel');
   
   if (typeof bootstrap === 'undefined' || !apartmentsCarouselElement) {
-    console.log('Bootstrap no disponible o elemento carrusel no encontrado');
     return;
   }
 
@@ -649,12 +645,10 @@ function initializeCarouselPagination() {
   
   const totalPagesCountElement = document.getElementById('totalPagesCount');
   if (!totalPagesCountElement) {
-    console.log('Elemento totalPagesCount no encontrado');
     return;
   }
   
   const totalCarouselPages = parseInt(totalPagesCountElement.textContent);
-  console.log('Total páginas:', totalCarouselPages);
 
   const pageIndicatorMinus5 = document.getElementById('pageIndicatorMinus5');
   const pageIndicatorMinus1 = document.getElementById('pageIndicatorMinus1');
@@ -662,16 +656,7 @@ function initializeCarouselPagination() {
   const pageIndicatorPlus1 = document.getElementById('pageIndicatorPlus1');
   const pageIndicatorPlus5 = document.getElementById('pageIndicatorPlus5');
 
-  console.log('Elementos de paginación encontrados:', {
-    minus5: !!pageIndicatorMinus5,
-    minus1: !!pageIndicatorMinus1,
-    current: !!pageIndicatorCurrent,
-    plus1: !!pageIndicatorPlus1,
-    plus5: !!pageIndicatorPlus5
-  });
-
   if (!pageIndicatorCurrent) {
-    console.log('Botones de paginación no encontrados');
     return;
   }
 
@@ -681,8 +666,6 @@ function initializeCarouselPagination() {
   function updatePaginationButtons(newPageIndex) {
     currentPageIndex = newPageIndex;
     const currentPageNum = currentPageIndex + 1;
-    
-    console.log('Actualizando botones para página:', currentPageNum);
 
     // Actualizar texto del botón actual
     pageIndicatorCurrent.textContent = currentPageNum;
@@ -727,7 +710,6 @@ function initializeCarouselPagination() {
 
   // Event handler para el carrusel
   paginationEventHandlers.carouselHandler = function(event) {
-    console.log('Carrusel cambió a diapositiva:', event.to);
     updatePaginationButtons(event.to);
   };
 
@@ -740,7 +722,6 @@ function initializeCarouselPagination() {
       event.preventDefault();
       if (!this.disabled) {
         const targetSlide = parseInt(this.getAttribute('data-target-slide'));
-        console.log(`Botón ${label} clickeado, yendo a diapositiva:`, targetSlide);
         apartmentsCarouselInstance.to(targetSlide);
       }
     };
@@ -761,8 +742,6 @@ function initializeCarouselPagination() {
 
   // Inicializar estado de los botones
   updatePaginationButtons(0);
-  
-  console.log('Paginación inicializada correctamente');
 }
 
 // Función para limpiar event handlers
@@ -788,7 +767,6 @@ function cleanupPaginationEvents() {
 
 // Inicializar cuando se carga la página
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('DOM cargado, inicializando paginación...');
   // Esperar un poco para asegurar que Bootstrap y todos los elementos estén listos
   setTimeout(() => {
     initializeCarouselPagination();
