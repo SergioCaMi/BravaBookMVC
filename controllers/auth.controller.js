@@ -306,115 +306,142 @@ export const getApartmentSearch = async (req, res) => {
 
 // Buscar apartamentos usando IA (Gemini)
 export const searchApartments = async (req, res) => {
-  const userQuery = req.body.query;
+  const userQuery = req.body.query;
 
-  try {
-    console.log("API Key:", process.env.GEMINI_API_KEY?.slice(0, 5), "...");
-    console.log("User Query:", userQuery);
+  try {
+    console.log("Búsqueda IA iniciada:", userQuery);
 
-    // 1. Envía la consulta a la API de Gemini
-    const geminiResponse = await axios.post(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
-      {
-        contents: [
-          {
-            parts: [
-              {
-                text: `Convierte esta frase en un JSON con filtros para apartamentos: "${userQuery}". Usa campos como province, municipality, services, minPrice, maxPrice, rooms, bathrooms, maxGuests. Devuelve solo el objeto JSON.`,
-              },
-            ],
-          },
-        ],
-      },
-      {
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    // 1. Envía la consulta a la API de Gemini
+    const geminiResponse = await axios.post(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      {
+        contents: [
+          {
+            parts: [
+              {
+                text: `Convierte esta frase en un JSON con filtros para apartamentos: "${userQuery}". 
+                
+                Campos disponibles: province, municipality, services, minPrice, maxPrice, rooms, bathrooms, maxGuests.
+                
+                Para servicios usa: wifi, parking, pool, gym, terrace, airConditioning, heating, kitchen, laundry, tv, security.
+                
+                Ejemplos:
+                - "piso en Madrid con piscina máximo 800€" → {"province": "Madrid", "services": {"pool": true}, "maxPrice": 800}
+                - "apartamento Barcelona 2 habitaciones" → {"municipality": "Barcelona", "rooms": 2}
+                
+                Devuelve SOLO el objeto JSON, sin texto adicional.`,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        headers: { "Content-Type": "application/json" },
+      }
+    );
 
-    // 2. Limpia y parsea la respuesta JSON de Gemini
-    let raw = geminiResponse.data.candidates[0].content.parts[0].text;
-    let cleanJson = raw.trim();
+    // 2. Procesa la respuesta de Gemini
+    let raw = geminiResponse.data.candidates[0].content.parts[0].text;
+    let cleanJson = raw.trim();
 
-    if (cleanJson.startsWith("```")) {
-      cleanJson = cleanJson.replace(/```json|```/g, "").trim();
-    }
+    // Limpia el formato de código si existe
+    if (cleanJson.startsWith("```")) {
+      cleanJson = cleanJson.replace(/```json|```/g, "").trim();
+    }
 
-    let filters;
-    try {
-      filters = JSON.parse(cleanJson);
-      console.log("Filtros generados por Gemini:", filters);
-      filters = JSON.parse(cleanJson); // Se repite el parseo
-    } catch (parseError) {
-      console.error("❌ Error al parsear JSON de Gemini:\n", cleanJson);
-      req.flash(
-        "error",
-        "La IA no entendió la búsqueda. Prueba con otra frase."
-      );
-      return res.redirect("/");
-    }
+    let filters;
+    try {
+      filters = JSON.parse(cleanJson);
+      console.log("✅ Filtros generados:", filters);
+    } catch (parseError) {
+      // Si no puede parsear JSON, hace búsqueda por texto
+      console.log("⚠️ Búsqueda por texto fallback");
+      const apartments = await Apartment.find({
+        active: true,
+        $or: [
+          { "location.province.nm": { $regex: new RegExp(userQuery, "i") } },
+          { "location.municipality.nm": { $regex: new RegExp(userQuery, "i") } },
+          { name: { $regex: new RegExp(userQuery, "i") } },
+          { description: { $regex: new RegExp(userQuery, "i") } }
+        ]
+      });
+      return res.render("seeApartments.ejs", { 
+        title: `Resultados para "${userQuery}"`, 
+        apartments,
+        searchQuery: userQuery,
+        isSearchResult: true
+      });
+    }
 
-    // 3. Traduce los filtros a una consulta de MongoDB
-    const query = { active: true };
-    const locationConditions = [];
+    // 3. Construye la consulta MongoDB
+    const query = { active: true };
 
-    if (filters.province) {
-      locationConditions.push({
-        "location.province.nm": { $regex: new RegExp(filters.province, "i") },
-      });
-    }
-    if (filters.municipality) {
-      locationConditions.push({
-        "location.municipality.nm": {
-          $regex: new RegExp(filters.municipality, "i"),
-        },
-      });
-    }
+    // Ubicación
+    if (filters.province || filters.municipality) {
+      const locationConditions = [];
+      if (filters.province) {
+        locationConditions.push({
+          "location.province.nm": { $regex: new RegExp(filters.province, "i") }
+        });
+      }
+      if (filters.municipality) {
+        locationConditions.push({
+          "location.municipality.nm": { $regex: new RegExp(filters.municipality, "i") }
+        });
+      }
+      query.$or = locationConditions;
+    }
 
-    if (locationConditions.length > 0) {
-      query.$or = locationConditions; // Combina condiciones de ubicación con OR
-    }
-    if (filters.maxGuests) {
-      query.maxGuests = { $gte: filters.maxGuests };
-    }
-    if (filters.rooms) {
-      query.rooms = { $gte: filters.rooms };
-    }
-    if (filters.bathrooms) {
-      query.bathrooms = { $gte: filters.bathrooms };
-    }
-    if (filters.minPrice || filters.maxPrice) {
-      query.price = {};
-      if (filters.minPrice) query.price.$gte = filters.minPrice;
-      if (filters.maxPrice) query.price.$lte = filters.maxPrice;
-    }
+    // Capacidad
+    if (filters.maxGuests) query.maxGuests = { $gte: filters.maxGuests };
+    if (filters.rooms) query.rooms = { $gte: filters.rooms };
+    if (filters.bathrooms) query.bathrooms = { $gte: filters.bathrooms };
 
-    if (filters.services) {
-      for (const [key, value] of Object.entries(filters.services)) {
-        if (value === true) query[`services.${key}`] = true;
-      }
-    }
-    console.log("Consulta MongoDB generada:", query);
+    // Precio
+    if (filters.minPrice || filters.maxPrice) {
+      query.price = {};
+      if (filters.minPrice) query.price.$gte = filters.minPrice;
+      if (filters.maxPrice) query.price.$lte = filters.maxPrice;
+    }
 
-    // 4. Busca y renderiza los apartamentos
-    const apartments = await Apartment.find(query);
-    res.render("seeApartments.ejs", { title: "home", apartments });
-  } catch (err) {
-    // Manejo de errores de la API de Gemini (ej. límite de cuota)
-    if (err.response?.status === 429) {
-      req.flash(
-        "error",
-        "🚫 Has superado el límite de uso de la IA. Inténtalo más tarde."
-      );
-      return res.redirect("/");
-    }
+    // Servicios
+    if (filters.services) {
+      for (const [service, required] of Object.entries(filters.services)) {
+        if (required === true) {
+          query[`services.${service}`] = true;
+        }
+      }
+    }
 
-    console.error("Error al buscar con IA:", err.response?.data || err.message);
-    req.flash("error", "No se pudo procesar la búsqueda. Inténtalo de nuevo.");
-    res.redirect("/");
-  }
-};
+    console.log("🔍 Consulta MongoDB:", query);
 
-// --- Gestión de Reservas ---
+    // 4. Ejecuta la búsqueda
+    const apartments = await Apartment.find(query).sort({ price: 1 });
+    
+    console.log(`✅ Encontrados ${apartments.length} apartamentos`);
+
+    // 5. Renderiza los resultados
+    res.render("seeApartments.ejs", { 
+      title: `${apartments.length} resultados para "${userQuery}"`, 
+      apartments,
+      searchQuery: userQuery,
+      appliedFilters: filters,
+      isSearchResult: true
+    });
+
+  } catch (err) {
+    // Manejo de errores
+    console.error("❌ Error en búsqueda IA:", err.message);
+    
+    if (err.response?.status === 429) {
+      req.flash("error", "🚫 Límite de IA alcanzado. Inténtalo más tarde.");
+    } else {
+      req.flash("error", "Error en la búsqueda inteligente. Inténtalo de nuevo.");
+    }
+    
+    res.redirect("/");
+  }
+};// --- Gestión de Reservas ---
 
 // Crear una nueva reserva
 export const postNewReservation = async (req, res) => {

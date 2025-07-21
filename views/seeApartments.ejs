@@ -1,0 +1,1076 @@
+<!-- Incluye el pie de página desde un archivo parcial -->
+<%- include("partials/header") %>
+<div class="container-fluid my-5">
+  <div class="bg-white p-4 shadow rounded-4">
+    <div class="catalog-header text-center mb-5">
+      <h1 class="display-4 fw-bold text-primary mb-2">Catálogo Completo</h1>
+      <p class="lead text-muted mb-4">Descubre nuestra selección completa de apartamentos únicos</p>
+      <div class="row justify-content-center text-center">
+        <div class="col-md-4 mb-3 mb-md-0">
+          <div class="stat-item p-3 rounded-3 shadow-sm">
+            <h3 class="display-6 fw-bold text-success mb-1"><%= apartments.length %></h3>
+            <p class="text-dark mb-0">Propiedades</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="stat-item p-3 rounded-3 shadow-sm">
+            <% const currentChunkSize = 12; %> <% const totalCarouselPages = Math.ceil(apartments.length / currentChunkSize); %>
+            <h3 class="display-6 fw-bold text-info mb-1" id="totalPagesCount"><%= totalCarouselPages %></h3>
+            <p class="text-dark mb-0">Páginas</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <% if (apartments && apartments.length > 0) { %> <% const currentChunkSize = 12; %> <% const totalCarouselPages = Math.ceil(apartments.length / currentChunkSize); %>
+
+    <div id="apartmentsCarousel" class="carousel slide" data-bs-interval="false" data-carousel-id="apartments">
+      <div class="carousel-inner">
+        <% for (let i = 0; i < totalCarouselPages; i++) { const currentChunk = apartments.slice(i * currentChunkSize, (i + 1) * currentChunkSize); %>
+
+        <div class="carousel-item <%= i === 0 ? 'active' : '' %>">
+          <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+            <% currentChunk.forEach((apartment, index) => { %>
+            <div class="col">
+              <div class="apartment-card card h-100 border-0 shadow-lg rounded-4 overflow-hidden transition-all" style="animation: slideInUp 0.6s ease-out <%= index * 0.1 %>s both">
+                <div class="card-img-container position-relative overflow-hidden">
+                  <a href="/apartments/<%= apartment._id %>" class="d-block">
+                    <img src="<%= apartment.photos.find(p => p.isMain)?.url || '/img/default.jpg' %>" class="card-img-top transition-all" alt="<%= apartment.title %>" />
+                    <div class="image-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center opacity-0 transition-all">
+                      <div class="overlay-content text-center">
+                        <span class="btn btn-light btn-lg rounded-circle shadow-lg mb-2">
+                          <i class="bi bi-eye-fill"></i>
+                        </span>
+                        <p class="text-white fw-bold mb-0">Ver Detalles</p>
+                      </div>
+                    </div>
+                  </a>
+
+                  <div class="position-absolute top-0 start-0 m-3">
+                    <% if (apartment.active) { %>
+                    <span class="badge bg-success bg-gradient px-3 py-2 rounded-pill shadow-sm"> <i class="bi bi-check-circle me-1"></i>Disponible </span>
+                    <% } else { %>
+                    <span class="badge bg-warning bg-gradient px-3 py-2 rounded-pill shadow-sm"> <i class="bi bi-pause-circle me-1"></i>Pausado </span>
+                    <% } %>
+                  </div>
+
+                  <div class="position-absolute bottom-0 end-0 m-3">
+                    <span class="price-badge badge bg-dark bg-gradient px-3 py-2 rounded-pill shadow-lg fs-6 fw-bold"> <%= apartment.price.toLocaleString() %>€ </span>
+                  </div>
+                </div>
+
+                <div class="card-body p-4 d-flex flex-column">
+                  <div class="apartment-info mb-3">
+                    <h5 class="card-title text-dark mb-2 fw-bold lh-sm"><%= apartment.title %></h5>
+                    <p class="location-info text-muted mb-0 d-flex align-items-center">
+                      <i class="bi bi-geo-alt-fill text-primary me-2"></i>
+                      <small><%= apartment.location.municipality.nm %>, <%= apartment.location.province.nm %></small>
+                    </p>
+                  </div>
+
+                  <div class="apartment-details d-flex justify-content-between mb-3 p-3 bg-light rounded-3">
+                    <div class="detail-item text-center">
+                      <i class="bi bi-door-closed text-primary d-block mb-1 fs-5"></i>
+                      <small class="fw-medium text-dark"><%= apartment.rooms %> habs</small>
+                    </div>
+                    <div class="detail-divider"></div>
+                    <div class="detail-item text-center">
+                      <i class="bi bi-droplet text-info d-block mb-1 fs-5"></i>
+                      <small class="fw-medium text-dark"><%= apartment.bathrooms %> baños</small>
+                    </div>
+                    <div class="detail-divider"></div>
+                    <div class="detail-item text-center">
+                      <i class="bi bi-people text-success d-block mb-1 fs-5"></i>
+                      <small class="fw-medium text-dark"><%= apartment.maxGuests || 'N/A' %> huésp.</small>
+                    </div>
+                  </div>
+
+                  <% const s = apartment.services; %>
+                  <div class="services-section mb-4">
+                    <h6 class="services-title text-dark mb-2 fw-semibold"><i class="bi bi-gear me-1"></i>Servicios</h6>
+                    <div class="services-icons d-flex flex-wrap gap-2">
+                      <% if (s.airConditioning) { %>
+                      <span class="service-badge badge bg-primary bg-gradient rounded-pill px-2 py-1" data-bs-toggle="tooltip" title="Aire acondicionado">
+                        <i class="bi bi-snow"></i>
+                      </span>
+                      <% } %> <% if (s.heating) { %>
+                      <span class="service-badge badge bg-danger bg-gradient rounded-pill px-2 py-1" data-bs-toggle="tooltip" title="Calefacción">
+                        <i class="bi bi-fire"></i>
+                      </span>
+                      <% } %> <% if (s.accessibility) { %>
+                      <span class="service-badge badge bg-info bg-gradient rounded-pill px-2 py-1" data-bs-toggle="tooltip" title="Accesibilidad">
+                        <i class="bi bi-person-wheelchair"></i>
+                      </span>
+                      <% } %> <% if (s.television) { %>
+                      <span class="service-badge badge bg-secondary bg-gradient rounded-pill px-2 py-1" data-bs-toggle="tooltip" title="Televisión">
+                        <i class="bi bi-tv"></i>
+                      </span>
+                      <% } %> <% if (s.kitchen) { %>
+                      <span class="service-badge badge bg-warning bg-gradient rounded-pill px-2 py-1" data-bs-toggle="tooltip" title="Cocina">
+                        <i class="bi bi-cup-hot"></i>
+                      </span>
+                      <% } %> <% if (s.internet) { %>
+                      <span class="service-badge badge bg-success bg-gradient rounded-pill px-2 py-1" data-bs-toggle="tooltip" title="Internet">
+                        <i class="bi bi-wifi"></i>
+                      </span>
+                      <% } %>
+                    </div>
+                  </div>
+
+                  <a href="/apartments/<%= apartment._id %>" class="btn btn-primary btn-lg w-100 mt-auto rounded-pill fw-bold transition-all hover-lift shadow-sm">
+                    <i class="bi bi-arrow-right-circle me-2"></i>Ver Detalles
+                  </a>
+
+                  <% if (currentUser && currentUser.role === 'admin') { %>
+                  <div class="admin-controls mt-3 pt-3 border-top border-light">
+                    <h6 class="admin-title text-muted mb-2 fw-semibold"><i class="bi bi-gear-fill me-1"></i>Controles Admin</h6>
+                    <div class="d-flex gap-2">
+                      <a
+                        href="/admin/apartments/edit/<%= apartment._id %>"
+                        class="btn btn-warning btn-sm flex-fill rounded-pill transition-all hover-lift"
+                        data-bs-toggle="tooltip"
+                        title="Editar apartamento"
+                      >
+                        <i class="bi bi-pencil-square me-1"></i>Editar
+                      </a>
+
+                      <% if (apartment.active == true) { %>
+                      <button
+                        class="btn btn-danger btn-sm flex-fill rounded-pill transition-all hover-lift"
+                        data-bs-toggle="modal"
+                        data-bs-target="#deleteModal-<%= apartment._id %>"
+                        title="Eliminar apartamento"
+                      >
+                        <i class="bi bi-trash3 me-1"></i>Eliminar
+                      </button>
+                      <% } else { %>
+                      <form action="/admin/apartments/active/<%= apartment._id %>" method="POST" class="flex-fill">
+                        <button type="submit" class="btn btn-success btn-sm w-100 rounded-pill transition-all hover-lift" data-bs-toggle="tooltip" title="Activar apartamento">
+                          <i class="bi bi-check-circle me-1"></i>Activar
+                        </button>
+                      </form>
+                      <% } %>
+                    </div>
+                  </div>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+            <% }); %>
+          </div>
+        </div>
+        <% } %>
+      </div>
+
+      <button class="carousel-control-prev" type="button" data-bs-target="#apartmentsCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#apartmentsCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+
+      <div class="carousel-indicators-custom mt-4 d-flex justify-content-center">
+        <button type="button" class="page-indicator-btn" id="pageIndicatorMinus5" aria-label="Retroceder 5 páginas">
+          <i class="bi bi-chevron-bar-left"></i>
+        </button>
+        <button type="button" class="page-indicator-btn" id="pageIndicatorMinus1" aria-label="Retroceder 1 página">
+          <i class="bi bi-chevron-left"></i>
+        </button>
+        <button type="button" class="page-indicator-btn active" id="pageIndicatorCurrent" aria-current="true" aria-label="Página actual">1</button>
+        <button type="button" class="page-indicator-btn" id="pageIndicatorPlus1" aria-label="Avanzar 1 página">
+          <i class="bi bi-chevron-right"></i>
+        </button>
+        <button type="button" class="page-indicator-btn" id="pageIndicatorPlus5" aria-label="Avanzar 5 páginas">
+          <i class="bi bi-chevron-bar-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <% } else { %>
+    <div class="alert alert-info text-center">No hay apartamentos disponibles.</div>
+    <% } %>
+  </div>
+</div>
+
+<!-- MODALES DE CONFIRMACIÓN DE ELIMINACIÓN - UBICADOS CORRECTAMENTE FUERA DE CONTENEDORES -->
+<% if (apartments && apartments.length > 0 && currentUser && currentUser.role === 'admin') { %>
+  <% apartments.forEach((apartment) => { %>
+    <% if (apartment.active == true) { %>
+      <div class="modal fade" id="deleteModal-<%= apartment._id %>" tabindex="-1" aria-labelledby="deleteModalLabel-<%= apartment._id %>" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="modal-header bg-danger bg-gradient text-white border-0">
+              <h5 class="modal-title fw-bold" id="deleteModalLabel-<%= apartment._id %>">
+                <i class="bi bi-exclamation-triangle me-2"></i>Confirmar Eliminación
+              </h5>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body p-4">
+              <div class="text-center mb-3">
+                <i class="bi bi-trash3 text-danger" style="font-size: 3rem"></i>
+              </div>
+              <p class="text-center mb-0">
+                ¿Estás seguro de que deseas eliminar
+                <strong class="text-danger">"<%= apartment.title %>"</strong>?
+              </p>
+              <p class="text-center text-muted small mt-2">Esta acción no se puede deshacer.</p>
+            </div>
+            <div class="modal-footer border-0 p-4 pt-0">
+              <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">
+                <i class="bi bi-x-circle me-1"></i>Cancelar
+              </button>
+              <form action="/admin/apartments/delete/<%= apartment._id %>" method="POST" class="d-inline delete-form">
+                <button type="submit" class="btn btn-danger rounded-pill px-4">
+                  <i class="bi bi-trash3 me-1"></i>Sí, Eliminar
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% } %>
+  <% }); %>
+<% } %>
+
+<!-- Incluye el pie de página desde un archivo parcial -->
+<%- include("partials/footer") %>
+
+
+<style>
+  /* Animaciones personalizadas */
+  @keyframes fadeInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideInUp {
+    from {
+      opacity: 0;
+      transform: translateY(50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Efectos de transición generales */
+  .transition-all {
+    transition: all 0.3s ease !important;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+  }
+
+  /* Sección de Cabecera del Catálogo */
+  .catalog-header {
+    animation: fadeInDown 0.8s ease-out;
+  }
+
+  .catalog-header h1 {
+    color: var(--bs-primary);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .catalog-header .lead {
+    color: var(--bs-gray-700);
+  }
+
+  .stat-item {
+    background: linear-gradient(135deg, var(--bs-light), var(--bs-white));
+    border: 1px solid var(--bs-gray-200);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+  }
+
+  .stat-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  .stat-item h3 {
+    font-size: 2.5rem;
+    line-height: 1;
+  }
+
+  .stat-item p {
+    font-weight: 500;
+    color: var(--bs-gray-800);
+  }
+
+  /* Tarjetas de apartamentos mejoradas */
+  .apartment-card {
+    transition: all 0.4s ease;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 0.75rem;
+  }
+
+  .apartment-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  /* Contenedor de la imagen de la tarjeta */
+  .card-img-container {
+    position: relative;
+    overflow: hidden;
+    border-top-left-radius: 0.75rem;
+    border-top-right-radius: 0.75rem;
+  }
+
+  .card-img-container .card-img-top {
+    height: 220px;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .apartment-card:hover .card-img-top {
+    transform: scale(1.05);
+  }
+
+  /* Overlay de la imagen al hacer hover */
+  .image-overlay {
+    background: rgba(0, 0, 0, 0.4);
+    transition: opacity 0.4s ease;
+    opacity: 0;
+  }
+
+  .apartment-card:hover .image-overlay {
+    opacity: 1 !important;
+    background: rgba(0, 0, 0, 0.6);
+  }
+
+  .image-overlay .overlay-content {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+
+  .apartment-card:hover .image-overlay .overlay-content {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Badges de estado y precio */
+  .card-img-container .badge {
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .price-badge {
+    backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.8) !important;
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Contenido de la tarjeta */
+  .card-body {
+    padding: 1.5rem;
+  }
+
+  .apartment-info .card-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    line-height: 1.3;
+  }
+
+  .location-info {
+    font-size: 0.875rem;
+    color: #6c757d;
+  }
+
+  /* Detalles de habitaciones y baños */
+  .apartment-details {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-radius: 0.5rem;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+
+  .detail-item {
+    text-align: center;
+  }
+
+  .detail-item i {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .detail-divider {
+    width: 1px;
+    background-color: #dee2e6;
+    margin: 0 0.75rem;
+  }
+
+  /* Sección de Servicios */
+  .services-section {
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    padding-top: 1rem;
+    margin-top: 1rem;
+  }
+
+  .services-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: #343a40;
+  }
+
+  .services-icons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem; /* Ajustado para mejor espaciado */
+  }
+
+  .service-badge {
+    background-color: #e9ecef;
+    color: #495057;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .service-badge:hover {
+    background-color: #ced4da;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .service-badge i {
+    font-size: 1rem;
+  }
+
+  /* Botón principal */
+  .card-body > .btn {
+    margin-top: auto;
+    font-weight: bold;
+    padding: 0.75rem 1.5rem;
+    border-radius: 2rem;
+    transition: all 0.3s ease;
+  }
+
+  .card-body > .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(13, 110, 253, 0.3);
+  }
+
+  /* Controles de administrador */
+  .admin-controls {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e9ecef;
+    background-color: rgba(248, 249, 250, 0.7);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.03);
+  }
+
+  .admin-controls .admin-title {
+    font-size: 0.9rem;
+    color: #6c757d;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .admin-controls .admin-title i {
+    margin-right: 0.5rem;
+  }
+
+  .admin-controls .btn-sm {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    border-radius: 1.5rem;
+    transition: all 0.2s ease;
+  }
+
+  .admin-controls .btn-sm:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Modal de confirmación - CSS simplificado para compatibilidad */
+  .modal-content {
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    border: none;
+  }
+
+  .modal-header {
+    border-bottom: none;
+    padding: 1.5rem;
+    background: linear-gradient(45deg, rgba(220, 53, 69, 0.9), rgba(255, 193, 7, 0.7));
+  }
+
+  .modal-header h5 {
+    color: white;
+    display: flex;
+    align-items: center;
+  }
+
+  .modal-header .btn-close {
+    color: white;
+    filter: brightness(2);
+  }
+
+  .modal-body {
+    padding: 2rem;
+    text-align: center;
+    font-size: 1.1rem;
+    color: #343a40;
+  }
+
+  .modal-body i {
+    font-size: 4rem;
+    color: #dc3545;
+    margin-bottom: 1rem;
+    animation: bounceIn 0.6s ease-out;
+  }
+
+  @keyframes bounceIn {
+    0% {
+      transform: scale(0.3);
+      opacity: 0;
+    }
+    50% {
+      transform: scale(1.05);
+      opacity: 1;
+    }
+    70% {
+      transform: scale(0.9);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  .modal-footer {
+    border-top: none;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .modal-footer .btn {
+    border-radius: 2rem;
+    padding: 0.6rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .modal-footer .btn-danger:hover {
+    background-color: #c82333;
+    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+    transform: translateY(-2px);
+  }
+
+  .modal-footer .btn-secondary:hover {
+    background-color: #5a6268;
+    box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
+    transform: translateY(-2px);
+  }
+
+  /* Responsive para las cards */
+  @media (max-width: 992px) {
+    .row-cols-xl-4 {
+      --bs-gutter-x: 1rem;
+      --bs-gutter-y: 1rem;
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .row-cols-lg-3 > *,
+    .row-cols-md-2 > * {
+      /* Consolidado */
+      flex: 0 0 auto;
+      width: 33.33333333%;
+    }
+    .apartment-card {
+      margin-bottom: 1rem;
+    }
+    .card-img-container .card-img-top {
+      height: 200px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .row-cols-md-2 > * {
+      width: 100%;
+    }
+    .apartment-card .card-body {
+      padding: 1rem;
+    }
+    .apartment-details {
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem;
+    }
+    .detail-divider {
+      display: none;
+    }
+    .detail-item {
+      flex: 1 1 45%;
+    }
+    .admin-controls .d-flex {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .catalog-header h1 {
+      font-size: 2.5rem;
+    }
+    .stat-item h3 {
+      font-size: 2rem;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .card-img-container .card-img-top {
+      height: 180px;
+    }
+    .apartment-info .card-title {
+      font-size: 1.1rem;
+    }
+    .price-badge {
+      font-size: 0.9rem;
+      padding: 0.4rem 0.8rem;
+    }
+    .card-body > .btn {
+      padding: 0.6rem 1rem;
+      font-size: 0.9rem;
+    }
+    .catalog-header h1 {
+      font-size: 2rem;
+    }
+    .catalog-header .lead {
+      font-size: 1rem;
+    }
+    .stat-item h3 {
+      font-size: 1.8rem;
+    }
+    .stat-item p {
+      font-size: 0.85rem;
+    }
+  }
+
+  /* Carousel Indicators (Custom Pagination) */
+  .carousel-indicators-custom {
+    gap: 0.5rem; /* Ajustado para los 5 botones */
+    margin: 1rem auto 0;
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 50px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    max-width: fit-content;
+  }
+
+  .page-indicator-btn {
+    width: 40px; /* Ancho fijo para botones */
+    height: 40px; /* Alto fijo para botones */
+    border-radius: 50%; /* Botones redondos por defecto */
+    border: 2px solid rgba(13, 110, 253, 0.3);
+    background: transparent;
+    opacity: 1;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    display: flex; /* Para centrar el contenido (icono/número) */
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem; /* Tamaño de fuente para números/iconos */
+    color: #0d6efd; /* Color de texto/icono por defecto */
+    font-weight: 600;
+    padding: 0; /* Eliminar padding por defecto del botón */
+  }
+
+  .page-indicator-btn i {
+    font-size: 1.2rem; /* Tamaño de icono */
+  }
+
+  .page-indicator-btn:hover {
+    transform: translateY(-2px);
+    border-color: rgba(13, 110, 253, 0.6);
+    background: rgba(13, 110, 253, 0.1);
+    box-shadow: 0 4px 15px rgba(13, 110, 253, 0.2);
+  }
+
+  .page-indicator-btn.active {
+    width: 50px; /* Más ancho para la página actual */
+    height: 50px; /* Más alto para la página actual */
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0d6efd, #6610f2);
+    border-color: transparent;
+    box-shadow: 0 4px 20px rgba(13, 110, 253, 0.4);
+    color: white; /* Color de texto/icono blanco para activo */
+    font-size: 1.3rem; /* Tamaño de fuente para número activo */
+    transform: scale(1.05);
+  }
+
+  .page-indicator-btn.active:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 25px rgba(13, 110, 253, 0.6);
+  }
+
+  .page-indicator-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+    background-color: rgba(13, 110, 253, 0.05) !important;
+    border-color: rgba(13, 110, 253, 0.1) !important;
+    color: rgba(13, 110, 253, 0.5) !important;
+  }
+
+  /* Carousel Control Icons (Added for completeness, if custom icons are desired) */
+  .carousel-control-prev-icon,
+  .carousel-control-next-icon {
+    background-image: none;
+    width: 2rem;
+    height: 2rem;
+    background-size: 100%, 100%;
+  }
+
+  .carousel-control-prev-icon::after {
+    content: "\f2f6"; /* Bootstrap icon for arrow-left-circle-fill */
+    font-family: "bootstrap-icons";
+    color: #0d6efd;
+    font-size: 2rem;
+    display: block;
+  }
+
+  .carousel-control-next-icon::after {
+    content: "\f2f9"; /* Bootstrap icon for arrow-right-circle-fill */
+    font-family: "bootstrap-icons";
+    color: #0d6efd;
+    font-size: 2rem;
+    display: block;
+  }
+
+  .carousel-control-prev,
+  .carousel-control-next {
+    width: 5%;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+  }
+
+  .carousel-control-prev:hover,
+  .carousel-control-next:hover {
+    opacity: 0.8;
+  }
+
+  @keyframes loadingPulse {
+    0%,
+    100% {
+      opacity: 0.3;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+
+  /* Responsive para la paginación e indicadores (Consolidado) */
+  @media (max-width: 768px) {
+    .carousel-indicators-custom {
+      flex-wrap: wrap;
+      padding: 0.5rem 0.75rem;
+      border-radius: 40px;
+      gap: 0.3rem;
+    }
+    .page-indicator-btn {
+      width: 35px;
+      height: 35px;
+      font-size: 0.9rem;
+    }
+    .page-indicator-btn.active {
+      width: 45px;
+      height: 45px;
+      font-size: 1.1rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .carousel-indicators-custom {
+      width: 95%;
+      max-width: 300px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+</style>
+
+<script>
+  // Animación de entrada para las tarjetas
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: "0px 0px -50px 0px",
+  };
+
+  const observer = new IntersectionObserver(function (entries) {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.style.animationPlayState = "running";
+      }
+    });
+  }, observerOptions);
+
+  document.querySelectorAll(".apartment-card").forEach((card) => {
+    observer.observe(card);
+  });
+
+  // Inicialización simple de componentes
+  document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+    // Configurar delegación de eventos para formularios de eliminación
+    document.addEventListener('submit', function(event) {
+      if (event.target.classList.contains('delete-form')) {
+        event.preventDefault();
+        handleApartmentDelete(event);
+      }
+    });
+
+    // Agregar listener para limpiar backdrops cuando se cierran modales
+    document.addEventListener('hidden.bs.modal', function(event) {
+      // Pequeño delay para asegurar que Bootstrap termine su cleanup
+      setTimeout(() => {
+        cleanupModalBackdrops();
+      }, 50);
+    });
+
+    // Limpiar backdrops al cargar la página
+    cleanupModalBackdrops();
+  });
+
+  // Función simplificada para manejar eliminación de apartamentos
+  function handleApartmentDelete(event) {
+    event.preventDefault();
+    
+    const form = event.target;
+    const formData = new FormData(form);
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    
+    // Mostrar loading
+    submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Eliminando...';
+    submitBtn.disabled = true;
+    
+    fetch(form.action, {
+      method: 'POST',
+      body: formData,
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(response => {
+      if (response.ok) {
+        // Cerrar modal y limpiar backdrop ANTES de recargar contenido
+        const modal = form.closest('.modal');
+        if (modal) {
+          const modalInstance = bootstrap.Modal.getInstance(modal);
+          if (modalInstance) {
+            modalInstance.hide();
+          }
+          
+          // Forzar limpieza inmediata del modal y backdrop
+          modal.classList.remove('show');
+          modal.style.display = 'none';
+          modal.setAttribute('aria-hidden', 'true');
+          modal.removeAttribute('aria-modal');
+        }
+        
+        // Limpiar todos los backdrops inmediatamente
+        cleanupModalBackdrops();
+        
+        // Recargar página manteniendo filtros si existen
+        if (typeof buscarApartamentos === 'function' && window.lastSearchParams) {
+          fetch('/apartments/search?' + window.lastSearchParams, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+          })
+          .then(res => res.text())
+          .then(html => {
+            const partial = document.getElementById('apartmentsPartial') || document.getElementById('apartmentsContainer');
+            if (partial) {
+              partial.innerHTML = html;
+              
+              // Limpiar backdrops nuevamente después de recargar contenido
+              setTimeout(() => {
+                cleanupModalBackdrops();
+                
+                if (typeof initializeCarouselPagination === 'function') {
+                  initializeCarouselPagination();
+                }
+                if (typeof reinitializeComponents === 'function') {
+                  reinitializeComponents();
+                }
+              }, 100);
+            }
+          })
+          .catch(() => {
+            cleanupModalBackdrops();
+            setTimeout(() => window.location.reload(), 500);
+          });
+        } else {
+          cleanupModalBackdrops();
+          setTimeout(() => window.location.reload(), 500);
+        }
+      } else {
+        alert('Error al eliminar el apartamento.');
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+      }
+    })
+    .catch(error => {
+      alert('Error al eliminar el apartamento.');
+      submitBtn.innerHTML = originalText;
+      submitBtn.disabled = false;
+    });
+  }
+
+  // Función específica para limpiar backdrops de modales
+  function cleanupModalBackdrops() {
+    // Eliminar todos los backdrops existentes
+    const backdrops = document.querySelectorAll('.modal-backdrop');
+    backdrops.forEach(backdrop => {
+      backdrop.remove();
+    });
+    
+    // Limpiar clases del body
+    document.body.classList.remove('modal-open');
+    document.body.style.overflow = '';
+    document.body.style.paddingRight = '';
+    
+    // Cerrar todos los modales que puedan estar abiertos
+    document.querySelectorAll('.modal.show').forEach(modal => {
+      modal.classList.remove('show');
+      modal.style.display = '';
+      modal.setAttribute('aria-hidden', 'true');
+      modal.removeAttribute('aria-modal');
+    });
+    
+    // Limpiar cualquier overlay residual
+    const overlays = document.querySelectorAll('.modal-backdrop, .fade');
+    overlays.forEach(overlay => {
+      if (overlay.classList.contains('modal-backdrop')) {
+        overlay.remove();
+      }
+    });
+  }
+
+  // Función simple para reinicializar componentes después de cargas AJAX
+  function reinitializeComponents() {
+    // Limpiar backdrops al reinicializar
+    cleanupModalBackdrops();
+    
+    // Reinicializar tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      var existingTooltip = bootstrap.Tooltip.getInstance(tooltipTriggerEl);
+      if (existingTooltip) {
+        existingTooltip.dispose();
+      }
+      return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+    // Reinicializar observer para animaciones
+    document.querySelectorAll(".apartment-card").forEach((card) => {
+      observer.observe(card);
+    });
+  }
+
+  // Exponer funciones globalmente para compatibilidad AJAX
+  window.reinitializeComponents = reinitializeComponents;
+  window.handleApartmentDelete = handleApartmentDelete;
+  window.cleanupModalBackdrops = cleanupModalBackdrops;
+</script>
+
+<!-- Script de paginación personalizada -->
+<script src="/js/carouselPagination.js"></script>
+
+<!-- Script adicional para resultados de búsqueda con IA -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Verificar si es resultado de búsqueda IA
+  const isSearchResult = '<%= typeof isSearchResult !== "undefined" ? isSearchResult : false %>';
+  
+  if (isSearchResult === 'true') {
+    console.log('🔍 Resultados de búsqueda con IA detectados');
+    
+    // Reinicializar la paginación para los resultados de búsqueda
+    const carousel = document.getElementById('apartmentsCarousel');
+    if (carousel) {
+      const carouselItems = carousel.querySelectorAll('.carousel-item');
+      if (carouselItems.length > 0 && typeof initializeCarouselPagination === 'function') {
+        initializeCarouselPagination('apartmentsCarousel', carouselItems.length);
+      }
+    }
+    
+    // Agregar información de búsqueda
+    const catalogHeader = document.querySelector('.catalog-header');
+    if (catalogHeader && !document.querySelector('.search-results-info')) {
+      const searchInfo = document.createElement('div');
+      searchInfo.className = 'search-results-info alert alert-info d-flex align-items-center justify-content-between mt-3';
+      searchInfo.innerHTML = `
+        <div class="d-flex align-items-center">
+          <i class="bi bi-robot me-2"></i>
+          <span>Resultados de búsqueda inteligente</span>
+        </div>
+        <div>
+          <a href="/" class="btn btn-outline-primary btn-sm me-2">
+            <i class="bi bi-arrow-left me-1"></i>Nueva búsqueda
+          </a>
+          <a href="/apartments" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-grid me-1"></i>Ver todos
+          </a>
+        </div>
+      `;
+      catalogHeader.appendChild(searchInfo);
+    }
+  }
+});
+</script>
+
+<%- include("partials/footer") %>

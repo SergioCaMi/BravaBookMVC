@@ -1,83 +1,146 @@
-<!-- Modal para mostrar mensajes de error -->
-<% if (typeof error_msg !== 'undefined' && error_msg.length > 0) { %>
-  <!-- Contenedor del modal de error -->
-  <div class="modal fade show" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true" style="display: block;">
-    <div class="modal-dialog modal-dialog-centered">
-      <!-- Contenido del modal de error -->
-      <div class="modal-content">
-        <!-- Encabezado del modal de error con fondo rojo -->
-        <div class="modal-header bg-danger text-white">
-          <h5 class="modal-title" id="errorModalLabel">Error</h5>
-          <!-- Botón para cerrar el modal -->
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+<!-- Contenedor de notificaciones toast (esquina superior derecha) -->
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+  <!-- Toast de error -->
+  <% if (typeof error_msg !== 'undefined' && error_msg.length > 0) { %>
+    <div id="errorToast" class="toast modern-toast error-toast" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="toast-header bg-danger bg-gradient text-white border-0">
+        <div class="toast-icon me-2">
+          <i class="bi bi-exclamation-triangle-fill fs-5"></i>
         </div>
-        <!-- Cuerpo del modal que muestra el mensaje de error -->
-        <div class="modal-body">
-          <%= error_msg %>
-        </div>
-        <!-- Pie del modal con botón para cerrar -->
-        <div class="modal-footer">
-          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+        <strong class="me-auto">Error</strong>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+      </div>
+      <div class="toast-body bg-light">
+        <div class="d-flex align-items-start">
+          <div class="toast-content flex-grow-1">
+            <p class="mb-0 text-dark"><%= error_msg %></p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-<% } %>
-
-<!-- Modal para mostrar mensajes de éxito -->
-<% if (typeof success_msg !== 'undefined' && success_msg.length > 0) { %>
-  <!-- Contenedor del modal de éxito -->
-  <div class="modal fade show" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true" style="display: block;">
-    <div class="modal-dialog modal-dialog-centered">
-      <!-- Contenido del modal de éxito -->
-      <div class="modal-content">
-        <!-- Encabezado del modal de éxito con fondo verde -->
-        <div class="modal-header bg-success text-white">
-          <h5 class="modal-title" id="successModalLabel">Éxito</h5>
-          <!-- Botón para cerrar el modal -->
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+  <% } %>
+  
+  <!-- Toast de éxito -->
+  <% if (typeof success_msg !== 'undefined' && success_msg.length > 0) { %>
+    <div id="successToast" class="toast modern-toast success-toast" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="toast-header bg-success bg-gradient text-white border-0">
+        <div class="toast-icon me-2">
+          <i class="bi bi-check-circle-fill fs-5"></i>
         </div>
-        <!-- Cuerpo del modal que muestra el mensaje de éxito -->
-        <div class="modal-body">
-          <%= success_msg %>
-        </div>
-        <!-- Pie del modal con botón para cerrar -->
-        <div class="modal-footer">
-          <button type="button" class="btn btn-success" data-bs-dismiss="modal">Cerrar</button>
+        <strong class="me-auto">Éxito</strong>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+      </div>
+      <div class="toast-body bg-light">
+        <div class="d-flex align-items-start">
+          <div class="toast-content flex-grow-1">
+            <p class="mb-0 text-dark"><%= success_msg %></p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-<% } %>
+  <% } %>
+</div>
 
-<!-- Enlace al CSS de Bootstrap para estilos predefinidos -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Estilos CSS personalizados -->
+<style>
+/* Toasts modernos */
+.modern-toast {
+  min-width: 350px;
+  border: none;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  backdrop-filter: blur(10px);
+  animation: slideInRight 0.5s ease-out;
+}
 
-<!-- Script de Bootstrap JS Bundle con Popper para componentes interactivos -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+.toast-icon {
+  animation: bounceIn 0.6s ease-out;
+}
 
+/* Animaciones */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes bounceIn {
+  0% { transform: scale(0.3); opacity: 0; }
+  50% { transform: scale(1.05); }
+  70% { transform: scale(0.9); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Estados de error y éxito */
+.error-toast .toast-header {
+  background: linear-gradient(135deg, #dc3545, #c82333) !important;
+}
+
+.success-toast .toast-header {
+  background: linear-gradient(135deg, #28a745, #20c997) !important;
+}
+
+/* Efectos adicionales */
+.btn-close:hover {
+  transform: scale(1.1);
+  transition: transform 0.2s ease;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .modern-toast {
+    min-width: 300px;
+    margin: 0 1rem;
+  }
+  
+  .toast-container {
+    left: 0;
+    right: 0;
+    top: auto;
+    bottom: 0;
+  }
+}
+</style>
+
+<!-- Scripts simplificados para toasts -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  // Inicializar y mostrar el modal de error si existe
-  var errorModal = document.getElementById('errorModal');
-  if (errorModal) {
-    var modal = new bootstrap.Modal(errorModal);
-    modal.show();
-    // Desaparecer el modal de error después de 3 segundos
-    setTimeout(function() {
-      modal.hide();
-    }, 3000);
+  // Mostrar toasts automáticamente
+  const errorToast = document.getElementById('errorToast');
+  const successToast = document.getElementById('successToast');
+  
+  if (errorToast) {
+    const toast = new bootstrap.Toast(errorToast, {
+      autohide: true,
+      delay: 5000
+    });
+    toast.show();
   }
-
-  // Inicializar y mostrar el modal de éxito si existe
-  var successModal = document.getElementById('successModal');
-  if (successModal) {
-    var modal = new bootstrap.Modal(successModal);
-    modal.show();
-    // Desaparecer el modal de éxito después de 3 segundos
-    setTimeout(function() {
-      modal.hide();
-    }, 3000);
+  
+  if (successToast) {
+    const toast = new bootstrap.Toast(successToast, {
+      autohide: true,
+      delay: 4000
+    });
+    toast.show();
   }
+  
+  // Accesibilidad: cerrar con tecla Escape
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      // Cerrar todos los toasts visibles
+      document.querySelectorAll('.toast.show').forEach(toast => {
+        const toastInstance = bootstrap.Toast.getInstance(toast);
+        if (toastInstance) {
+          toastInstance.hide();
+        }
+      });
+    }
+  });
 });
 </script>
+

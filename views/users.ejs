@@ -1,114 +1,899 @@
 <!-- Incluye el encabezado de la página desde un archivo parcial -->
 <%- include("partials/header", { title }) %>
 
-<!-- Enlace para volver atrás en la navegación -->
-<a href="#" onclick="window.history.back()" class="row justify-content-start">
-  <img src="/img/back.png" alt="Volver atrás" style="max-width: 70px; height: auto;" class="m-3">
-</a>
-
 <!-- Incluye mensajes parciales, como notificaciones o alertas -->
 <%- include("partials/mensajes") %>
 
-<!-- Contenedor principal del contenido -->
-<div class="container-fluid my-5 mx-6">
-  <div class="bg-white p-4 shadow rounded-4">
-    <!-- Título de la página -->
-    <h2 class="text-center text-primary fw-bold mb-4">Usuarios registrados</h2>
+<!-- Hero section moderno -->
+<div class="users-hero position-relative overflow-hidden">
+  <div class="hero-background position-absolute top-0 start-0 w-100 h-100"
+       style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+  
+  <!-- Partículas animadas de fondo -->
+  <div class="particles-container position-absolute top-0 start-0 w-100 h-100">
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+  </div>
+  
+  <div class="hero-content position-relative py-4">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-8">
+          <div class="users-welcome text-white" style="animation: fadeInLeft 0.8s ease-out;">
+            
+            <div class="welcome-badge mb-3">
+              <span class="badge bg-light text-primary px-4 py-2 rounded-pill fs-6 fw-medium">
+                <i class="bi bi-people me-2"></i>Gestión de Usuarios
+              </span>
+            </div>
+            
+            <h1 class="display-4 fw-bold mb-3">
+              Usuarios Registrados
+            </h1>
+            
+            <p class="lead mb-4 text-light">
+              Administra y visualiza todos los usuarios de la plataforma
+            </p>
+          </div>
+        </div>
+        
+        <!-- Estadísticas rápidas -->
+        <div class="col-lg-4 text-center text-lg-end">
+          <div class="users-stats backdrop-blur rounded-4 p-4 shadow-lg border border-light border-opacity-25"
+               style="background: rgba(255, 255, 255, 0.1); animation: slideInRight 0.8s ease-out 0.3s both;">
+            
+            <div class="stats-grid">
+              <div class="stat-item mb-3">
+                <div class="stat-icon bg-success bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center mb-2"
+                     style="width: 50px; height: 50px;">
+                  <i class="bi bi-people text-white fs-4"></i>
+                </div>
+                <div class="stat-number h3 fw-bold text-white mb-0"><%= users ? users.length : 0 %></div>
+                <small class="text-light">Total Usuarios</small>
+              </div>
+              
+              <div class="stat-item">
+                <div class="stat-icon bg-info bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center mb-2"
+                     style="width: 50px; height: 50px;">
+                  <i class="bi bi-shield-check text-white fs-4"></i>
+                </div>
+                <div class="stat-number h3 fw-bold text-white mb-0">
+                  <%= users ? users.filter(user => user.role === 'admin').length : 0 %>
+                </div>
+                <small class="text-light">Administradores</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
+<!-- Contenedor principal del contenido -->
+<div class="users-dashboard py-5" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+  <div class="container">
     <!-- Verifica si hay usuarios registrados disponibles -->
     <% if (users && users.length > 0) {
       const chunkSize = 20;
       const totalPages = Math.ceil(users.length / chunkSize);
       const currentPage = 0;
     %>
-
-    <!-- Carrusel para mostrar los usuarios -->
-    <div id="usersCarousel" class="carousel slide" data-bs-interval="false">
-      <div class="carousel-inner">
-        <!-- Itera sobre las páginas de usuarios -->
-        <% for (let i = 0; i < totalPages; i++) {
-          const currentChunk = users.slice(i * chunkSize, (i + 1) * chunkSize); %>
-
-        <!-- Página del carrusel -->
-        <div class="carousel-item <%= i === 0 ? 'active' : '' %>">
-          <div class="table-responsive">
-            <!-- Tabla de usuarios -->
-            <table class="table table-hover align-middle text-center mb-0">
-              <thead class="table-dark">
-                <tr>
-                  <th>#</th>
-                  <th>Avatar</th>
-                  <th>Nombre</th>
-                  <th>Email</th>
-                  <th>Rol</th>
-                  <% if (currentUser && currentUser.role === 'admin') { %>
-                    <th>Acciones</th>
-                  <% } %>
-                </tr>
-              </thead>
-              <tbody>
-                <!-- Itera sobre los usuarios de la página actual -->
-                <% currentChunk.forEach((user, index) => { %>
-                <tr>
-                  <td><%= (i * chunkSize) + index + 1 %></td>
-                  <td>
-                    <!-- Imagen del avatar del usuario -->
-                    <img src="/uploads/<%= user.avatar %>" alt="Avatar" class="rounded-circle shadow-sm" style="width: 50px; height: 50px; object-fit: cover;">
-                  </td>
-                  <td><strong><%= user.name %></strong></td>
-                  <td><%= user.email %></td>
-                  <td>
-                    <!-- Muestra el rol del usuario -->
-                    <span class="badge <%= user.role === 'admin' ? 'bg-primary' : 'bg-secondary' %>">
-                      <%= user.role %>
-                    </span>
-                  </td>
-                  <!-- Acciones para administradores -->
-                  <% if (currentUser && currentUser.role === 'admin') { %>
+    
+    <!-- Contenedor de la tabla con glassmorphism -->
+    <div class="table-container backdrop-blur rounded-4 shadow-lg border border-light border-opacity-25 overflow-hidden"
+         style="background: rgba(255, 255, 255, 0.95); animation: slideInUp 0.8s ease-out;">
+      
+      <!-- Header de la tabla -->
+      <div class="table-header bg-gradient p-4 text-white position-relative overflow-hidden"
+           style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <div class="row align-items-center">
+          <div class="col-md-12 text-center">
+            <h3 class="mb-0 fw-bold">
+              <i class="bi bi-table me-2"></i>Lista de Usuarios
+            </h3>
+            <p class="mb-0 text-light small">Gestiona todos los usuarios registrados</p>
+          </div>
+        </div>
+        
+        <!-- Decoración de fondo -->
+        <div class="position-absolute top-0 end-0 opacity-10">
+          <i class="bi bi-people" style="font-size: 8rem;"></i>
+        </div>
+      </div>
+      
+      <!-- Carrusel para mostrar los usuarios -->
+      <div id="usersCarousel" class="carousel slide" data-bs-interval="false">
+        <div class="carousel-inner">
+          <!-- Itera sobre las páginas de usuarios -->
+          <% for (let i = 0; i < totalPages; i++) {
+            const currentChunk = users.slice(i * chunkSize, (i + 1) * chunkSize); %>
+          <!-- Página del carrusel -->
+          <div class="carousel-item <%= i === 0 ? 'active' : '' %>">
+            <div class="table-responsive">
+              <!-- Tabla de usuarios moderna -->
+              <table class="table table-hover align-middle mb-0 modern-table">
+                <thead class="table-header-modern">
+                  <tr>
+                    <th class="text-center">#</th>
+                    <th class="text-center">Avatar</th>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th class="text-center">Rol</th>
+                    <% if (currentUser && currentUser.role === 'admin') { %>
+                      <th class="text-center">Acciones</th>
+                    <% } %>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Itera sobre los usuarios de la página actual -->
+                  <% currentChunk.forEach((user, index) => { %>
+                  <tr class="user-row" style="animation: fadeInUp 0.6s ease-out <%= (index * 0.1) %>s both;">
+                    <td class="text-center">
+                      <span class="user-number badge bg-primary bg-gradient rounded-pill">
+                        <%= (i * chunkSize) + index + 1 %>
+                      </span>
+                    </td>
+                    <td class="text-center">
+                      <!-- Avatar del usuario con efectos -->
+                      <div class="user-avatar-container position-relative d-inline-block">
+                        <img src="/uploads/<%= user.avatar %>" 
+                             alt="Avatar de <%= user.name %>" 
+                             class="user-avatar rounded-circle shadow-sm border border-3 border-light" 
+                             style="width: 60px; height: 60px; object-fit: cover;">
+                        <div class="avatar-status position-absolute bottom-0 end-0 bg-success border border-2 border-white rounded-circle"
+                             style="width: 18px; height: 18px;"></div>
+                      </div>
+                    </td>
                     <td>
-                      <!-- Botón para eliminar usuario -->
-                      <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteUserModal-<%= user._id %>">
-                        <i class="bi bi-trash3"></i>
-                      </button>
-                      <!-- Modal para confirmar eliminación -->
-                      <div class="modal fade" id="deleteUserModal-<%= user._id %>" tabindex="-1" aria-labelledby="deleteUserModalLabel-<%= user._id %>" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered">
-                          <div class="modal-content">
-                            <div class="modal-header bg-danger text-white">
-                              <h5 class="modal-title" id="deleteUserModalLabel-<%= user._id %>">Confirmar eliminación</h5>
-                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                            </div>
-                            <div class="modal-body">
-                              ¿Estás seguro de que deseas eliminar a <strong><%= user.name %></strong>? Esta acción no se puede deshacer.
-                            </div>
-                            <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                              <form action="/admin/user/delete/<%= user._id %>" method="POST">
-                                <button type="submit" class="btn btn-danger">Sí, eliminar</button>
-                              </form>
+                      <div class="user-info">
+                        <div class="user-name fw-bold text-dark mb-1"><%= user.name %></div>
+                        <small class="text-muted">
+                          <i class="bi bi-calendar3 me-1"></i>
+                          Registrado: <%= new Date(user.createdAt || Date.now()).toLocaleDateString('es-ES') %>
+                        </small>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="user-email">
+                        <div class="email-text text-dark"><%= user.email %></div>
+                        <small class="text-muted">
+                          <i class="bi bi-envelope me-1"></i>Verificado
+                        </small>
+                      </div>
+                    </td>
+                    <td class="text-center">
+                      <!-- Badge del rol con efectos -->
+                      <span class="role-badge badge <%= user.role === 'admin' ? 'bg-gradient' : 'bg-gradient' %> px-3 py-2 rounded-pill fw-medium"
+                            style="<%= user.role === 'admin' ? 'background: linear-gradient(135deg, #dc3545, #c82333) !important;' : 'background: linear-gradient(135deg, #6c757d, #5a6268) !important;' %>">
+                        <i class="bi <%= user.role === 'admin' ? 'bi-shield-fill' : 'bi-person-fill' %> me-1"></i>
+                        <%= user.role === 'admin' ? 'Administrador' : 'Usuario' %>
+                      </span>
+                    </td>
+                    <!-- Acciones para administradores -->
+                    <% if (currentUser && currentUser.role === 'admin') { %>
+                      <td class="text-center">
+                        <div class="action-buttons d-flex gap-2 justify-content-center">
+                          <!-- Botón para eliminar usuario -->
+                          <button class="btn btn-outline-danger btn-sm rounded-pill px-3 hover-lift" 
+                                  data-bs-toggle="modal" 
+                                  data-bs-target="#deleteUserModal-<%= user._id %>">
+                            <i class="bi bi-trash3"></i>
+                          </button>
+                        </div>
+                        
+                        <!-- Modal moderno para confirmar eliminación -->
+                        <div class="modal fade" id="deleteUserModal-<%= user._id %>" tabindex="-1" 
+                             aria-labelledby="deleteUserModalLabel-<%= user._id %>" aria-hidden="true">
+                          <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content modern-modal border-0 shadow-lg rounded-4 overflow-hidden">
+                              <!-- Header del modal -->
+                              <div class="modal-header bg-danger bg-gradient text-white border-0 position-relative">
+                                <div class="modal-header-content d-flex align-items-center w-100">
+                                  <div class="modal-icon me-3">
+                                    <div class="icon-container bg-white bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center"
+                                         style="width: 50px; height: 50px;">
+                                      <i class="bi bi-exclamation-triangle-fill text-white fs-3"></i>
+                                    </div>
+                                  </div>
+                                  <div class="modal-title-content flex-grow-1">
+                                    <h4 class="modal-title fw-bold mb-1" id="deleteUserModalLabel-<%= user._id %>">
+                                      Confirmar Eliminación
+                                    </h4>
+                                    <p class="mb-0 text-white-50 small">Esta acción no se puede deshacer</p>
+                                  </div>
+                                </div>
+                                <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" 
+                                        data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                
+                                <!-- Decoración de fondo -->
+                                <div class="modal-decoration position-absolute top-0 end-0 opacity-10">
+                                  <i class="bi bi-person-x" style="font-size: 6rem;"></i>
+                                </div>
+                              </div>
+                              
+                              <!-- Cuerpo del modal -->
+                              <div class="modal-body p-4">
+                                <div class="delete-content text-center">
+                                  <!-- Avatar del usuario a eliminar -->
+                                  <div class="user-to-delete mb-4">
+                                    <img src="/uploads/<%= user.avatar %>" 
+                                         alt="Avatar de <%= user.name %>"
+                                         class="rounded-circle shadow-lg border border-3 border-danger"
+                                         style="width: 80px; height: 80px; object-fit: cover;">
+                                    <h5 class="mt-3 mb-1 fw-bold text-dark"><%= user.name %></h5>
+                                    <p class="text-muted mb-0"><%= user.email %></p>
+                                  </div>
+                                  
+                                  <div class="warning-message mb-4">
+                                    <div class="alert alert-warning border-0 rounded-3" role="alert">
+                                      <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                      <strong>¡Atención!</strong> Estás a punto de eliminar permanentemente este usuario.
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              <!-- Pie del modal -->
+                              <div class="modal-footer border-0 p-4 pt-0">
+                                <div class="d-flex gap-2 w-100">
+                                  <button type="button" class="btn btn-outline-secondary rounded-pill px-4 flex-fill hover-lift" 
+                                          data-bs-dismiss="modal">
+                                    <i class="bi bi-x-circle me-2"></i>Cancelar
+                                  </button>
+                                  <form action="/admin/user/delete/<%= user._id %>" method="POST" class="flex-fill">
+                                    <button type="submit" class="btn btn-danger rounded-pill px-4 w-100 hover-lift">
+                                      <i class="bi bi-trash3 me-2"></i>Sí, eliminar
+                                    </button>
+                                  </form>
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    </td>
-                  <% } %>
-                </tr>
-                <% }) %>
-              </tbody>
-            </table>
+                      </td>
+                    <% } %>
+                  </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
           </div>
+          <% } %>
         </div>
-        <% } %>
       </div>
-    </div>
+      
+      <!-- Controles de carrusel con navegación -->
+      <% if (totalPages > 1) { %>
+        <button class="carousel-control-prev" type="button" data-bs-target="#usersCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#usersCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
 
+        <!-- Indicadores de paginación personalizados -->
+        <div class="carousel-indicators-custom mt-4 d-flex justify-content-center">
+          <button type="button" class="page-indicator-btn" id="pageIndicatorMinus5" aria-label="Retroceder 5 páginas">
+            <i class="bi bi-chevron-bar-left"></i>
+          </button>
+          <button type="button" class="page-indicator-btn" id="pageIndicatorMinus1" aria-label="Retroceder 1 página">
+            <i class="bi bi-chevron-left"></i>
+          </button>
+          <button type="button" class="page-indicator-btn active" id="pageIndicatorCurrent" aria-current="true" aria-label="Página actual">1</button>
+          <button type="button" class="page-indicator-btn" id="pageIndicatorPlus1" aria-label="Avanzar 1 página">
+            <i class="bi bi-chevron-right"></i>
+          </button>
+          <button type="button" class="page-indicator-btn" id="pageIndicatorPlus5" aria-label="Avanzar 5 páginas">
+            <i class="bi bi-chevron-bar-right"></i>
+          </button>
+        </div>
+        
+        <!-- Información de paginación -->
+        <div class="pagination-info text-center mt-3" data-total-items="<%= users.length %>">
+          <small class="text-muted">
+            <i class="bi bi-info-circle me-1"></i>
+            Mostrando <strong><%= Math.min(chunkSize, users.length) %></strong> de <strong><%= users.length %></strong> usuarios
+          </small>
+        </div>
+      <% } %>
+    </div>
+    
     <% } else { %>
       <!-- Mensaje si no hay usuarios registrados -->
-      <div class="alert alert-info text-center">No hay usuarios registrados.</div>
+      <div class="empty-state text-center py-5">
+        <div class="empty-state-container backdrop-blur rounded-4 p-5 shadow-lg border border-light border-opacity-25 mx-auto"
+             style="background: rgba(255, 255, 255, 0.95); max-width: 500px; animation: slideInUp 0.8s ease-out;">
+          
+          <div class="empty-icon mb-4">
+            <div class="icon-container bg-info bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center"
+                 style="width: 100px; height: 100px;">
+              <i class="bi bi-people text-white" style="font-size: 3rem;"></i>
+            </div>
+          </div>
+          
+          <h3 class="fw-bold text-dark mb-3">No hay usuarios registrados</h3>
+          <p class="text-muted mb-4">
+            Aún no se han registrado usuarios en la plataforma. 
+            Los nuevos registros aparecerán aquí automáticamente.
+          </p>
+          
+          <div class="empty-actions">
+            <button onclick="window.history.back()" class="btn btn-primary rounded-pill px-4 me-2 hover-lift">
+              <i class="bi bi-arrow-left me-2"></i>Volver
+            </button>
+            <button onclick="window.location.reload()" class="btn btn-outline-secondary rounded-pill px-4 hover-lift">
+              <i class="bi bi-arrow-clockwise me-2"></i>Actualizar
+            </button>
+          </div>
+        </div>
+      </div>
     <% } %>
   </div>
 </div>
 
+<!-- Estilos CSS personalizados -->
+<style>
+/* Efectos de transición globales */
+.hover-lift {
+  transition: all 0.3s ease !important;
+}
+
+.hover-lift:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+}
+
+/* Hero section */
+.users-hero {
+  min-height: 40vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.hero-background {
+  background-attachment: fixed;
+}
+
+/* Partículas animadas */
+.particles-container {
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  animation: float 6s ease-in-out infinite;
+}
+
+.particle:nth-child(1) {
+  width: 20px;
+  height: 20px;
+  top: 20%;
+  left: 20%;
+  animation-delay: 0s;
+}
+
+.particle:nth-child(2) {
+  width: 15px;
+  height: 15px;
+  top: 60%;
+  left: 80%;
+  animation-delay: 2s;
+}
+
+.particle:nth-child(3) {
+  width: 25px;
+  height: 25px;
+  top: 80%;
+  left: 10%;
+  animation-delay: 4s;
+}
+
+.particle:nth-child(4) {
+  width: 12px;
+  height: 12px;
+  top: 30%;
+  left: 70%;
+  animation-delay: 1s;
+}
+
+.particle:nth-child(5) {
+  width: 18px;
+  height: 18px;
+  top: 70%;
+  left: 50%;
+  animation-delay: 3s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.7; }
+  50% { transform: translateY(-20px) rotate(180deg); opacity: 1; }
+}
+
+/* Glassmorphism effects */
+.backdrop-blur {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Tabla moderna */
+.table-container {
+  transition: all 0.3s ease;
+}
+
+.modern-table {
+  margin: 0;
+}
+
+.table-header-modern th {
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  border: none;
+  padding: 1rem;
+  font-weight: 600;
+  color: #495057;
+  position: relative;
+}
+
+.table-header-modern th::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #667eea, transparent);
+}
+
+/* Filas de usuario */
+.user-row {
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.user-row:hover {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05)) !important;
+  transform: scale(1.01);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.user-row td {
+  padding: 1.25rem 1rem;
+  border: none;
+  vertical-align: middle;
+}
+
+/* Avatar del usuario */
+.user-avatar-container {
+  transition: all 0.3s ease;
+}
+
+.user-avatar-container:hover {
+  transform: scale(1.1);
+}
+
+.user-avatar {
+  transition: all 0.3s ease;
+  border-color: #e9ecef !important;
+}
+
+.user-row:hover .user-avatar {
+  border-color: #667eea !important;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.avatar-status {
+  animation: pulse 2s infinite;
+}
+
+/* Información del usuario */
+.user-info, .user-email {
+  transition: all 0.3s ease;
+}
+
+.user-row:hover .user-name {
+  color: #667eea !important;
+}
+
+/* Badge del rol */
+.role-badge {
+  transition: all 0.3s ease;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
+
+.role-badge:hover {
+  transform: scale(1.05);
+}
+
+/* Botones de acción */
+.action-buttons .btn {
+  transition: all 0.3s ease;
+  border-width: 2px;
+}
+
+.action-buttons .btn:hover {
+  transform: translateY(-2px);
+}
+
+/* Número de usuario */
+.user-number {
+  font-size: 0.9rem;
+  font-weight: 600;
+  min-width: 35px;
+  height: 35px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Indicadores del carrusel modernos */
+.carousel-pagination {
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+}
+
+.pagination-container {
+  transition: all 0.3s ease;
+}
+
+.pagination-container:hover {
+  transform: scale(1.02);
+}
+
+/* Sistema de paginación personalizada (compatible con seeApartments) */
+.carousel-indicators-custom {
+  gap: 0.5rem;
+  margin: 1rem auto 0;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 50px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  max-width: fit-content;
+}
+
+.page-indicator-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid rgba(13, 110, 253, 0.3);
+  background: transparent;
+  opacity: 1;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  color: #0d6efd;
+  font-weight: 600;
+  padding: 0;
+}
+
+.page-indicator-btn i {
+  font-size: 1.2rem;
+}
+
+.page-indicator-btn:hover {
+  transform: translateY(-2px);
+  border-color: rgba(13, 110, 253, 0.6);
+  background: rgba(13, 110, 253, 0.1);
+  box-shadow: 0 4px 15px rgba(13, 110, 253, 0.2);
+}
+
+.page-indicator-btn.active {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0d6efd, #6610f2);
+  border-color: transparent;
+  box-shadow: 0 4px 20px rgba(13, 110, 253, 0.4);
+  color: white;
+  font-size: 1.3rem;
+  transform: scale(1.05);
+}
+
+.page-indicator-btn.active:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 25px rgba(13, 110, 253, 0.6);
+}
+
+.page-indicator-btn:disabled,
+.page-indicator-btn.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+  background-color: rgba(13, 110, 253, 0.05) !important;
+  border-color: rgba(13, 110, 253, 0.1) !important;
+  color: rgba(13, 110, 253, 0.5) !important;
+}
+
+/* Controles de carrusel */
+.carousel-control-prev,
+.carousel-control-next {
+  width: 5%;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+  opacity: 0.8;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  background-image: none;
+  width: 2rem;
+  height: 2rem;
+  background-size: 100%, 100%;
+}
+
+.carousel-control-prev-icon::after {
+  content: "\f2f6";
+  font-family: "bootstrap-icons";
+  color: #0d6efd;
+  font-size: 2rem;
+  display: block;
+}
+
+.carousel-control-next-icon::after {
+  content: "\f2f9";
+  font-family: "bootstrap-icons";
+  color: #0d6efd;
+  font-size: 2rem;
+  display: block;
+}
+
+/* Modal moderno */
+.modern-modal {
+  animation: modalSlideIn 0.4s ease-out;
+}
+
+.modal-header {
+  min-height: 100px;
+  padding: 1.5rem;
+}
+
+.modal-decoration {
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+.icon-container {
+  animation: iconPulse 2s infinite;
+}
+
+/* Estado vacío */
+.empty-state-container {
+  animation: slideInUp 0.8s ease-out;
+}
+
+.empty-icon .icon-container {
+  animation: bounce 2s infinite;
+}
+
+/* Animaciones */
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.7; }
+}
+
+@keyframes iconPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-10px); }
+  60% { transform: translateY(-5px); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .users-hero {
+    min-height: 60vh;
+  }
+  
+  .users-welcome h1 {
+    font-size: 2rem !important;
+  }
+  
+  .users-stats {
+    margin-top: 2rem;
+  }
+  
+  .stats-grid {
+    display: flex;
+    justify-content: space-around;
+  }
+  
+  .table-responsive {
+    font-size: 0.9rem;
+  }
+  
+  .user-avatar {
+    width: 45px !important;
+    height: 45px !important;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .action-buttons .btn {
+    font-size: 0.8rem;
+    padding: 0.375rem 0.75rem;
+  }
+  
+  .carousel-indicator-modern {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .indicator-number {
+    font-size: 0.8rem;
+  }
+
+  /* Responsive para la paginación personalizada */
+  .carousel-indicators-custom {
+    flex-wrap: wrap;
+    padding: 0.5rem 0.75rem;
+    border-radius: 40px;
+    gap: 0.3rem;
+  }
+  
+  .page-indicator-btn {
+    width: 35px;
+    height: 35px;
+    font-size: 0.9rem;
+  }
+  
+  .page-indicator-btn.active {
+    width: 45px;
+    height: 45px;
+    font-size: 1.1rem;
+  }
+}
+  
+  .modal-header {
+    padding: 1rem;
+    min-height: 80px;
+  }
+  
+  .modal-header-content {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .modal-icon {
+    margin-bottom: 1rem;
+    margin-right: 0;
+  }
+}
+
+/* Efectos adicionales */
+.table-header {
+  position: relative;
+  overflow: hidden;
+}
+
+.table-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+/* Estados de carga */
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Mejoras en la accesibilidad */
+.user-row:focus-within {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+
+.carousel-indicator-modern:focus {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+
+/* Efectos de hover mejorados */
+.back-button-container .btn:hover {
+  transform: translateY(-2px) scale(1.02);
+}
+
+/* Animación de entrada para las filas */
+.user-row {
+  opacity: 0;
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+</style>
+
+<!-- Script de paginación personalizada -->
+<script src="/js/carouselPagination.js"></script>
 
 <!-- Incluye el pie de página desde un archivo parcial -->
 <%- include("partials/footer") %>
