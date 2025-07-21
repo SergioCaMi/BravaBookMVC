@@ -868,6 +868,17 @@
         handleApartmentDelete(event);
       }
     });
+
+    // Agregar listener para limpiar backdrops cuando se cierran modales
+    document.addEventListener('hidden.bs.modal', function(event) {
+      // Pequeño delay para asegurar que Bootstrap termine su cleanup
+      setTimeout(() => {
+        cleanupModalBackdrops();
+      }, 50);
+    });
+
+    // Limpiar backdrops al cargar la página
+    cleanupModalBackdrops();
   });
 
   // Función simplificada para manejar eliminación de apartamentos
@@ -890,14 +901,23 @@
     })
     .then(response => {
       if (response.ok) {
-        // Cerrar modal usando Bootstrap estándar
+        // Cerrar modal y limpiar backdrop ANTES de recargar contenido
         const modal = form.closest('.modal');
         if (modal) {
           const modalInstance = bootstrap.Modal.getInstance(modal);
           if (modalInstance) {
             modalInstance.hide();
           }
+          
+          // Forzar limpieza inmediata del modal y backdrop
+          modal.classList.remove('show');
+          modal.style.display = 'none';
+          modal.setAttribute('aria-hidden', 'true');
+          modal.removeAttribute('aria-modal');
         }
+        
+        // Limpiar todos los backdrops inmediatamente
+        cleanupModalBackdrops();
         
         // Recargar página manteniendo filtros si existen
         if (typeof buscarApartamentos === 'function' && window.lastSearchParams) {
@@ -909,20 +929,26 @@
             const partial = document.getElementById('apartmentsPartial') || document.getElementById('apartmentsContainer');
             if (partial) {
               partial.innerHTML = html;
+              
+              // Limpiar backdrops nuevamente después de recargar contenido
               setTimeout(() => {
+                cleanupModalBackdrops();
+                
                 if (typeof initializeCarouselPagination === 'function') {
                   initializeCarouselPagination();
                 }
                 if (typeof reinitializeComponents === 'function') {
                   reinitializeComponents();
                 }
-              }, 200);
+              }, 100);
             }
           })
           .catch(() => {
+            cleanupModalBackdrops();
             setTimeout(() => window.location.reload(), 500);
           });
         } else {
+          cleanupModalBackdrops();
           setTimeout(() => window.location.reload(), 500);
         }
       } else {
@@ -938,8 +964,41 @@
     });
   }
 
+  // Función específica para limpiar backdrops de modales
+  function cleanupModalBackdrops() {
+    // Eliminar todos los backdrops existentes
+    const backdrops = document.querySelectorAll('.modal-backdrop');
+    backdrops.forEach(backdrop => {
+      backdrop.remove();
+    });
+    
+    // Limpiar clases del body
+    document.body.classList.remove('modal-open');
+    document.body.style.overflow = '';
+    document.body.style.paddingRight = '';
+    
+    // Cerrar todos los modales que puedan estar abiertos
+    document.querySelectorAll('.modal.show').forEach(modal => {
+      modal.classList.remove('show');
+      modal.style.display = '';
+      modal.setAttribute('aria-hidden', 'true');
+      modal.removeAttribute('aria-modal');
+    });
+    
+    // Limpiar cualquier overlay residual
+    const overlays = document.querySelectorAll('.modal-backdrop, .fade');
+    overlays.forEach(overlay => {
+      if (overlay.classList.contains('modal-backdrop')) {
+        overlay.remove();
+      }
+    });
+  }
+
   // Función simple para reinicializar componentes después de cargas AJAX
   function reinitializeComponents() {
+    // Limpiar backdrops al reinicializar
+    cleanupModalBackdrops();
+    
     // Reinicializar tooltips
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
@@ -956,7 +1015,8 @@
     });
   }
 
-  // Exponer función globalmente para compatibilidad AJAX
+  // Exponer funciones globalmente para compatibilidad AJAX
   window.reinitializeComponents = reinitializeComponents;
   window.handleApartmentDelete = handleApartmentDelete;
+  window.cleanupModalBackdrops = cleanupModalBackdrops;
 </script>
