@@ -1,6 +1,865 @@
-<%- include("partials/header", { title: title }) %>
-    <div class="position-relative my-5" style="width: 100%;">
-        <h2>En contstrucción</h2>
+<!-- Incluye el encabezado de la página desde un archivo parcial -->
+<%- include("partials/header") %>
+
+<!-- Hero section moderno -->
+<div class="about-hero position-relative overflow-hidden">
+  <div class="hero-background position-absolute top-0 start-0 w-100 h-100"
+       style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+  
+  <!-- Partículas animadas de fondo -->
+  <div class="particles-container position-absolute top-0 start-0 w-100 h-100">
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+  </div>
+  
+  <div class="hero-content position-relative py-5">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-8">
+          <div class="hero-title text-white" style="animation: fadeInLeft 0.8s ease-out;">
+            <div class="title-badge mb-3">
+              <span class="badge bg-light text-primary px-4 py-2 rounded-pill fs-6 fw-medium">
+                <i class="bi bi-code-slash me-2"></i>Stack Tecnológico
+              </span>
+            </div>
+            
+            <h1 class="display-4 fw-bold mb-3">Sobre Nuestro Proyecto</h1>
+            <p class="lead mb-0 text-light">
+              Una aplicación web full-stack moderna para gestión de alquileres vacacionales, 
+              implementando las mejores prácticas de desarrollo web
+            </p>
+          </div>
+        </div>
+        
+        <div class="col-lg-4 text-center text-lg-end">
+          <div class="hero-stats backdrop-blur rounded-4 p-4 shadow-lg border border-light border-opacity-25"
+               style="background: rgba(255, 255, 255, 0.1); animation: slideInRight 0.8s ease-out 0.3s both;">
+            <div class="stat-item mb-3">
+              <div class="stat-icon bg-success bg-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2"
+                   style="width: 60px; height: 60px;">
+                <i class="bi bi-gear-wide-connected text-white fs-3"></i>
+              </div>
+              <h4 class="text-white fw-bold mb-1">Full-Stack</h4>
+              <p class="text-light small mb-0">Tecnología Moderna</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Contenedor principal -->
+<div class="about-container py-5" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+  <div class="container">
+    
+    <!-- Sección Backend -->
+    <div class="tech-section mb-5" data-section="backend">
+      <div class="section-wrapper backdrop-blur rounded-4 shadow-lg border border-light border-opacity-50 overflow-hidden"
+           style="background: rgba(255, 255, 255, 0.95);">
+        <div class="section-content p-5">
+          <div class="section-header text-center mb-5">
+            <div class="section-icon bg-primary bg-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
+                 style="width: 80px; height: 80px;">
+              <i class="bi bi-server text-white fs-2"></i>
+            </div>
+            <h2 class="fw-bold text-dark mb-3">🛠️ Backend</h2>
+            <p class="text-muted">Servidor robusto y escalable</p>
+          </div>
+          
+          <div class="row g-4">
+            <div class="col-md-6 col-xl-2-4">
+              <div class="tech-card h-100">
+                <div class="tech-icon bg-success">
+                  <i class="bi bi-nodejs"></i>
+                </div>
+                <h5>Node.js</h5>
+                <p>Runtime de JavaScript para el servidor, permitiendo desarrollo full-stack con un solo lenguaje</p>
+              </div>
+            </div>
+            <div class="col-md-6 col-xl-2-4">
+              <div class="tech-card h-100">
+                <div class="tech-icon bg-dark">
+                  <i class="bi bi-lightning"></i>
+                </div>
+                <h5>Express.js</h5>
+                <p>Framework web minimalista y flexible para Node.js, ideal para APIs REST y aplicaciones web</p>
+              </div>
+            </div>
+            <div class="col-md-6 col-xl-2-4">
+              <div class="tech-card h-100">
+                <div class="tech-icon bg-success">
+                  <i class="bi bi-database"></i>
+                </div>
+                <h5>MongoDB</h5>
+                <p>Base de datos NoSQL con Mongoose ODM para modelado de datos flexible y escalable</p>
+              </div>
+            </div>
+            <div class="col-md-6 col-xl-2-4">
+              <div class="tech-card h-100">
+                <div class="tech-icon bg-warning">
+                  <i class="bi bi-file-earmark-code"></i>
+                </div>
+                <h5>EJS</h5>
+                <p>Motor de plantillas para renderizado server-side con sintaxis JavaScript familiar</p>
+              </div>
+            </div>
+            <div class="col-md-6 col-xl-2-4">
+              <div class="tech-card h-100">
+                <div class="tech-icon bg-danger">
+                  <i class="bi bi-check-circle"></i>
+                </div>
+                <h5>express-validator</h5>
+                <p>Middleware de validación y sanitización de datos de entrada para mayor seguridad</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <%- include("partials/footer") %>
+    <!-- Sección Frontend -->
+    <div class="tech-section mb-5" data-section="frontend">
+      <div class="section-wrapper backdrop-blur rounded-4 shadow-lg border border-light border-opacity-50 overflow-hidden"
+           style="background: rgba(255, 255, 255, 0.95);">
+        <div class="section-content p-5">
+          <div class="section-header text-center mb-5">
+            <div class="section-icon bg-info bg-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
+                 style="width: 80px; height: 80px;">
+              <i class="bi bi-palette text-white fs-2"></i>
+            </div>
+            <h2 class="fw-bold text-dark mb-3">🎨 Frontend</h2>
+            <p class="text-muted">Interfaz moderna y responsive</p>
+          </div>
+          
+          <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+              <div class="tech-card h-100">
+                <div class="tech-icon bg-primary">
+                  <i class="bi bi-bootstrap"></i>
+                </div>
+                <h5>Bootstrap 5</h5>
+                <p>Framework CSS responsive con componentes modernos y sistema de grid flexible</p>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+              <div class="tech-card h-100">
+                <div class="tech-icon bg-primary">
+                  <i class="bi bi-icons"></i>
+                </div>
+                <h5>Bootstrap Icons</h5>
+                <p>Librería completa de iconos vectoriales optimizados para web</p>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+              <div class="tech-card h-100">
+                <div class="tech-icon bg-warning">
+                  <i class="bi bi-code-square"></i>
+                </div>
+                <h5>JavaScript Vanilla</h5>
+                <p>JavaScript puro para interactividad del cliente sin dependencias externas</p>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+              <div class="tech-card h-100">
+                <div class="tech-icon bg-info">
+                  <i class="bi bi-brush"></i>
+                </div>
+                <h5>CSS3 Moderno</h5>
+                <p>Efectos glassmorphism, animaciones keyframes y diseño responsive avanzado</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección Autenticación & Seguridad -->
+    <div class="tech-section mb-5" data-section="security">
+      <div class="section-wrapper backdrop-blur rounded-4 shadow-lg border border-light border-opacity-50 overflow-hidden"
+           style="background: rgba(255, 255, 255, 0.95);">
+        <div class="section-content p-5">
+          <div class="section-header text-center mb-5">
+            <div class="section-icon bg-danger bg-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
+                 style="width: 80px; height: 80px;">
+              <i class="bi bi-shield-lock text-white fs-2"></i>
+            </div>
+            <h2 class="fw-bold text-dark mb-3">🔐 Autenticación & Seguridad</h2>
+            <p class="text-muted">Protección robusta de datos</p>
+          </div>
+          
+          <div class="row g-4">
+            <div class="col-md-4">
+              <div class="tech-card h-100">
+                <div class="tech-icon bg-danger">
+                  <i class="bi bi-key"></i>
+                </div>
+                <h5>bcryptjs</h5>
+                <p>Encriptación segura de contraseñas con salt rounds configurables</p>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="tech-card h-100">
+                <div class="tech-icon bg-warning">
+                  <i class="bi bi-person-check"></i>
+                </div>
+                <h5>express-session</h5>
+                <p>Manejo seguro de sesiones de usuario con configuración personalizada</p>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="tech-card h-100">
+                <div class="tech-icon bg-success">
+                  <i class="bi bi-database-lock"></i>
+                </div>
+                <h5>connect-mongo</h5>
+                <p>Almacenamiento persistente de sesiones en MongoDB</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección Gestión de Archivos -->
+    <div class="tech-section mb-5" data-section="files">
+      <div class="section-wrapper backdrop-blur rounded-4 shadow-lg border border-light border-opacity-50 overflow-hidden"
+           style="background: rgba(255, 255, 255, 0.95);">
+        <div class="section-content p-5">
+          <div class="section-header text-center mb-5">
+            <div class="section-icon bg-secondary bg-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
+                 style="width: 80px; height: 80px;">
+              <i class="bi bi-cloud-upload text-white fs-2"></i>
+            </div>
+            <h2 class="fw-bold text-dark mb-3">📁 Gestión de Archivos</h2>
+            <p class="text-muted">Subida y manejo de imágenes</p>
+          </div>
+          
+          <div class="row g-4 justify-content-center">
+            <div class="col-md-6">
+              <div class="tech-card h-100">
+                <div class="tech-icon bg-info">
+                  <i class="bi bi-upload"></i>
+                </div>
+                <h5>Multer</h5>
+                <p>Middleware para subida de archivos e imágenes con validación y configuración avanzada</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="tech-card h-100">
+                <div class="tech-icon bg-secondary">
+                  <i class="bi bi-folder"></i>
+                </div>
+                <h5>Path</h5>
+                <p>Manejo seguro de rutas de archivos multiplataforma con Node.js</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección Funcionalidades Clave -->
+    <div class="tech-section mb-5" data-section="features">
+      <div class="section-wrapper backdrop-blur rounded-4 shadow-lg border border-light border-opacity-50 overflow-hidden"
+           style="background: rgba(255, 255, 255, 0.95);">
+        <div class="section-content p-5">
+          <div class="section-header text-center mb-5">
+            <div class="section-icon bg-success bg-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
+                 style="width: 80px; height: 80px;">
+              <i class="bi bi-gear-wide text-white fs-2"></i>
+            </div>
+            <h2 class="fw-bold text-dark mb-3">⚡ Funcionalidades Clave</h2>
+            <p class="text-muted">Características principales del sistema</p>
+          </div>
+          
+          <div class="row g-4">
+            <div class="col-md-6 col-lg-4">
+              <div class="feature-card">
+                <div class="feature-icon bg-primary">
+                  <i class="bi bi-database-gear"></i>
+                </div>
+                <h6>CRUD Completo</h6>
+                <p>Operaciones completas para apartamentos, usuarios y reservas</p>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+              <div class="feature-card">
+                <div class="feature-icon bg-warning">
+                  <i class="bi bi-person-badge"></i>
+                </div>
+                <h6>Sistema de Roles</h6>
+                <p>Autenticación con roles diferenciados (admin/usuario)</p>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+              <div class="feature-card">
+                <div class="feature-icon bg-info">
+                  <i class="bi bi-images"></i>
+                </div>
+                <h6>Subida de Imágenes</h6>
+                <p>Gestión completa de imágenes para apartamentos</p>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+              <div class="feature-card">
+                <div class="feature-icon bg-success">
+                  <i class="bi bi-graph-up"></i>
+                </div>
+                <h6>Panel Administrativo</h6>
+                <p>Estadísticas y métricas en tiempo real</p>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+              <div class="feature-card">
+                <div class="feature-icon bg-danger">
+                  <i class="bi bi-calendar-check"></i>
+                </div>
+                <h6>Gestión de Reservas</h6>
+                <p>Control de estados de pago y disponibilidad</p>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+              <div class="feature-card">
+                <div class="feature-icon bg-secondary">
+                  <i class="bi bi-phone"></i>
+                </div>
+                <h6>Interfaz Responsive</h6>
+                <p>Diseño adaptativo con efectos visuales modernos</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección Arquitectura -->
+    <div class="tech-section mb-5" data-section="architecture">
+      <div class="section-wrapper backdrop-blur rounded-4 shadow-lg border border-light border-opacity-50 overflow-hidden"
+           style="background: rgba(255, 255, 255, 0.95);">
+        <div class="section-content p-5">
+          <div class="section-header text-center mb-5">
+            <div class="section-icon bg-dark bg-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
+                 style="width: 80px; height: 80px;">
+              <i class="bi bi-diagram-3 text-white fs-2"></i>
+            </div>
+            <h2 class="fw-bold text-dark mb-3">🏗️ Arquitectura</h2>
+            <p class="text-muted">Estructura y patrones de diseño</p>
+          </div>
+          
+          <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+              <div class="arch-card">
+                <div class="arch-icon bg-primary">MVC</div>
+                <h6>Patrón MVC</h6>
+                <p>Model-View-Controller para separación de responsabilidades</p>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+              <div class="arch-card">
+                <div class="arch-icon bg-success">API</div>
+                <h6>API REST</h6>
+                <p>Endpoints RESTful para operaciones CRUD</p>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+              <div class="arch-card">
+                <div class="arch-icon bg-warning">MW</div>
+                <h6>Middleware</h6>
+                <p>Middleware customizado para autenticación</p>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+              <div class="arch-card">
+                <div class="arch-icon bg-info">MOD</div>
+                <h6>Modularización</h6>
+                <p>CSS y JavaScript organizados por vista</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección Características Modernas -->
+    <div class="tech-section mb-5" data-section="modern">
+      <div class="section-wrapper backdrop-blur rounded-4 shadow-lg border border-light border-opacity-50 overflow-hidden"
+           style="background: rgba(255, 255, 255, 0.95);">
+        <div class="section-content p-5">
+          <div class="section-header text-center mb-5">
+            <div class="section-icon bg-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
+                 style="width: 80px; height: 80px; background: linear-gradient(135deg, #667eea, #764ba2);">
+              <i class="bi bi-stars text-white fs-2"></i>
+            </div>
+            <h2 class="fw-bold text-dark mb-3">✨ Características Modernas</h2>
+            <p class="text-muted">Efectos visuales y experiencia de usuario</p>
+          </div>
+          
+          <div class="row g-4">
+            <div class="col-md-6 col-lg-4">
+              <div class="modern-card">
+                <div class="modern-icon">🎭</div>
+                <h6>Hero Sections Animadas</h6>
+                <p>Secciones principales con partículas y efectos de parallax</p>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+              <div class="modern-card">
+                <div class="modern-icon">💎</div>
+                <h6>Efectos Glassmorphism</h6>
+                <p>Diseño moderno con transparencias y desenfoque</p>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+              <div class="modern-card">
+                <div class="modern-icon">🎬</div>
+                <h6>Animaciones CSS</h6>
+                <p>Keyframes personalizados y transiciones suaves</p>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+              <div class="modern-card">
+                <div class="modern-icon">👆</div>
+                <h6>Interfaz Intuitiva</h6>
+                <p>Feedback visual y experiencia de usuario optimizada</p>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+              <div class="modern-card">
+                <div class="modern-icon">🎠</div>
+                <h6>Carruseles Modernos</h6>
+                <p>Paginación avanzada y navegación fluida</p>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+              <div class="modern-card">
+                <div class="modern-icon">📱</div>
+                <h6>Responsive Design</h6>
+                <p>Adaptación perfecta a todos los dispositivos</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Conclusión -->
+    <div class="conclusion-section">
+      <div class="conclusion-wrapper backdrop-blur rounded-4 shadow-lg border border-light border-opacity-50 overflow-hidden text-center p-5"
+           style="background: rgba(255, 255, 255, 0.95);">
+        <div class="conclusion-icon bg-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-4"
+             style="width: 100px; height: 100px; background: linear-gradient(135deg, #667eea, #764ba2);">
+          <i class="bi bi-rocket-takeoff text-white fs-1"></i>
+        </div>
+        <h2 class="fw-bold text-dark mb-3">Proyecto Full-Stack Moderno</h2>
+        <p class="lead text-muted mb-4">
+          Este proyecto representa una aplicación web completa para gestión de alquileres vacacionales, 
+          implementando las mejores prácticas de desarrollo web con tecnologías modernas y un diseño 
+          centrado en la experiencia del usuario.
+        </p>
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+          <span class="badge bg-primary px-3 py-2 fs-6">Full-Stack</span>
+          <span class="badge bg-success px-3 py-2 fs-6">Responsive</span>
+          <span class="badge bg-info px-3 py-2 fs-6">Moderno</span>
+          <span class="badge bg-warning px-3 py-2 fs-6">Escalable</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Estilos CSS personalizados -->
+<style>
+/* Hero Section Styles */
+.about-hero {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.hero-background {
+  background-attachment: fixed;
+}
+
+/* Partículas animadas */
+.particles-container {
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  animation: float 6s ease-in-out infinite;
+}
+
+.particle:nth-child(1) {
+  width: 20px;
+  height: 20px;
+  top: 20%;
+  left: 20%;
+  animation-delay: 0s;
+}
+
+.particle:nth-child(2) {
+  width: 15px;
+  height: 15px;
+  top: 60%;
+  left: 80%;
+  animation-delay: 2s;
+}
+
+.particle:nth-child(3) {
+  width: 25px;
+  height: 25px;
+  top: 80%;
+  left: 10%;
+  animation-delay: 4s;
+}
+
+.particle:nth-child(4) {
+  width: 12px;
+  height: 12px;
+  top: 30%;
+  left: 70%;
+  animation-delay: 1s;
+}
+
+.particle:nth-child(5) {
+  width: 18px;
+  height: 18px;
+  top: 70%;
+  left: 50%;
+  animation-delay: 3s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.7; }
+  50% { transform: translateY(-20px) rotate(180deg); opacity: 1; }
+}
+
+/* Glassmorphism effects */
+.backdrop-blur {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Secciones tecnológicas */
+.tech-section {
+  animation: fadeInUp 0.8s ease-out;
+  opacity: 0;
+  animation-fill-mode: forwards;
+}
+
+.tech-section:nth-child(1) { animation-delay: 0.2s; }
+.tech-section:nth-child(2) { animation-delay: 0.4s; }
+.tech-section:nth-child(3) { animation-delay: 0.6s; }
+.tech-section:nth-child(4) { animation-delay: 0.8s; }
+.tech-section:nth-child(5) { animation-delay: 1.0s; }
+.tech-section:nth-child(6) { animation-delay: 1.2s; }
+.tech-section:nth-child(7) { animation-delay: 1.4s; }
+
+/* Cards de tecnología */
+.tech-card {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 1rem;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(10px);
+}
+
+.tech-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.tech-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  font-size: 1.5rem;
+  color: white;
+}
+
+.tech-card h5 {
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+.tech-card p {
+  color: #6c757d;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Cards de características */
+.feature-card {
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 0.75rem;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  height: 100%;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.feature-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  font-size: 1.2rem;
+  color: white;
+}
+
+.feature-card h6 {
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.feature-card p {
+  color: #6c757d;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Cards de arquitectura */
+.arch-card {
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 0.75rem;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  height: 100%;
+}
+
+.arch-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.arch-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: white;
+}
+
+.arch-card h6 {
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.arch-card p {
+  color: #6c757d;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Cards modernas */
+.modern-card {
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 0.75rem;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  height: 100%;
+}
+
+.modern-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.modern-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.modern-card h6 {
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.modern-card p {
+  color: #6c757d;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Sección de conclusión */
+.conclusion-section {
+  animation: fadeInUp 1s ease-out 1.6s both;
+}
+
+/* Animaciones */
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .about-hero {
+    min-height: 50vh;
+  }
+  
+  .hero-title h1 {
+    font-size: 2.5rem !important;
+  }
+  
+  .section-content {
+    padding: 2rem !important;
+  }
+  
+  .tech-card {
+    padding: 1.5rem 1rem;
+  }
+  
+  .tech-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .about-hero {
+    min-height: 40vh;
+  }
+  
+  .hero-title h1 {
+    font-size: 2rem !important;
+  }
+  
+  .section-content {
+    padding: 1.5rem !important;
+  }
+}
+
+/* Clase personalizada para 5 columnas en pantallas grandes */
+@media (min-width: 1200px) {
+  .col-xl-2-4 {
+    flex: 0 0 auto;
+    width: 20%;
+  }
+}
+</style>
+
+<!-- Scripts para efectos -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Animación de entrada escalonada para las cards
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  };
+
+  const observer = new IntersectionObserver(function(entries) {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const cards = entry.target.querySelectorAll('.tech-card, .feature-card, .arch-card, .modern-card');
+        cards.forEach((card, index) => {
+          setTimeout(() => {
+            card.style.animation = 'fadeInUp 0.6s ease-out forwards';
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+              card.style.opacity = '1';
+              card.style.transform = 'translateY(0)';
+            }, 50);
+          }, index * 100);
+        });
+      }
+    });
+  }, observerOptions);
+
+  // Observar todas las secciones
+  document.querySelectorAll('.tech-section').forEach(section => {
+    observer.observe(section);
+  });
+
+  // Efecto parallax suave para las partículas
+  document.addEventListener('mousemove', function(e) {
+    const particles = document.querySelectorAll('.particle');
+    const x = e.clientX / window.innerWidth;
+    const y = e.clientY / window.innerHeight;
+    
+    particles.forEach((particle, index) => {
+      const speed = (index + 1) * 0.3;
+      const xPos = (x - 0.5) * speed * 15;
+      const yPos = (y - 0.5) * speed * 15;
+      
+      particle.style.transform = `translate(${xPos}px, ${yPos}px)`;
+    });
+  });
+});
+</script>
+
+<!-- Incluye el pie de página desde un archivo parcial -->
+<%- include("partials/footer") %>

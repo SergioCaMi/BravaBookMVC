@@ -4,61 +4,78 @@ import User from "../models/user.model.js";
 import Apartment from "../models/apartment.model.js";
 import Reservation from "../models/reservation.model.js";
 import axios from "axios";
+import { validationResult } from 'express-validator';
 
 // --- Gestión de Usuario ---
 
 // Registro de un nuevo usuario
 export const register = async (req, res) => {
-  try {
-    console.log("Register");
-    const { name, email, password } = req.body;
+  try {
+    console.log("Register");
+    
+    // Verificar errores de validación
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const errorMessages = errors.array().map(error => error.msg);
+      req.flash("error", errorMessages.join(', '));
+      return res.redirect("/register");
+    }
 
-    // Verifica si el correo ya está en uso
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      req.flash("error_msg", "El correo electrónico ya está en uso.");
-      return res.redirect("/register");
-    }
+    const { name, email, password } = req.body;
 
-    // Asigna rol de 'admin' al primer usuario
-    const firstUser = await User.countDocuments();
-    const user = new User({
-      name,
-      email,
-      password,
-      role: firstUser === 0 ? "admin" : "user",
-    });
+    // Verifica si el correo ya está en uso
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      req.flash("error_msg", "El correo electrónico ya está en uso.");
+      return res.redirect("/register");
+    }
 
-    await user.save();
-    console.log("Usuario guardado:", user);
-    req.session.userId = user._id;
-    req.flash("success_msg", "Nuevo usuario añadido con éxito.");
-    res.redirect("/dashboard");
-  } catch (err) {
-    console.error(err);
-    res.render("register", {
-      title: "home",
-      error: "Error al registrar usuario",
-    });
-  }
+    // Asigna rol de 'admin' al primer usuario
+    const firstUser = await User.countDocuments();
+    const user = new User({
+      name: name.trim(),
+      email: email.toLowerCase().trim(),
+      password,
+      role: firstUser === 0 ? "admin" : "user",
+    });
+
+    await user.save();
+    console.log("Usuario guardado:", user);
+    req.session.userId = user._id;
+    req.flash("success_msg", "Nuevo usuario añadido con éxito.");
+    res.redirect("/dashboard");
+  } catch (err) {
+    console.error(err);
+    res.render("register", {
+      title: "home",
+      error: "Error al registrar usuario",
+    });
+  }
 };
 
 // Inicio de sesión
 export const login = async (req, res) => {
-  console.log("Login");
-  const { email, password } = req.body;
-  const user = await User.findOne({ email });
-  if (!user || !(await user.comparePassword(password))) {
-    req.flash("error_msg", "Credenciales incorrectas.");
-    return res.redirect("/login");
-  }
+  console.log("Login");
+  
+  // Verificar errores de validación
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const errorMessages = errors.array().map(error => error.msg);
+    req.flash("error", errorMessages.join(', '));
+    return res.redirect("/login");
+  }
 
-  req.session.userId = user._id;
-  console.log(user.name);
-  res.redirect("/dashboard");
-};
+  const { email, password } = req.body;
+  const user = await User.findOne({ email: email.toLowerCase().trim() });
+  if (!user || !(await user.comparePassword(password))) {
+    req.flash("error_msg", "Credenciales incorrectas.");
+    return res.redirect("/login");
+  }
 
-// Cierre de sesión
+  req.session.userId = user._id;
+  console.log(user.name);
+  res.redirect("/dashboard");
+};// Cierre de sesión
 export const logout = (req, res) => {
   console.log("LogOut");
   req.session.destroy(() => res.redirect("/"));

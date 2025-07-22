@@ -176,12 +176,11 @@
                     <!-- Acciones para administradores -->
                     <% if (currentUser && currentUser.role === 'admin') { %>
                       <td class="text-center">
-                        <div class="action-buttons d-flex gap-2 justify-content-center" onclick="event.stopPropagation();">
+                        <div class="action-buttons d-flex gap-2 justify-content-center">
                           <!-- Botón para eliminar usuario -->
                           <button class="btn btn-outline-danger btn-sm rounded-pill px-3 hover-lift" 
                                   data-bs-toggle="modal" 
-                                  data-bs-target="#deleteUserModal-<%= user._id %>"
-                                  onclick="event.stopPropagation();">
+                                  data-bs-target="#deleteUserModal-<%= user._id %>">
                             <i class="bi bi-trash3"></i>
                           </button>
                         </div>
@@ -197,33 +196,40 @@
         </div>
       </div>
       
-      <!-- Indicadores del carrusel modernos -->
+      <!-- Controles de carrusel con navegación -->
       <% if (totalPages > 1) { %>
-        <div class="carousel-pagination py-4">
-          <div class="d-flex justify-content-center">
-            <div class="pagination-container backdrop-blur rounded-pill px-4 py-2 shadow-sm border border-light border-opacity-25"
-                 style="background: rgba(255, 255, 255, 0.9);">
-              <div class="carousel-indicators position-static m-0 d-flex gap-2">
-                <% for (let i = 0; i < totalPages; i++) { %>
-                  <button type="button" 
-                          data-bs-target="#usersCarousel" 
-                          data-bs-slide-to="<%= i %>" 
-                          class="carousel-indicator-modern <%= i === 0 ? 'active' : '' %>" 
-                          aria-label="Página <%= i + 1 %>">
-                    <span class="indicator-number"><%= i + 1 %></span>
-                  </button>
-                <% } %>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Información de paginación -->
-          <div class="pagination-info text-center mt-3">
-            <small class="text-muted">
-              <i class="bi bi-info-circle me-1"></i>
-              Mostrando <strong><%= Math.min(chunkSize, users.length) %></strong> de <strong><%= users.length %></strong> usuarios
-            </small>
-          </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#usersCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#usersCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+
+        <!-- Indicadores de paginación personalizados -->
+        <div class="carousel-indicators-custom mt-4 d-flex justify-content-center">
+          <button type="button" class="page-indicator-btn" id="pageIndicatorMinus5" aria-label="Retroceder 5 páginas">
+            <i class="bi bi-chevron-bar-left"></i>
+          </button>
+          <button type="button" class="page-indicator-btn" id="pageIndicatorMinus1" aria-label="Retroceder 1 página">
+            <i class="bi bi-chevron-left"></i>
+          </button>
+          <button type="button" class="page-indicator-btn active" id="pageIndicatorCurrent" aria-current="true" aria-label="Página actual">1</button>
+          <button type="button" class="page-indicator-btn" id="pageIndicatorPlus1" aria-label="Avanzar 1 página">
+            <i class="bi bi-chevron-right"></i>
+          </button>
+          <button type="button" class="page-indicator-btn" id="pageIndicatorPlus5" aria-label="Avanzar 5 páginas">
+            <i class="bi bi-chevron-bar-right"></i>
+          </button>
+        </div>
+        
+        <!-- Información de paginación -->
+        <div class="pagination-info text-center mt-3" data-total-items="<%= users.length %>">
+          <small class="text-muted">
+            <i class="bi bi-info-circle me-1"></i>
+            Mostrando <strong><%= Math.min(chunkSize, users.length) %></strong> de <strong><%= users.length %></strong> usuarios
+          </small>
         </div>
       <% } %>
     </div>
@@ -261,15 +267,14 @@
   </div>
 </div>
 
-<!-- MODALES FUERA DE LA TABLA -->
+<!-- MODALES DE CONFIRMACIÓN FUERA DE CONTENEDORES PARA EVITAR CONFLICTOS DE Z-INDEX -->
 <% if (users && users.length > 0 && currentUser && currentUser.role === 'admin') { %>
   <% users.forEach((user) => { %>
     <!-- Modal moderno para confirmar eliminación -->
     <div class="modal fade" id="deleteUserModal-<%= user._id %>" tabindex="-1" 
-         aria-labelledby="deleteUserModalLabel-<%= user._id %>" aria-hidden="true"
-         style="z-index: 1060;">
-      <div class="modal-dialog modal-dialog-centered" style="z-index: 1070;">
-        <div class="modal-content modern-modal border-0 shadow-lg rounded-4 overflow-hidden" style="z-index: 1080;">
+         aria-labelledby="deleteUserModalLabel-<%= user._id %>" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content modern-modal border-0 shadow-lg rounded-4 overflow-hidden">
           <!-- Header del modal -->
           <div class="modal-header bg-danger bg-gradient text-white border-0 position-relative">
             <div class="modal-header-content d-flex align-items-center w-100">
@@ -306,10 +311,6 @@
                      style="width: 80px; height: 80px; object-fit: cover;">
                 <h5 class="mt-3 mb-1 fw-bold text-dark"><%= user.name %></h5>
                 <p class="text-muted mb-0"><%= user.email %></p>
-                <small class="text-muted">
-                  <i class="bi bi-calendar3 me-1"></i>
-                  Registrado: <%= new Date(user.createdAt || Date.now()).toLocaleDateString('es-ES') %>
-                </small>
               </div>
               
               <div class="warning-message mb-4">
@@ -551,62 +552,131 @@
   transform: scale(1.02);
 }
 
-.carousel-indicator-modern {
-  width: 45px;
-  height: 45px;
+/* Sistema de paginación personalizada (compatible con seeApartments) */
+.carousel-indicators-custom {
+  gap: 0.5rem;
+  margin: 1rem auto 0;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 50px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  max-width: fit-content;
+}
+
+.page-indicator-btn {
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  border: 2px solid #dee2e6;
-  background: linear-gradient(135deg, #fff, #f8f9fa);
+  border: 2px solid rgba(13, 110, 253, 0.3);
+  background: transparent;
+  opacity: 1;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.carousel-indicator-modern::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.3), transparent);
-  transition: left 0.5s ease;
-}
-
-.carousel-indicator-modern:hover::before {
-  left: 100%;
-}
-
-.carousel-indicator-modern:hover {
-  border-color: #667eea;
-  transform: scale(1.1);
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-}
-
-.carousel-indicator-modern.active {
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  border-color: #667eea;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-}
-
-.indicator-number {
+  font-size: 1rem;
+  color: #0d6efd;
   font-weight: 600;
-  font-size: 0.9rem;
-  color: #495057;
-  position: relative;
-  z-index: 2;
+  padding: 0;
 }
 
-.carousel-indicator-modern.active .indicator-number {
+.page-indicator-btn i {
+  font-size: 1.2rem;
+}
+
+.page-indicator-btn:hover {
+  transform: translateY(-2px);
+  border-color: rgba(13, 110, 253, 0.6);
+  background: rgba(13, 110, 253, 0.1);
+  box-shadow: 0 4px 15px rgba(13, 110, 253, 0.2);
+}
+
+.page-indicator-btn.active {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0d6efd, #6610f2);
+  border-color: transparent;
+  box-shadow: 0 4px 20px rgba(13, 110, 253, 0.4);
   color: white;
+  font-size: 1.3rem;
+  transform: scale(1.05);
 }
 
-/* Modal moderno - Z-index corregido */
+.page-indicator-btn.active:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 25px rgba(13, 110, 253, 0.6);
+}
+
+.page-indicator-btn:disabled,
+.page-indicator-btn.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+  background-color: rgba(13, 110, 253, 0.05) !important;
+  border-color: rgba(13, 110, 253, 0.1) !important;
+  color: rgba(13, 110, 253, 0.5) !important;
+}
+
+/* Controles de carrusel */
+.carousel-control-prev,
+.carousel-control-next {
+  width: 5%;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+  opacity: 0.8;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  background-image: none;
+  width: 2rem;
+  height: 2rem;
+  background-size: 100%, 100%;
+}
+
+.carousel-control-prev-icon::after {
+  content: "\f2f6";
+  font-family: "bootstrap-icons";
+  color: #0d6efd;
+  font-size: 2rem;
+  display: block;
+}
+
+.carousel-control-next-icon::after {
+  content: "\f2f9";
+  font-family: "bootstrap-icons";
+  color: #0d6efd;
+  font-size: 2rem;
+  display: block;
+}
+
+/* Modal moderno */
+.modern-modal {
+  animation: modalSlideIn 0.4s ease-out;
+}
+
+/* Modal de confirmación - CSS simplificado para compatibilidad igual que en seeApartments.ejs */
+.modal-content {
+  border-radius: 1rem !important;
+  overflow: hidden !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important;
+  border: none !important;
+}
+
 .modal {
-  z-index: 1060 !important;
+  z-index: 1055 !important;
 }
 
 .modal-backdrop {
@@ -614,15 +684,24 @@
 }
 
 .modal-dialog {
-  z-index: 1070 !important;
+  z-index: 1060 !important;
 }
 
-.modal-content {
-  z-index: 1080 !important;
+.modal.show {
+  z-index: 1055 !important;
 }
 
-.modern-modal {
-  animation: modalSlideIn 0.4s ease-out;
+.modal.show .modal-dialog {
+  z-index: 1060 !important;
+}
+
+/* Override para Bootstrap */
+body.modal-open .modal {
+  z-index: 1055 !important;
+}
+
+body.modal-open .modal-backdrop {
+  z-index: 1050 !important;
 }
 
 .modal-header {
@@ -766,6 +845,27 @@
   .indicator-number {
     font-size: 0.8rem;
   }
+
+  /* Responsive para la paginación personalizada */
+  .carousel-indicators-custom {
+    flex-wrap: wrap;
+    padding: 0.5rem 0.75rem;
+    border-radius: 40px;
+    gap: 0.3rem;
+  }
+  
+  .page-indicator-btn {
+    width: 35px;
+    height: 35px;
+    font-size: 0.9rem;
+  }
+  
+  .page-indicator-btn.active {
+    width: 45px;
+    height: 45px;
+    font-size: 1.1rem;
+  }
+}
   
   .modal-header {
     padding: 1rem;
@@ -832,7 +932,94 @@
   opacity: 0;
   animation: fadeInUp 0.6s ease-out forwards;
 }
+
+/* Animaciones */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes iconPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 </style>
 
-<!-- Incluye el pie de página desde un archivo parcial -->
-<%- include("partials/footer") %>
+<!-- Script de paginación personalizada -->
+<script src="/js/carouselPagination.js"></script>
+
+<!-- Script para reinicialización de modales -->
+<script>
+  // Función específica para users.ejs
+  function reinitializeUsersComponents() {
+    if (typeof reinitializeBootstrapComponents === 'function') {
+      reinitializeBootstrapComponents();
+    }
+    
+    // Asegurar que todos los botones de modal tengan el event listener correcto
+    setTimeout(() => {
+      const modalButtons = document.querySelectorAll('[data-bs-toggle="modal"]');
+      modalButtons.forEach(button => {
+        const targetSelector = button.getAttribute('data-bs-target');
+        if (targetSelector) {
+          // Remover event listeners previos
+          button.removeEventListener('click', handleUserModalClick);
+          // Agregar event listener actualizado
+          button.addEventListener('click', handleUserModalClick);
+        }
+      });
+    }, 200);
+  }
+  
+  // Manejador específico para modales de usuarios
+  function handleUserModalClick(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    const button = event.currentTarget;
+    const targetSelector = button.getAttribute('data-bs-target');
+    
+    console.log('Modal button clicked:', targetSelector);
+    
+    if (targetSelector) {
+      const targetModal = document.querySelector(targetSelector);
+      if (targetModal) {
+        console.log('Modal found, showing:', targetModal);
+        const modal = bootstrap.Modal.getInstance(targetModal) || new bootstrap.Modal(targetModal);
+        modal.show();
+      } else {
+        console.error('Modal not found:', targetSelector);
+      }
+    }
+  }
+  
+  // Inicializar cuando se carga la página
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+      reinitializeUsersComponents();
+    }, 1000);
+  });
+  
+  // También reinicializar después de búsquedas con IA
+  window.reinitializeUsersComponents = reinitializeUsersComponents;
+</script>
+
+</body>
+</html>

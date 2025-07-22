@@ -1,0 +1,632 @@
+/* ========== RESERVATIONS.CSS - ESTILOS ESPECÍFICOS PARA VISTA DE RESERVAS ========== */
+
+/* Hero section */
+.reservations-hero {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-background {
+  background-attachment: fixed;
+  z-index: -1;
+}
+
+.hero-content {
+  z-index: 2;
+  position: relative;
+}
+
+/* Partículas animadas */
+.particles-container {
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  animation: float 6s ease-in-out infinite;
+}
+
+.particle:nth-child(1) { left: 20%; animation-delay: 0s; }
+.particle:nth-child(2) { left: 40%; animation-delay: 1s; }
+.particle:nth-child(3) { left: 60%; animation-delay: 2s; }
+.particle:nth-child(4) { left: 80%; animation-delay: 3s; }
+.particle:nth-child(5) { left: 90%; animation-delay: 4s; }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.6; }
+  50% { transform: translateY(-20px) rotate(180deg); opacity: 1; }
+}
+
+/* Estilos del título del hero */
+.hero-title {
+  opacity: 1;
+  visibility: visible;
+}
+
+.title-badge {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Estadísticas del hero */
+.stats-container {
+  opacity: 1;
+  visibility: visible;
+}
+
+.stat-item {
+  opacity: 1;
+  visibility: visible;
+}
+
+.stat-number {
+  opacity: 1;
+  visibility: visible;
+  color: white !important;
+}
+
+.stat-icon {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Botón de volver atrás */
+.back-button {
+  transition: all 0.3s ease;
+  padding: 0.75rem 1.5rem;
+  border-radius: 50px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.back-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateX(-5px);
+  color: white !important;
+}
+
+.back-icon-wrapper {
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.back-button:hover .back-icon-wrapper {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+/* Glassmorphism effects */
+.backdrop-blur {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Contenedor principal */
+.main-container {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  opacity: 1;
+  visibility: visible;
+}
+
+.reservations-content {
+  opacity: 1;
+  visibility: visible;
+  min-height: 400px;
+}
+
+/* Tabla moderna */
+.modern-table {
+  border: none;
+}
+
+.table-header {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  position: relative;
+}
+
+.table-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+.table-header-cell {
+  color: white !important;
+  font-weight: 600;
+  border: none !important;
+  padding: 1rem 0.75rem;
+  position: relative;
+  z-index: 1;
+}
+
+.table-row {
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.table-row:hover {
+  background: rgba(102, 126, 234, 0.05) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.table-cell {
+  border: none !important;
+  padding: 1rem 0.75rem;
+  vertical-align: middle;
+}
+
+/* Estados de reserva */
+.expired-reservation {
+  background: rgba(248, 249, 250, 0.8);
+  opacity: 0.7;
+}
+
+.active-reservation {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+/* Información del huésped */
+.guest-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.guest-name {
+  font-size: 0.9rem;
+  color: #495057;
+}
+
+.guest-email {
+  font-size: 0.85rem;
+  color: #6c757d;
+}
+
+/* Información del apartamento */
+.apartment-link {
+  color: #495057;
+  transition: all 0.3s ease;
+}
+
+.apartment-link:hover {
+  color: #667eea;
+  transform: scale(1.05);
+}
+
+.apartment-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+}
+
+/* Información del usuario */
+.user-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  color: #495057;
+}
+
+/* Rango de fechas */
+.date-range {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.date-item {
+  display: flex;
+  align-items: center;
+  font-size: 0.8rem;
+}
+
+.date-separator {
+  color: #6c757d;
+  font-weight: bold;
+}
+
+/* Badge de precio */
+.price-badge {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(40, 167, 69, 0.3);
+}
+
+/* Badges de estado */
+.status-badge {
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.85rem;
+}
+
+.status-confirmed {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
+  box-shadow: 0 2px 10px rgba(40, 167, 69, 0.3);
+}
+
+.status-pending {
+  background: linear-gradient(135deg, #ffc107, #fd7e14);
+  color: white;
+  box-shadow: 0 2px 10px rgba(255, 193, 7, 0.3);
+}
+
+/* Estado de pago */
+.payment-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.paid-indicator, .unpaid-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Botones de acción */
+.action-buttons {
+  gap: 0.5rem;
+}
+
+.action-btn {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.action-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+/* Modales modernos - Z-INDEX CORREGIDO */
+.modal {
+  z-index: 1070 !important;
+}
+
+.modal-backdrop {
+  z-index: 1060 !important;
+}
+
+.modern-modal {
+  animation: modalSlideIn 0.4s ease-out;
+  z-index: 1080 !important;
+}
+
+.modal-dialog {
+  z-index: 1080 !important;
+}
+
+.modal-content {
+  z-index: 1080 !important;
+}
+
+.modal-icon {
+  animation: iconPulse 2s infinite;
+}
+
+/* Indicadores de carrusel modernos */
+.carousel-indicators-modern {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin: 0;
+  position: static;
+}
+
+.carousel-indicator-modern {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  border: 2px solid #dee2e6;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.carousel-indicator-modern:hover {
+  transform: scale(1.1);
+  border-color: #667eea;
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+}
+
+.carousel-indicator-modern.active {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-color: #667eea;
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.indicator-number {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #495057;
+  z-index: 1;
+  position: relative;
+}
+
+.carousel-indicator-modern.active .indicator-number {
+  color: white;
+}
+
+.carousel-indicator-modern::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.3s ease;
+}
+
+.carousel-indicator-modern.active::before {
+  width: 100%;
+  height: 100%;
+}
+
+/* Estado vacío */
+.empty-state {
+  padding: 4rem 2rem;
+}
+
+.empty-icon {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Número de fila */
+.row-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border-radius: 50%;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+/* Animaciones */
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes iconPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .reservations-hero {
+    min-height: 60vh;
+  }
+  
+  .hero-title h1 {
+    font-size: 2rem !important;
+  }
+  
+  .stats-container {
+    margin-top: 2rem;
+  }
+  
+  .table-responsive {
+    font-size: 0.85rem;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  
+  .action-btn {
+    width: 30px;
+    height: 30px;
+  }
+  
+  .date-range {
+    font-size: 0.75rem;
+  }
+  
+  .carousel-indicators-modern {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+  
+  .carousel-indicator-modern {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .indicator-number {
+    font-size: 0.8rem;
+  }
+}
+
+/* Efectos adicionales */
+.table-row:nth-child(even) {
+  background: rgba(248, 249, 250, 0.5);
+}
+
+.table-row:nth-child(odd) {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+/* Tooltips personalizados */
+.tooltip {
+  font-size: 0.8rem;
+}
+
+.tooltip-inner {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 10px;
+  padding: 0.5rem 1rem;
+}
+
+/* ========== SOLUCIÓN ESPECÍFICA PARA MODALES EN RESERVATIONS ========== */
+/* Asegurar z-index correcto para modales de reservations */
+.modal {
+  z-index: 1055 !important;
+}
+
+.modal-backdrop {
+  z-index: 1050 !important;
+}
+
+.modal.show {
+  z-index: 1055 !important;
+}
+
+.modal-dialog {
+  z-index: 1060 !important;
+}
+
+.modal-content {
+  z-index: 1065 !important;
+  position: relative;
+}
+
+/* Específico para modales dentro del contenedor de reservations */
+.reservations-container .modal,
+.carousel .modal {
+  z-index: 1055 !important;
+}
+
+.reservations-container .modal-backdrop,
+.carousel .modal-backdrop {
+  z-index: 1050 !important;
+}
+
+/* Asegurar que el hero section no interfiera */
+.reservations-hero,
+.hero-background {
+  z-index: 1 !important;
+}
+
+/* Asegurar que las partículas no interfieran */
+.particles-container {
+  z-index: 2 !important;
+}
+
+/* Modales modernos mejorados */
+.modern-modal {
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+.modern-modal .modal-header {
+  background: linear-gradient(135deg, #dc3545, #ff6b7a);
+  border: none;
+}
+
+.modern-modal .modal-body {
+  background: linear-gradient(135deg, #f8f9fa, #ffffff);
+}
+
+.modern-modal .modal-footer {
+  background: linear-gradient(135deg, #ffffff, #f8f9fa);
+  border: none;
+}
+/* ========== FIN SOLUCIÓN ESPECÍFICA PARA MODALES ========== */
+
+/* Estados de hover para elementos interactivos */
+.guest-info:hover .guest-avatar {
+  transform: scale(1.1);
+  transition: transform 0.3s ease;
+}
+
+.price-badge:hover {
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
+}
+
+.status-badge:hover {
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
+}

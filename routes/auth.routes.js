@@ -2,6 +2,12 @@ import { Router } from 'express';
 import * as authController from '../controllers/auth.controller.js';
 import { requireAuth } from '../middlewares/auth.js';
 import {upload} from '../middlewares/uploadMiddleware.js';
+import { 
+  validateUserRegistration, 
+  validateUserLogin, 
+  validateUserUpdate,
+  handleValidationErrors 
+} from '../middlewares/validation.js';
 
 const router = Router();
 
@@ -9,11 +15,11 @@ const router = Router();
 
 // Registro de usuario (GET formulario, POST envío)
 router.get('/register', (req, res) => res.render('register', {title: "home"}));
-router.post('/register', authController.register);
+router.post('/register', validateUserRegistration, handleValidationErrors, authController.register);
 
 // Inicio de sesión (GET formulario, POST envío)
 router.get('/login', (req, res) => res.render('login', {title: "home"}));
-router.post('/login', authController.login);
+router.post('/login', validateUserLogin, handleValidationErrors, authController.login);
 
 // Cierre de sesión
 router.get('/logout', authController.logout);
@@ -29,7 +35,7 @@ router.get('/about', authController.getAboutUs);
 
 // Editar perfil de usuario (GET formulario, POST actualización con subida de avatar)
 router.get('/profile/edit', requireAuth, authController.getEditProfile);
-router.post('/profile/update', upload.single('avatar'), requireAuth, authController.postUpdateProfile);
+router.post('/profile/update', upload.single('avatar'), validateUserUpdate, handleValidationErrors, requireAuth, authController.postUpdateProfile);
 
 
 // --- Rutas de Apartamentos ---

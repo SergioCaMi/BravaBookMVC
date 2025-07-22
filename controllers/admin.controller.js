@@ -3,6 +3,7 @@ import Apartment from "../models/apartment.model.js";
 import Reservation from "../models/reservation.model.js";
 import fs from "fs/promises"; // Para operaciones de sistema de archivos asíncronas
 import path from "path"; // Para manejar rutas de archivos y directorios
+import { validationResult } from 'express-validator';
 
 //  Gestión de Usuarios 
 
@@ -193,6 +194,14 @@ export const postNewApartment = async (req, res) => {
   // req.files contendrá los archivos subidos a través de Multer.
   // req.body.newPhotos contendrá los datos del formulario, incluyendo descripciones y URLs.
   console.log("Archivos temporales recibidos por Multer (req.files):", req.files);
+
+  // Verificar errores de validación
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const errorMessages = errors.array().map(error => error.msg);
+    req.flash("error", errorMessages.join(', '));
+    return res.redirect("/admin/apartments/new");
+  }
 
   const tempUploadDir = req.tempUploadDir; // Directorio temporal de Multer
   let newApartment = null; // Se inicializa para limpieza en el 'finally'
@@ -404,6 +413,14 @@ export const getApartmentEdit = async (req, res) => {
 export const putApartmentEdit = async (req, res) => {
   const { id } = req.params;
   const tempUploadDir = req.tempUploadDir; // Directorio temporal de Multer
+
+  // Verificar errores de validación
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const errorMessages = errors.array().map(error => error.msg);
+    req.flash("error", errorMessages.join(', '));
+    return res.redirect(`/admin/apartments/${id}/edit`);
+  }
 
   try {
     const apartment = await Apartment.findById(id);
@@ -787,6 +804,15 @@ export const getReservationEdit = async (req, res) => {
  */
 export const putReservationEdit = async (req, res) => {
   const { id } = req.params;
+  
+  // Verificar errores de validación
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const errorMessages = errors.array().map(error => error.msg);
+    req.flash("error", errorMessages.join(', '));
+    return res.redirect(`/admin/reservation/edit/${id}`);
+  }
+
   const { apartmentId, guestName, guestEmail, dateRange } = req.body;
   const [start, end] = dateRange.split(" - ");
   const startDate = new Date(start);
