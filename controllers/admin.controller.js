@@ -129,8 +129,12 @@ export const postDeleteUser = async (req, res) => {
   try {
     // Evita que un usuario se elimine a sí mismo (asumiendo req.user es el usuario logueado)
     if (id !== req.user._id.toString()) {
-      await User.findByIdAndDelete(id);
-      req.flash("success_msg", "Usuario eliminado satisfactoriamente.");
+      const deletedUser = await User.findByIdAndDelete(id);
+      if (deletedUser) {
+        req.flash("success_msg", `Usuario "${deletedUser.name}" eliminado satisfactoriamente.`);
+      } else {
+        req.flash("error_msg", "Usuario no encontrado.");
+      }
     } else {
       req.flash("error_msg", "No puedes eliminar tu propio usuario desde aquí.");
     }

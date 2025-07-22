@@ -1,7 +1,7 @@
 <!-- Contenedor de notificaciones toast (esquina superior derecha) -->
-<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 10500;">
   <!-- Toast de error -->
-  <% if (typeof error_msg !== 'undefined' && error_msg.length > 0) { %>
+  <% if (typeof error_msg !== 'undefined' && Array.isArray(error_msg) && error_msg.length > 0) { %>
     <div id="errorToast" class="toast modern-toast error-toast" role="alert" aria-live="assertive" aria-atomic="true">
       <div class="toast-header bg-danger bg-gradient text-white border-0">
         <div class="toast-icon me-2">
@@ -13,7 +13,9 @@
       <div class="toast-body bg-light">
         <div class="d-flex align-items-start">
           <div class="toast-content flex-grow-1">
-            <p class="mb-0 text-dark"><%= error_msg %></p>
+            <% error_msg.forEach(function(msg) { %>
+              <p class="mb-0 text-dark"><%= msg %></p>
+            <% }); %>
           </div>
         </div>
       </div>
@@ -21,7 +23,7 @@
   <% } %>
   
   <!-- Toast de éxito -->
-  <% if (typeof success_msg !== 'undefined' && success_msg.length > 0) { %>
+  <% if (typeof success_msg !== 'undefined' && Array.isArray(success_msg) && success_msg.length > 0) { %>
     <div id="successToast" class="toast modern-toast success-toast" role="alert" aria-live="assertive" aria-atomic="true">
       <div class="toast-header bg-success bg-gradient text-white border-0">
         <div class="toast-icon me-2">
@@ -33,7 +35,9 @@
       <div class="toast-body bg-light">
         <div class="d-flex align-items-start">
           <div class="toast-content flex-grow-1">
-            <p class="mb-0 text-dark"><%= success_msg %></p>
+            <% success_msg.forEach(function(msg) { %>
+              <p class="mb-0 text-dark"><%= msg %></p>
+            <% }); %>
           </div>
         </div>
       </div>
@@ -106,27 +110,69 @@
 }
 </style>
 
-<!-- Scripts simplificados para toasts -->
+<!-- Scripts optimizados para toasts con arrays de mensajes -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  // Mostrar toasts automáticamente
+  console.log('🍞 Inicializando sistema de toasts...');
+  
+  // Buscar elementos toast
   const errorToast = document.getElementById('errorToast');
   const successToast = document.getElementById('successToast');
   
+  console.log('🔍 Elementos encontrados:', { errorToast, successToast });
+  
+  // Función para mostrar toast con configuración robusta
+  function showToast(toastElement, type, duration = 5000) {
+    if (!toastElement) {
+      console.log(`⚠️ No se encontró elemento toast de ${type}`);
+      return;
+    }
+    
+    console.log(`✅ Mostrando toast de ${type}`);
+    
+    try {
+      const toast = new bootstrap.Toast(toastElement, {
+        autohide: true,
+        delay: duration
+      });
+      
+      // Eventos para debugging
+      toastElement.addEventListener('shown.bs.toast', function() {
+        console.log(`🎉 Toast ${type} mostrado exitosamente`);
+      });
+      
+      toastElement.addEventListener('hidden.bs.toast', function() {
+        console.log(`👋 Toast ${type} ocultado`);
+      });
+      
+      toast.show();
+      
+    } catch (error) {
+      console.error(`❌ Error mostrando toast ${type}:`, error);
+      
+      // Fallback: mostrar manualmente
+      toastElement.style.display = 'block';
+      toastElement.style.opacity = '1';
+      toastElement.classList.add('show');
+      
+      // Auto-hide manual después del delay
+      setTimeout(() => {
+        toastElement.style.opacity = '0';
+        setTimeout(() => {
+          toastElement.style.display = 'none';
+          toastElement.classList.remove('show');
+        }, 300);
+      }, duration);
+    }
+  }
+  
+  // Mostrar toasts disponibles
   if (errorToast) {
-    const toast = new bootstrap.Toast(errorToast, {
-      autohide: true,
-      delay: 5000
-    });
-    toast.show();
+    showToast(errorToast, 'error', 6000);
   }
   
   if (successToast) {
-    const toast = new bootstrap.Toast(successToast, {
-      autohide: true,
-      delay: 4000
-    });
-    toast.show();
+    showToast(successToast, 'éxito', 4000);
   }
   
   // Accesibilidad: cerrar con tecla Escape
