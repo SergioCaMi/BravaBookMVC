@@ -29,6 +29,9 @@ router.post('/profile/update', validateUserUpdate, handleValidationErrors, requi
 // Ver todos los usuarios
 router.get('/users', requireAuth, requireAdmin, adminController.getUsers);
 
+// Eliminar usuario
+router.post('/user/delete/:id', validateMongoId('id'), handleValidationErrors, requireAuth, requireAdmin, adminController.postDeleteUser);
+
 //  Rutas de Reservas 
 
 // Ver todas las reservas
