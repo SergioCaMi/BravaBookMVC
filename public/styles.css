@@ -117,3 +117,246 @@ footer li a,
 }
 
 /* ========== FIN DE SOLUCIÓN GLOBAL PARA MODALES ========== */
+
+/* ========== SOLUCIÓN GLOBAL PARA HERO SECTIONS ========== */
+/* Forzar visibilidad de todas las hero sections en el proyecto */
+
+/* Hero backgrounds - Asegurar que sean visibles */
+.hero-background,
+.reservation-form-hero .hero-background,
+.apartment-form-hero .hero-background,
+.admin-hero .hero-background,
+.dashboard-hero .hero-background,
+.users-hero .hero-background,
+.reservations-hero .hero-background {
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: block !important;
+    z-index: 1 !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* Hero containers - Asegurar que sean visibles */
+.reservation-form-hero,
+.apartment-form-hero,
+.admin-hero,
+.dashboard-hero,
+.users-hero,
+.reservations-hero {
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: flex !important;
+    position: relative !important;
+    overflow: hidden !important;
+    min-height: 40vh !important;
+    align-items: center !important;
+}
+
+/* Hero content - Asegurar que sea visible */
+.reservation-form-hero .hero-content,
+.apartment-form-hero .hero-content,
+.admin-hero .hero-content,
+.dashboard-hero .hero-content,
+.users-hero .hero-content,
+.reservations-hero .hero-content,
+.reservation-form-hero .hero-title,
+.apartment-form-hero .hero-title,
+.admin-hero .hero-title,
+.dashboard-hero .hero-title,
+.users-hero .hero-title,
+.reservations-hero .hero-title {
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: block !important;
+    position: relative !important;
+    z-index: 10 !important;
+}
+
+/* Hero stats y elementos especiales - SOLO dentro de heroes */
+.reservation-form-hero .hero-stats,
+.apartment-form-hero .hero-stats,
+.admin-hero .hero-stats,
+.dashboard-hero .hero-stats,
+.users-hero .hero-stats,
+.reservations-hero .hero-stats,
+.reservation-form-hero .title-badge,
+.apartment-form-hero .title-badge,
+.admin-hero .title-badge,
+.dashboard-hero .title-badge,
+.users-hero .title-badge,
+.reservations-hero .title-badge,
+.reservation-form-hero .welcome-badge,
+.apartment-form-hero .welcome-badge,
+.admin-hero .welcome-badge,
+.dashboard-hero .welcome-badge,
+.users-hero .welcome-badge,
+.reservations-hero .welcome-badge,
+.reservation-form-hero .back-button-container,
+.apartment-form-hero .back-button-container,
+.admin-hero .back-button-container,
+.dashboard-hero .back-button-container,
+.users-hero .back-button-container,
+.reservations-hero .back-button-container {
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: block !important;
+    position: relative !important;
+    z-index: 10 !important;
+}
+
+/* Partículas y elementos decorativos - SOLO dentro de heroes */
+.reservation-form-hero .particles-container,
+.apartment-form-hero .particles-container,
+.admin-hero .particles-container,
+.dashboard-hero .particles-container,
+.users-hero .particles-container,
+.reservations-hero .particles-container {
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: block !important;
+    position: absolute !important;
+    z-index: 2 !important;
+}
+
+.reservation-form-hero .particle,
+.apartment-form-hero .particle,
+.admin-hero .particle,
+.dashboard-hero .particle,
+.users-hero .particle,
+.reservations-hero .particle {
+    visibility: visible !important;
+    opacity: 0.7 !important;
+    display: block !important;
+}
+
+/* Texto y elementos dentro del hero - MÁS ESPECÍFICO */
+.reservation-form-hero .hero-content h1,
+.reservation-form-hero .hero-content h2,
+.reservation-form-hero .hero-content h3,
+.reservation-form-hero .hero-content h4,
+.reservation-form-hero .hero-content h5,
+.reservation-form-hero .hero-content h6,
+.reservation-form-hero .hero-content p,
+.apartment-form-hero .hero-content h1,
+.apartment-form-hero .hero-content h2,
+.apartment-form-hero .hero-content h3,
+.apartment-form-hero .hero-content h4,
+.apartment-form-hero .hero-content h5,
+.apartment-form-hero .hero-content h6,
+.apartment-form-hero .hero-content p,
+.admin-hero .hero-content h1,
+.admin-hero .hero-content h2,
+.admin-hero .hero-content h3,
+.admin-hero .hero-content h4,
+.admin-hero .hero-content h5,
+.admin-hero .hero-content h6,
+.admin-hero .hero-content p,
+.dashboard-hero .hero-content h1,
+.dashboard-hero .hero-content h2,
+.dashboard-hero .hero-content h3,
+.dashboard-hero .hero-content h4,
+.dashboard-hero .hero-content h5,
+.dashboard-hero .hero-content h6,
+.dashboard-hero .hero-content p,
+.users-hero .hero-content h1,
+.users-hero .hero-content h2,
+.users-hero .hero-content h3,
+.users-hero .hero-content h4,
+.users-hero .hero-content h5,
+.users-hero .hero-content h6,
+.users-hero .hero-content p,
+.reservations-hero .hero-content h1,
+.reservations-hero .hero-content h2,
+.reservations-hero .hero-content h3,
+.reservations-hero .hero-content h4,
+.reservations-hero .hero-content h5,
+.reservations-hero .hero-content h6,
+.reservations-hero .hero-content p {
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: block !important;
+    color: white !important;
+}
+
+/* Botones dentro de heroes - MÁS ESPECÍFICO */
+.reservation-form-hero .hero-content .btn,
+.apartment-form-hero .hero-content .btn,
+.admin-hero .hero-content .btn,
+.dashboard-hero .hero-content .btn,
+.users-hero .hero-content .btn,
+.reservations-hero .hero-content .btn {
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: inline-block !important;
+}
+
+/* Badges dentro de heroes - MÁS ESPECÍFICO */
+.reservation-form-hero .hero-content .badge,
+.apartment-form-hero .hero-content .badge,
+.admin-hero .hero-content .badge,
+.dashboard-hero .hero-content .badge,
+.users-hero .hero-content .badge,
+.reservations-hero .hero-content .badge {
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: inline-block !important;
+}
+
+/* Iconos dentro de heroes - MÁS ESPECÍFICO */
+.reservation-form-hero .hero-content i,
+.reservation-form-hero .hero-stats i,
+.apartment-form-hero .hero-content i,
+.apartment-form-hero .hero-stats i,
+.admin-hero .hero-content i,
+.admin-hero .hero-stats i,
+.dashboard-hero .hero-content i,
+.dashboard-hero .hero-stats i,
+.users-hero .hero-content i,
+.users-hero .hero-stats i,
+.reservations-hero .hero-content i,
+.reservations-hero .hero-stats i {
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: inline-block !important;
+}
+
+/* Contenedores especiales del hero - MÁS ESPECÍFICO */
+.reservation-form-hero .stat-item,
+.reservation-form-hero .info-item,
+.apartment-form-hero .stat-item,
+.apartment-form-hero .info-item,
+.admin-hero .stat-item,
+.admin-hero .info-item,
+.admin-hero .admin-stats,
+.admin-hero .admin-welcome,
+.dashboard-hero .stat-item,
+.dashboard-hero .info-item,
+.dashboard-hero .dashboard-stats,
+.dashboard-hero .dashboard-welcome,
+.users-hero .stat-item,
+.users-hero .info-item,
+.reservations-hero .stat-item,
+.reservations-hero .info-item {
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: block !important;
+    position: relative !important;
+    z-index: 10 !important;
+}
+
+/* Override para cualquier CSS que pueda ocultar el hero - MÁS ESPECÍFICO */
+.reservation-form-hero .container .hero-background,
+.apartment-form-hero .container .hero-background,
+.admin-hero .container .hero-background,
+.dashboard-hero .container .hero-background,
+.users-hero .container .hero-background,
+.reservations-hero .container .hero-background {
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* ========== FIN SOLUCIÓN GLOBAL PARA HERO SECTIONS ========== */

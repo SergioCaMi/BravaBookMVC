@@ -588,3 +588,203 @@ document.addEventListener('DOMContentLoaded', function() {
 /**
  * ========== FIN DE FUNCIONES PARA MODALES ==========
  */
+
+/**
+ * ========== FUNCIONES PARA HERO SECTIONS ==========
+ */
+
+// Función para forzar la visibilidad de todos los elementos del hero
+function forceHeroVisibility() {
+    // Selectors de todas las posibles secciones hero
+    const heroSelectors = [
+        '.reservation-form-hero',
+        '.apartment-form-hero',
+        '.admin-hero',
+        '.dashboard-hero',
+        '.users-hero',
+        '.reservations-hero'
+    ];
+
+    heroSelectors.forEach(selector => {
+        const heroElement = document.querySelector(selector);
+        if (heroElement) {
+            console.log(`Procesando hero: ${selector}`);
+            
+            // Forzar visibilidad del contenedor principal
+            heroElement.style.cssText += `
+                visibility: visible !important;
+                opacity: 1 !important;
+                display: flex !important;
+                position: relative !important;
+                overflow: hidden !important;
+                min-height: 40vh !important;
+                align-items: center !important;
+            `;
+
+            // Forzar visibilidad del background
+            const background = heroElement.querySelector('.hero-background');
+            if (background) {
+                background.style.cssText += `
+                    visibility: visible !important;
+                    opacity: 1 !important;
+                    display: block !important;
+                    z-index: 1 !important;
+                    position: absolute !important;
+                    top: 0 !important;
+                    left: 0 !important;
+                    width: 100% !important;
+                    height: 100% !important;
+                `;
+            }
+
+            // Forzar visibilidad del contenido
+            const content = heroElement.querySelector('.hero-content');
+            if (content) {
+                content.style.cssText += `
+                    visibility: visible !important;
+                    opacity: 1 !important;
+                    display: block !important;
+                    position: relative !important;
+                    z-index: 10 !important;
+                `;
+
+                // Forzar todos los elementos del contenido
+                const contentElements = content.querySelectorAll('*');
+                contentElements.forEach(el => {
+                    el.style.cssText += `
+                        visibility: visible !important;
+                        opacity: 1 !important;
+                    `;
+                });
+            }
+
+            // Forzar visibilidad de las partículas si existen
+            const particles = heroElement.querySelector('.particles-container');
+            if (particles) {
+                particles.style.cssText += `
+                    visibility: visible !important;
+                    opacity: 1 !important;
+                    display: block !important;
+                    position: absolute !important;
+                    z-index: 2 !important;
+                `;
+            }
+
+            console.log(`Hero ${selector} forzado a ser visible`);
+        }
+    });
+}
+
+// Función para verificar y reparar heroes cada cierto tiempo
+function startHeroVisibilityWatcher() {
+    setInterval(() => {
+        forceHeroVisibility();
+    }, 1000); // Cada segundo
+}
+
+// Función para aplicar las soluciones globales de hero
+function applyHeroGlobalSolutions() {
+    // Aplicar inmediatamente
+    forceHeroVisibility();
+    
+    // Aplicar después de un pequeño delay para elementos que se cargan tarde
+    setTimeout(() => {
+        forceHeroVisibility();
+    }, 500);
+    
+    // Iniciar el observador
+    startHeroVisibilityWatcher();
+    
+    console.log('Soluciones globales de hero aplicadas');
+}
+
+// Función para crear botón de test de heroes (solo para debugging)
+function createHeroTestButton() {
+    if (document.getElementById('heroTestButton')) return;
+    
+    const button = document.createElement('button');
+    button.id = 'heroTestButton';
+    button.textContent = 'Test Hero Visibility';
+    button.style.cssText = `
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        z-index: 9999;
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 12px;
+    `;
+    
+    button.addEventListener('click', () => {
+        forceHeroVisibility();
+        alert('Hero visibility forzado!');
+    });
+    
+    document.body.appendChild(button);
+}
+
+// Observer para detectar cambios en el DOM y aplicar soluciones de hero
+function setupHeroObserver() {
+    const observer = new MutationObserver((mutations) => {
+        let heroFound = false;
+        
+        mutations.forEach((mutation) => {
+            if (mutation.type === 'childList') {
+                mutation.addedNodes.forEach((node) => {
+                    if (node.nodeType === Node.ELEMENT_NODE) {
+                        // Verificar si el nodo agregado es o contiene un hero
+                        const heroSelectors = [
+                            '.reservation-form-hero',
+                            '.apartment-form-hero',
+                            '.admin-hero',
+                            '.dashboard-hero',
+                            '.users-hero',
+                            '.reservations-hero'
+                        ];
+                        
+                        heroSelectors.forEach(selector => {
+                            if (node.matches && node.matches(selector)) {
+                                heroFound = true;
+                            } else if (node.querySelector && node.querySelector(selector)) {
+                                heroFound = true;
+                            }
+                        });
+                    }
+                });
+            }
+        });
+        
+        if (heroFound) {
+            setTimeout(forceHeroVisibility, 100);
+        }
+    });
+    
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+}
+
+// Inicialización automática cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+        // Aplicar soluciones de hero
+        applyHeroGlobalSolutions();
+        
+        // Configurar observer para heroes
+        setupHeroObserver();
+        
+        // Crear botón de test (comentar en producción)
+        // createHeroTestButton();
+        
+        console.log('Soluciones de hero aplicadas correctamente');
+    }, 800);
+});
+
+/**
+ * ========== FIN DE FUNCIONES PARA HERO SECTIONS ==========
+ */
