@@ -19,3 +19,101 @@ footer li a,
 .footer-bottom {
     font-size: 0.8rem; /* Tamaño de fuente más pequeño para el texto de copyright */
 }
+
+/* ========== SOLUCIÓN GLOBAL PARA PROBLEMAS DE Z-INDEX EN MODALES ========== */
+/* Bootstrap Modal z-index fixes - Solución universal para todo el proyecto */
+
+/* Asegurar que los modales aparezcan por encima de cualquier contenido */
+.modal {
+    z-index: 1055 !important;
+}
+
+.modal-backdrop {
+    z-index: 1050 !important;
+}
+
+.modal.show {
+    z-index: 1055 !important;
+}
+
+.modal-dialog {
+    z-index: 1060 !important;
+}
+
+.modal-content {
+    z-index: 1065 !important;
+    position: relative;
+}
+
+/* Específico para modales dentro de carruseles */
+.carousel .modal {
+    z-index: 1055 !important;
+}
+
+.carousel .modal-backdrop {
+    z-index: 1050 !important;
+}
+
+/* Específico para modales dentro de contenedores con backdrop-filter */
+.backdrop-blur .modal,
+[style*="backdrop-filter"] .modal {
+    z-index: 1055 !important;
+}
+
+/* Asegurar que los dropdowns no interfieran */
+.dropdown-menu {
+    z-index: 1000 !important;
+}
+
+/* Asegurar que los tooltips no interfieran */
+.tooltip {
+    z-index: 1070 !important;
+}
+
+/* Asegurar que los popovers no interfieran */
+.popover {
+    z-index: 1070 !important;
+}
+
+/* Específico para contenedores de formularios que pueden tener z-index alto */
+.form-wrapper,
+.reservation-form-container,
+.admin-panel-container {
+    z-index: auto !important;
+    position: relative;
+}
+
+/* Asegurar que los overlays de video no interfieran */
+.video-overlay,
+.hero-background {
+    z-index: 1 !important;
+}
+
+/* SOLUCIÓN ADICIONAL - Prevenir stacking context problemático */
+/* Elementos con backdrop-filter pueden crear stacking context, forzamos z-index auto */
+.backdrop-blur,
+[style*="backdrop-filter"],
+.form-wrapper,
+.reservation-form-container {
+    z-index: auto !important;
+}
+
+/* Asegurar que hero sections no interfieran con modales */
+.reservation-form-hero,
+.particles-container,
+.hero-stats {
+    z-index: auto !important;
+}
+
+/* Override agresivo para cualquier elemento que pueda interferir */
+.container,
+.container-fluid,
+.row,
+.col,
+.bg-white,
+.shadow,
+.rounded-4 {
+    z-index: auto !important;
+}
+
+/* ========== FIN DE SOLUCIÓN GLOBAL PARA MODALES ========== */

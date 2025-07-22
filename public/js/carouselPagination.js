@@ -409,3 +409,182 @@ document.addEventListener('DOMContentLoaded', function() {
     // setupKeyboardNavigation();
   }, 500);
 });
+
+/**
+ * ========== FUNCIONES ESPECÍFICAS PARA SOLUCIONAR PROBLEMAS DE MODALES ==========
+ */
+
+/**
+ * Función global para solucionar problemas de z-index en modales
+ * Se ejecuta automáticamente al cargar la página y después de cambios en el DOM
+ */
+function fixModalZIndexIssues() {
+  // Buscar todos los modales en la página
+  const modals = document.querySelectorAll('.modal');
+  
+  modals.forEach(modal => {
+    // Aplicar z-index altos a los modales
+    modal.style.zIndex = '1055';
+    
+    // Event listener para cuando el modal se muestra
+    modal.addEventListener('show.bs.modal', function(e) {
+      // Asegurar que el modal esté por encima de todo
+      this.style.zIndex = '1055';
+      
+      // Buscar y ajustar el backdrop
+      setTimeout(() => {
+        const backdrop = document.querySelector('.modal-backdrop');
+        if (backdrop) {
+          backdrop.style.zIndex = '1050';
+        }
+      }, 50);
+    });
+    
+    // Event listener para después de que el modal se muestre
+    modal.addEventListener('shown.bs.modal', function(e) {
+      // Asegurar z-index después de la animación
+      this.style.zIndex = '1055';
+      
+      const modalDialog = this.querySelector('.modal-dialog');
+      if (modalDialog) {
+        modalDialog.style.zIndex = '1060';
+      }
+      
+      const modalContent = this.querySelector('.modal-content');
+      if (modalContent) {
+        modalContent.style.zIndex = '1065';
+      }
+    });
+    
+    // Event listener para cuando el modal se oculta
+    modal.addEventListener('hidden.bs.modal', function(e) {
+      // Limpiar backdrops sobrantes
+      const backdrops = document.querySelectorAll('.modal-backdrop');
+      backdrops.forEach(backdrop => {
+        if (!document.querySelector('.modal.show')) {
+          backdrop.remove();
+        }
+      });
+    });
+  });
+}
+
+/**
+ * Función para mover modales fuera de contenedores problemáticos
+ * (Solo para casos donde sea necesario via JavaScript)
+ */
+function moveModalsOutOfContainers() {
+  const problematicContainers = [
+    '.carousel-inner',
+    '.carousel-item',
+    '.table-responsive',
+    '.backdrop-blur',
+    '[style*="backdrop-filter"]'
+  ];
+  
+  problematicContainers.forEach(containerSelector => {
+    const containers = document.querySelectorAll(containerSelector);
+    
+    containers.forEach(container => {
+      const modalsInContainer = container.querySelectorAll('.modal');
+      
+      modalsInContainer.forEach(modal => {
+        // Mover el modal al final del body
+        document.body.appendChild(modal);
+        console.log('Modal movido fuera de contenedor problemático:', modal.id);
+      });
+    });
+  });
+}
+
+/**
+ * Función para reinicializar modales después de cambios en el DOM
+ */
+function reinitializeModals() {
+  // Primero, mover modales si es necesario
+  moveModalsOutOfContainers();
+  
+  // Luego, aplicar fixes de z-index
+  fixModalZIndexIssues();
+  
+  // Reinicializar instancias de Bootstrap Modal
+  const modals = document.querySelectorAll('.modal');
+  modals.forEach(modal => {
+    // Dispose de la instancia anterior si existe
+    const existingInstance = bootstrap.Modal.getInstance(modal);
+    if (existingInstance) {
+      existingInstance.dispose();
+    }
+    
+    // Crear nueva instancia
+    new bootstrap.Modal(modal, {
+      backdrop: true,
+      keyboard: true,
+      focus: true
+    });
+  });
+}
+
+/**
+ * Observer para detectar cambios en modales específicamente
+ */
+function setupModalObserver() {
+  const observer = new MutationObserver(function(mutations) {
+    let modalChanged = false;
+    
+    mutations.forEach(mutation => {
+      // Detectar si se añadieron o removieron modales
+      if (mutation.type === 'childList') {
+        mutation.addedNodes.forEach(node => {
+          if (node.nodeType === 1) { // Element node
+            if (node.classList && node.classList.contains('modal')) {
+              modalChanged = true;
+            }
+            // Buscar modales dentro del nodo añadido
+            if (node.querySelectorAll && node.querySelectorAll('.modal').length > 0) {
+              modalChanged = true;
+            }
+          }
+        });
+      }
+    });
+    
+    if (modalChanged) {
+      console.log('Cambios detectados en modales, reinicializando...');
+      setTimeout(reinitializeModals, 100);
+    }
+  });
+  
+  // Observar cambios en el documento
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+  
+  return observer;
+}
+
+// Exportar las nuevas funciones
+window.fixModalZIndexIssues = fixModalZIndexIssues;
+window.moveModalsOutOfContainers = moveModalsOutOfContainers;
+window.reinitializeModals = reinitializeModals;
+window.setupModalObserver = setupModalObserver;
+
+// Auto-ejecutar las funciones de modales
+document.addEventListener('DOMContentLoaded', function() {
+  setTimeout(() => {
+    console.log('Aplicando soluciones globales para modales...');
+    
+    // Aplicar todas las soluciones de modales
+    reinitializeModals();
+    
+    // Configurar observer para modales
+    setupModalObserver();
+    
+    console.log('Soluciones de modales aplicadas correctamente');
+  }, 600);
+});
+
+/**
+ * ========== FIN DE FUNCIONES PARA MODALES ==========
+ */

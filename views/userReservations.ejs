@@ -197,5 +197,35 @@
   </div>
 </div>
 
+<!-- CSS para solucionar problemas de z-index en modales -->
+<style>
+/* ========== SOLUCIÓN PARA MODALES EN USER RESERVATIONS ========== */
+.modal {
+  z-index: 1055 !important;
+}
+
+.modal-backdrop {
+  z-index: 1050 !important;
+}
+
+.modal.show {
+  z-index: 1055 !important;
+}
+
+.modal-dialog {
+  z-index: 1060 !important;
+}
+
+.modal-content {
+  z-index: 1065 !important;
+  position: relative;
+  border-radius: 1rem !important;
+  overflow: hidden !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important;
+  border: none !important;
+}
+/* ========== FIN SOLUCIÓN PARA MODALES ========== */
+</style>
+
 <!-- Incluye el pie de página desde un archivo parcial -->
 <%- include("partials/footer") %>

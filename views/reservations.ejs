@@ -921,6 +921,71 @@
   padding: 0.5rem 1rem;
 }
 
+/* ========== SOLUCIÓN ESPECÍFICA PARA MODALES EN RESERVATIONS ========== */
+/* Asegurar z-index correcto para modales de reservations */
+.modal {
+  z-index: 1055 !important;
+}
+
+.modal-backdrop {
+  z-index: 1050 !important;
+}
+
+.modal.show {
+  z-index: 1055 !important;
+}
+
+.modal-dialog {
+  z-index: 1060 !important;
+}
+
+.modal-content {
+  z-index: 1065 !important;
+  position: relative;
+}
+
+/* Específico para modales dentro del contenedor de reservations */
+.reservations-container .modal,
+.carousel .modal {
+  z-index: 1055 !important;
+}
+
+.reservations-container .modal-backdrop,
+.carousel .modal-backdrop {
+  z-index: 1050 !important;
+}
+
+/* Asegurar que el hero section no interfiera */
+.reservations-hero,
+.hero-background {
+  z-index: 1 !important;
+}
+
+/* Asegurar que las partículas no interfieran */
+.particles-container {
+  z-index: 2 !important;
+}
+
+/* Modales modernos mejorados */
+.modern-modal {
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+.modern-modal .modal-header {
+  background: linear-gradient(135deg, #dc3545, #ff6b7a);
+  border: none;
+}
+
+.modern-modal .modal-body {
+  background: linear-gradient(135deg, #f8f9fa, #ffffff);
+}
+
+.modern-modal .modal-footer {
+  background: linear-gradient(135deg, #ffffff, #f8f9fa);
+  border: none;
+}
+/* ========== FIN SOLUCIÓN ESPECÍFICA PARA MODALES ========== */
+
 /* Estados de hover para elementos interactivos */
 .guest-info:hover .guest-avatar {
   transform: scale(1.1);

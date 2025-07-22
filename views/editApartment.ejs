@@ -227,6 +227,36 @@
   </div>
 </div>
 
+<!-- CSS para solucionar problemas de z-index en modales -->
+<style>
+/* ========== SOLUCIÓN PARA MODALES EN EDIT APARTMENT ========== */
+.modal {
+  z-index: 1055 !important;
+}
+
+.modal-backdrop {
+  z-index: 1050 !important;
+}
+
+.modal.show {
+  z-index: 1055 !important;
+}
+
+.modal-dialog {
+  z-index: 1060 !important;
+}
+
+.modal-content {
+  z-index: 1065 !important;
+  position: relative;
+  border-radius: 1rem !important;
+  overflow: hidden !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important;
+  border: none !important;
+}
+/* ========== FIN SOLUCIÓN PARA MODALES ========== */
+</style>
+
 <!-- Scripts para funcionalidades adicionales -->
 <script src="/js/municipiAndProvince.js"></script>
 <script src="/js/editApartment.js"></script>
