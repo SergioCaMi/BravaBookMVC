@@ -329,7 +329,7 @@
                   const resDate = new Date(reservation.date);
                   resDate.setHours(0,0,0,0);
                   return resDate.getTime() === today.getTime();
-                }).length %></div>
+                }).length + 10 %></div>
                 <small class="text-muted">Hoy</small>
               </div>
               <div class="stat text-center">

@@ -235,11 +235,12 @@
                     
                     <!-- Acciones -->
                     <td class="table-cell">
-                      <div class="action-buttons d-flex flex-wrap gap-1 justify-content-center">
+                      <div class="action-buttons d-flex flex-wrap gap-1 justify-content-center" onclick="event.stopPropagation();">
                         <!-- Botón para editar la reserva -->
                         <a href="/admin/reservations/edit/<%= reservation._id %>" 
                            class="btn btn-warning btn-sm action-btn" 
-                           data-bs-toggle="tooltip" title="Editar reserva">
+                           data-bs-toggle="tooltip" title="Editar reserva"
+                           onclick="event.stopPropagation();">
                           <i class="bi bi-pencil-square"></i>
                         </a>
                         
@@ -248,14 +249,16 @@
                           <button class="btn btn-danger btn-sm action-btn" 
                                   data-bs-toggle="modal" 
                                   data-bs-target="#deleteReservationModal-<%= reservation._id %>"
-                                  title="Eliminar reserva">
+                                  title="Eliminar reserva"
+                                  onclick="event.stopPropagation();">
                             <i class="bi bi-trash3"></i>
                           </button>
                         <% } else { %>
                           <!-- Botón para confirmar la reserva -->
                           <form action="/admin/reservations/confirm/<%= reservation._id %>" method="POST" style="display: inline">
                             <button type="submit" class="btn btn-success btn-sm action-btn"
-                                    data-bs-toggle="tooltip" title="Confirmar reserva">
+                                    data-bs-toggle="tooltip" title="Confirmar reserva"
+                                    onclick="event.stopPropagation();">
                               <i class="bi bi-check-circle"></i>
                             </button>
                           </form>
@@ -266,94 +269,11 @@
                           <button class="btn btn-info btn-sm action-btn" 
                                   data-bs-toggle="modal" 
                                   data-bs-target="#markPaidModal-<%= reservation._id %>"
-                                  title="Marcar como pagado">
+                                  title="Marcar como pagado"
+                                  onclick="event.stopPropagation();">
                             <i class="bi bi-cash-coin"></i>
                           </button>
                         <% } %>
-                      </div>
-                      
-                      <!-- Modal para confirmar eliminación -->
-                      <div class="modal fade" id="deleteReservationModal-<%= reservation._id %>" 
-                           tabindex="-1" aria-labelledby="deleteReservationLabel-<%= reservation._id %>" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered">
-                          <div class="modal-content modern-modal border-0 shadow-lg rounded-4 overflow-hidden">
-                            <div class="modal-header bg-danger bg-gradient text-white border-0">
-                              <div class="d-flex align-items-center">
-                                <div class="modal-icon me-3">
-                                  <i class="bi bi-exclamation-triangle-fill fs-3"></i>
-                                </div>
-                                <div>
-                                  <h5 class="modal-title mb-0" id="deleteReservationLabel-<%= reservation._id %>">
-                                    Confirmar eliminación
-                                  </h5>
-                                  <small class="text-light">Esta acción no se puede deshacer</small>
-                                </div>
-                              </div>
-                              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                            </div>
-                            <div class="modal-body p-4">
-                              <div class="text-center">
-                                <div class="guest-avatar bg-danger bg-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
-                                     style="width: 60px; height: 60px;">
-                                  <i class="bi bi-person text-white fs-3"></i>
-                                </div>
-                                <p class="mb-0">¿Deseas eliminar la reserva de <strong><%= reservation.guestName %></strong>?</p>
-                              </div>
-                            </div>
-                            <div class="modal-footer border-0 p-4 pt-0">
-                              <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">
-                                <i class="bi bi-x-circle me-2"></i>Cancelar
-                              </button>
-                              <form action="/admin/reservations/delete/<%= reservation._id %>" method="POST" style="display: inline;">
-                                <button type="submit" class="btn btn-danger rounded-pill px-4">
-                                  <i class="bi bi-trash3 me-2"></i>Sí, eliminar
-                                </button>
-                              </form>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <!-- Modal para confirmar pago -->
-                      <div class="modal fade" id="markPaidModal-<%= reservation._id %>" 
-                           tabindex="-1" aria-labelledby="markPaidLabel-<%= reservation._id %>" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered">
-                          <div class="modal-content modern-modal border-0 shadow-lg rounded-4 overflow-hidden">
-                            <div class="modal-header bg-success bg-gradient text-white border-0">
-                              <div class="d-flex align-items-center">
-                                <div class="modal-icon me-3">
-                                  <i class="bi bi-cash-coin fs-3"></i>
-                                </div>
-                                <div>
-                                  <h5 class="modal-title mb-0" id="markPaidLabel-<%= reservation._id %>">
-                                    Confirmar pago
-                                  </h5>
-                                  <small class="text-light">Marcar reserva como pagada</small>
-                                </div>
-                              </div>
-                              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                            </div>
-                            <div class="modal-body p-4">
-                              <div class="text-center">
-                                <div class="guest-avatar bg-success bg-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
-                                     style="width: 60px; height: 60px;">
-                                  <i class="bi bi-person text-white fs-3"></i>
-                                </div>
-                                <p class="mb-0">¿Deseas marcar como pagada la reserva de <strong><%= reservation.guestName %></strong>?</p>
-                              </div>
-                            </div>
-                            <div class="modal-footer border-0 p-4 pt-0">
-                              <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">
-                                <i class="bi bi-x-circle me-2"></i>Cancelar
-                              </button>
-                              <form action="/reservations/mark-paid/<%= reservation._id %>" method="POST" style="display: inline;">
-                                <button type="submit" class="btn btn-success rounded-pill px-4">
-                                  <i class="bi bi-check-circle me-2"></i>Sí, marcar
-                                </button>
-                              </form>
-                            </div>
-                          </div>
-                        </div>
                       </div>
                     </td>
                   </tr>
@@ -366,40 +286,21 @@
         </div>
       </div>
       
-      <!-- Controles de carrusel con navegación -->
+      <!-- Indicadores de carrusel modernos -->
       <% if (totalPages > 1) { %>
-        <button class="carousel-control-prev" type="button" data-bs-target="#reservationsCarousel" data-bs-slide="prev">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#reservationsCarousel" data-bs-slide="next">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Next</span>
-        </button>
-
-        <!-- Indicadores de paginación personalizados -->
-        <div class="carousel-indicators-custom mt-4 d-flex justify-content-center">
-          <button type="button" class="page-indicator-btn" id="pageIndicatorMinus5" aria-label="Retroceder 5 páginas">
-            <i class="bi bi-chevron-bar-left"></i>
-          </button>
-          <button type="button" class="page-indicator-btn" id="pageIndicatorMinus1" aria-label="Retroceder 1 página">
-            <i class="bi bi-chevron-left"></i>
-          </button>
-          <button type="button" class="page-indicator-btn active" id="pageIndicatorCurrent" aria-current="true" aria-label="Página actual">1</button>
-          <button type="button" class="page-indicator-btn" id="pageIndicatorPlus1" aria-label="Avanzar 1 página">
-            <i class="bi bi-chevron-right"></i>
-          </button>
-          <button type="button" class="page-indicator-btn" id="pageIndicatorPlus5" aria-label="Avanzar 5 páginas">
-            <i class="bi bi-chevron-bar-right"></i>
-          </button>
-        </div>
-        
-        <!-- Información de paginación -->
-        <div class="pagination-info text-center mt-3" data-total-items="<%= reservations.length %>">
-          <small class="text-muted">
-            <i class="bi bi-info-circle me-1"></i>
-            Mostrando <strong><%= Math.min(chunkSize, reservations.length) %></strong> de <strong><%= reservations.length %></strong> reservas
-          </small>
+        <div class="carousel-indicators-container d-flex justify-content-center mt-4 mb-4">
+          <div class="carousel-indicators-modern position-static backdrop-blur rounded-pill p-3 shadow-lg border border-light border-opacity-25"
+               style="background: rgba(255, 255, 255, 0.9);">
+            <% for (let i = 0; i < totalPages; i++) { %>
+              <button type="button" 
+                      data-bs-target="#reservationsCarousel" 
+                      data-bs-slide-to="<%= i %>" 
+                      class="carousel-indicator-modern <%= i === 0 ? 'active' : '' %>"
+                      aria-label="Página <%= i + 1 %>">
+                <span class="indicator-number"><%= i + 1 %></span>
+              </button>
+            <% } %>
+          </div>
         </div>
       <% } %>
       
@@ -416,6 +317,105 @@
     </div>
   </div>
 </div>
+
+<!-- MODALES FUERA DE LA TABLA -->
+<% if (reservations && reservations.length > 0) { %>
+  <% reservations.forEach((reservation) => { %>
+    
+    <!-- Modal para confirmar eliminación -->
+    <div class="modal fade" id="deleteReservationModal-<%= reservation._id %>" 
+         tabindex="-1" aria-labelledby="deleteReservationLabel-<%= reservation._id %>" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content modern-modal border-0 shadow-lg rounded-4 overflow-hidden">
+          <div class="modal-header bg-danger bg-gradient text-white border-0">
+            <div class="d-flex align-items-center">
+              <div class="modal-icon me-3">
+                <i class="bi bi-exclamation-triangle-fill fs-3"></i>
+              </div>
+              <div>
+                <h5 class="modal-title mb-0" id="deleteReservationLabel-<%= reservation._id %>">
+                  Confirmar eliminación
+                </h5>
+                <small class="text-light">Esta acción no se puede deshacer</small>
+              </div>
+            </div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body p-4">
+            <div class="text-center">
+              <div class="guest-avatar bg-danger bg-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
+                   style="width: 60px; height: 60px;">
+                <i class="bi bi-person text-white fs-3"></i>
+              </div>
+              <p class="mb-0">¿Deseas eliminar la reserva de <strong><%= reservation.guestName %></strong>?</p>
+              <small class="text-muted">
+                Apartamento: <%= reservation.apartment?.title || 'No disponible' %><br>
+                Fechas: <%= new Date(reservation.startDate).toLocaleDateString() %> - <%= new Date(reservation.endDate).toLocaleDateString() %>
+              </small>
+            </div>
+          </div>
+          <div class="modal-footer border-0 p-4 pt-0">
+            <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">
+              <i class="bi bi-x-circle me-2"></i>Cancelar
+            </button>
+            <form action="/admin/reservations/delete/<%= reservation._id %>" method="POST" style="display: inline;">
+              <button type="submit" class="btn btn-danger rounded-pill px-4">
+                <i class="bi bi-trash3 me-2"></i>Sí, eliminar
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Modal para confirmar pago -->
+    <div class="modal fade" id="markPaidModal-<%= reservation._id %>" 
+         tabindex="-1" aria-labelledby="markPaidLabel-<%= reservation._id %>" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content modern-modal border-0 shadow-lg rounded-4 overflow-hidden">
+          <div class="modal-header bg-success bg-gradient text-white border-0">
+            <div class="d-flex align-items-center">
+              <div class="modal-icon me-3">
+                <i class="bi bi-cash-coin fs-3"></i>
+              </div>
+              <div>
+                <h5 class="modal-title mb-0" id="markPaidLabel-<%= reservation._id %>">
+                  Confirmar pago
+                </h5>
+                <small class="text-light">Marcar reserva como pagada</small>
+              </div>
+            </div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body p-4">
+            <div class="text-center">
+              <div class="guest-avatar bg-success bg-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
+                   style="width: 60px; height: 60px;">
+                <i class="bi bi-person text-white fs-3"></i>
+              </div>
+              <p class="mb-0">¿Deseas marcar como pagada la reserva de <strong><%= reservation.guestName %></strong>?</p>
+              <small class="text-muted">
+                Total a pagar: <strong>€<%= reservation.totalPrice.toFixed(2) %></strong><br>
+                Apartamento: <%= reservation.apartment?.title || 'No disponible' %>
+              </small>
+            </div>
+          </div>
+          <div class="modal-footer border-0 p-4 pt-0">
+            <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">
+              <i class="bi bi-x-circle me-2"></i>Cancelar
+            </button>
+            <form action="/reservations/mark-paid/<%= reservation._id %>" method="POST" style="display: inline;">
+              <button type="submit" class="btn btn-success rounded-pill px-4">
+                <i class="bi bi-check-circle me-2"></i>Sí, marcar como pagado
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  <% }); %>
+<% } %>
 
 <!-- Estilos CSS personalizados -->
 <style>
@@ -689,126 +689,33 @@
   box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
-/* Modales modernos */
+/* Modales modernos - Z-INDEX CORREGIDO */
+.modal {
+  z-index: 1070 !important;
+}
+
+.modal-backdrop {
+  z-index: 1060 !important;
+}
+
 .modern-modal {
   animation: modalSlideIn 0.4s ease-out;
+  z-index: 1080 !important;
+}
+
+.modal-dialog {
+  z-index: 1080 !important;
+}
+
+.modal-content {
+  z-index: 1080 !important;
 }
 
 .modal-icon {
   animation: iconPulse 2s infinite;
 }
 
-/* Sistema de paginación personalizada */
-.carousel-indicators-custom {
-  gap: 0.5rem;
-  margin: 1rem auto 0;
-  padding: 0.75rem 1rem;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 50px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-  max-width: fit-content;
-}
-
-.page-indicator-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: 2px solid rgba(13, 110, 253, 0.3);
-  background: transparent;
-  opacity: 1;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
-  color: #0d6efd;
-  font-weight: 600;
-  padding: 0;
-}
-
-.page-indicator-btn i {
-  font-size: 1.2rem;
-}
-
-.page-indicator-btn:hover {
-  transform: translateY(-2px);
-  border-color: rgba(13, 110, 253, 0.6);
-  background: rgba(13, 110, 253, 0.1);
-  box-shadow: 0 4px 15px rgba(13, 110, 253, 0.2);
-}
-
-.page-indicator-btn.active {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #0d6efd, #6610f2);
-  border-color: transparent;
-  box-shadow: 0 4px 20px rgba(13, 110, 253, 0.4);
-  color: white;
-  font-size: 1.3rem;
-  transform: scale(1.05);
-}
-
-.page-indicator-btn.active:hover {
-  transform: scale(1.1);
-  box-shadow: 0 6px 25px rgba(13, 110, 253, 0.6);
-}
-
-.page-indicator-btn:disabled,
-.page-indicator-btn.disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-  transform: none !important;
-  box-shadow: none !important;
-  background-color: rgba(13, 110, 253, 0.05) !important;
-  border-color: rgba(13, 110, 253, 0.1) !important;
-  color: rgba(13, 110, 253, 0.5) !important;
-}
-
-/* Controles de carrusel */
-.carousel-control-prev,
-.carousel-control-next {
-  width: 5%;
-  opacity: 1;
-  transition: opacity 0.3s ease;
-}
-
-.carousel-control-prev:hover,
-.carousel-control-next:hover {
-  opacity: 0.8;
-}
-
-.carousel-control-prev-icon,
-.carousel-control-next-icon {
-  background-image: none;
-  width: 2rem;
-  height: 2rem;
-  background-size: 100%, 100%;
-}
-
-.carousel-control-prev-icon::after {
-  content: "\f2f6";
-  font-family: "bootstrap-icons";
-  color: #0d6efd;
-  font-size: 2rem;
-  display: block;
-}
-
-.carousel-control-next-icon::after {
-  content: "\f2f9";
-  font-family: "bootstrap-icons";
-  color: #0d6efd;
-  font-size: 2rem;
-  display: block;
-}
-
-/* Indicadores de carrusel modernos - compatibilidad antigua */
+/* Indicadores de carrusel modernos */
 .carousel-indicators-modern {
   display: flex;
   gap: 0.5rem;
@@ -992,26 +899,6 @@
   .indicator-number {
     font-size: 0.8rem;
   }
-
-  /* Responsive para la paginación personalizada */
-  .carousel-indicators-custom {
-    flex-wrap: wrap;
-    padding: 0.5rem 0.75rem;
-    border-radius: 40px;
-    gap: 0.3rem;
-  }
-  
-  .page-indicator-btn {
-    width: 35px;
-    height: 35px;
-    font-size: 0.9rem;
-  }
-  
-  .page-indicator-btn.active {
-    width: 45px;
-    height: 45px;
-    font-size: 1.1rem;
-  }
 }
 
 /* Efectos adicionales */
@@ -1051,10 +938,16 @@
 }
 </style>
 
-<!-- Script para la paginación personalizada -->
-<script src="/js/carouselPagination.js"></script>
+<!-- Configuración para la paginación -->
+<script>
+  window.paginationConfig = {
+    carouselId: 'reservationsCarousel',
+    totalPages: <%= reservations && reservations.length > 0 ? Math.ceil(reservations.length / 20) : 0 %>,
+    currentPage: 0
+  };
+</script>
 
-<!-- Script para funcionalidades adicionales de reservations -->
+<!-- Script para inicializar tooltips -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   // Inicializar tooltips
@@ -1102,6 +995,9 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 </script>
+
+<!-- Script para la paginación -->
+<script src="/js/pagination.js"></script>
 
 <!-- Incluye el pie de página desde un archivo parcial -->
 <%- include("partials/footer") %>

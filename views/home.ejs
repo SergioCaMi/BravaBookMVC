@@ -2,32 +2,29 @@
 
 <%- include("partials/mensajes") %>
 
-<div id="heroCarousel" class="carousel slide position-relative w-100" data-bs-ride="carousel" data-bs-interval="5000">
-
-  <div class="carousel-indicators">
-    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
-    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
-    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
-  </div>
-
-  <div class="carousel-inner">
-    <div class="carousel-item active">
-      <div class="hero-slide position-relative" style="background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('/img/hero_bg_1.jpg'); height: 110vh; background-size: cover; background-position: center; background-attachment: fixed;"></div>
+<div id="videoHero" class="video-hero position-relative w-100 overflow-hidden">
+  
+  <!-- Video de fondo con efecto zoom -->
+  <video class="hero-video position-absolute top-0 start-0 w-100 h-100" 
+         autoplay muted loop playsinline preload="auto">
+    <source src="/bg1.mp4" type="video/mp4">
+    <!-- Fallback para navegadores que no soporten video -->
+    <div class="hero-slide position-relative" 
+         style="background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('/img/hero_bg_1.jpg'); 
+                height: 110vh; background-size: cover; background-position: center; background-attachment: fixed;">
     </div>
-    <div class="carousel-item">
-      <div class="hero-slide position-relative" style="background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('/img/hero_bg_2.jpg'); height: 110vh; background-size: cover; background-position: center; background-attachment: fixed;"></div>
-    </div>
-    <div class="carousel-item">
-      <div class="hero-slide position-relative" style="background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('/img/hero_bg_3.jpg'); height: 110vh; background-size: cover; background-position: center; background-attachment: fixed;"></div>
-    </div>
-  </div>
+  </video>
+  
+  <!-- Overlay oscuro para mejorar la legibilidad del texto -->
+  <div class="video-overlay position-absolute top-0 start-0 w-100 h-100" 
+       style="background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)); z-index: 2;"></div>
 
   <div class="position-absolute top-50 start-50 translate-middle w-100 px-3" style="max-width: 1200px; z-index: 10; transform: translate(-50%, -40%);">
     <div class="container text-white text-center">
       <div class="row justify-content-center">
         <div class="col-12 col-xl-11">
           <div class="hero-content-card backdrop-blur rounded-4 p-4 p-md-5 shadow-lg border border-light border-opacity-25"
-               style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); animation: fadeInUp 1s ease-out;">
+               style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); animation: fadeInUp 1s ease-out; z-index: 3; position: relative;">
 
             <div class="hero-title-container mb-4">
               <h1 class="display-4 display-md-3 fw-bold mb-3 text-shadow"
@@ -513,8 +510,44 @@
     background: linear-gradient(45deg, #0b5ed7, #520dc2);
   }
 
-  /* Efectos para el carrusel hero */
-  .hero-slide {
+  /* Efectos para el video hero */
+  .video-hero {
+    height: 110vh;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-video {
+    object-fit: cover;
+    z-index: 1;
+    animation: videoZoom 20s ease-in-out infinite alternate;
+    min-width: 100%;
+    min-height: 100%;
+  }
+
+  @keyframes videoZoom {
+    0% { 
+      transform: scale(1); 
+    }
+    100% { 
+      transform: scale(1.1); 
+    }
+  }
+
+  .video-overlay {
+    pointer-events: none;
+  }
+
+  /* Asegurar que el contenido esté por encima del video */
+  .hero-content-card {
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  }
+
+  /* Efectos para el carrusel hero - REMOVIDO */
+  /* .hero-slide {
     transition: transform 0.6s ease-in-out;
   }
 
@@ -525,7 +558,7 @@
   @keyframes zoomIn {
     0% { transform: scale(1); }
     100% { transform: scale(1.05); }
-  }
+  } */
 
   /* Responsive adjustments */
   @media (max-width: 768px) {
@@ -539,6 +572,25 @@
 
     .apartment-card-wrapper {
       width: 280px !important;
+    }
+
+    /* Ajustes específicos para video en móviles */
+    .video-hero {
+      height: 100vh;
+    }
+
+    .hero-video {
+      /* En móviles, reducir el zoom para evitar que se vea muy cortado */
+      animation: videoZoomMobile 15s ease-in-out infinite alternate;
+    }
+  }
+
+  @keyframes videoZoomMobile {
+    0% { 
+      transform: scale(1.05); 
+    }
+    100% { 
+      transform: scale(1.15); 
     }
   }
 
@@ -611,6 +663,41 @@ function buscarApartamentos(e) {
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
       return new bootstrap.Tooltip(tooltipTriggerEl);
     });
+
+    // Manejar la carga del video de fondo
+    const heroVideo = document.querySelector('.hero-video');
+    const videoHero = document.querySelector('.video-hero');
+    
+    if (heroVideo && videoHero) {
+      // Asegurar que el video se reproduzca
+      heroVideo.addEventListener('loadeddata', function() {
+        console.log('Video de fondo cargado correctamente');
+        heroVideo.play().catch(function(error) {
+          console.log('Error al reproducir video:', error);
+          // Si el video no puede reproducirse, usar imagen de fallback
+          showImageFallback();
+        });
+      });
+
+      // Fallback si el video no se puede cargar
+      heroVideo.addEventListener('error', function() {
+        console.log('Error al cargar el video, usando imagen de fallback');
+        showImageFallback();
+      });
+
+      function showImageFallback() {
+        videoHero.style.background = `
+          linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), 
+          url('/img/hero_bg_1.jpg')
+        `;
+        videoHero.style.backgroundSize = 'cover';
+        videoHero.style.backgroundPosition = 'center';
+        videoHero.style.backgroundAttachment = 'fixed';
+        if (heroVideo) {
+          heroVideo.style.display = 'none';
+        }
+      }
+    }
   });
 </script>
 

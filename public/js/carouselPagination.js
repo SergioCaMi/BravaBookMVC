@@ -26,6 +26,34 @@ function initializeCarouselPagination(id = 'usersCarousel', total = 1) {
   
   // Actualizar estado inicial
   updatePaginationState();
+  
+  // Inicializar componentes Bootstrap
+  reinitializeBootstrapComponents();
+}
+
+/**
+ * Función global para reinicializar todos los componentes
+ * Se puede llamar desde cualquier script que modifique el DOM
+ */
+function reinitializeAllComponents() {
+  // Detectar automáticamente el carrusel presente en la página
+  const carousels = ['usersCarousel', 'reservationsCarousel', 'apartmentsCarousel'];
+  
+  for (let carouselIdToCheck of carousels) {
+    const carousel = document.getElementById(carouselIdToCheck);
+    if (carousel) {
+      // Obtener el número total de páginas
+      const totalPagesElement = document.getElementById('totalPagesCount');
+      const total = totalPagesElement ? parseInt(totalPagesElement.textContent) : 1;
+      
+      // Inicializar la paginación para este carrusel
+      initializeCarouselPagination(carouselIdToCheck, total);
+      break;
+    }
+  }
+  
+  // Reinicializar componentes Bootstrap independientemente
+  reinitializeBootstrapComponents();
 }
 
 /**
@@ -77,7 +105,128 @@ function setupCarouselListeners() {
   carousel.addEventListener('slid.bs.carousel', function(event) {
     currentPageIndex = event.to;
     updatePaginationState();
+    
+    // Reinicializar componentes Bootstrap después del cambio de página
+    reinitializeBootstrapComponents();
   });
+}
+
+/**
+ * Reinicializa componentes de Bootstrap después de cambio de página del carrusel
+ * Esto es necesario porque cuando el carrusel cambia de página, 
+ * los elementos del DOM se recrean y Bootstrap pierde las referencias
+ */
+function reinitializeBootstrapComponents() {
+  // Pequeño delay para asegurar que el DOM se ha actualizado
+  setTimeout(() => {
+    try {
+      // Reinicializar tooltips
+      const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+      tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+        if (!bootstrap.Tooltip.getInstance(tooltipTriggerEl)) {
+          new bootstrap.Tooltip(tooltipTriggerEl);
+        }
+      });
+
+      // Reinicializar modales - CRUCIAL para que funcionen los botones
+      const modalTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="modal"]'));
+      modalTriggerList.forEach(function (modalTriggerEl) {
+        // Verificar que el modal target existe en el DOM
+        const targetSelector = modalTriggerEl.getAttribute('data-bs-target');
+        if (targetSelector && document.querySelector(targetSelector)) {
+          // Limpiar event listeners previos para evitar duplicados
+          modalTriggerEl.removeEventListener('click', handleModalClick);
+          // Agregar event listener actualizado
+          modalTriggerEl.addEventListener('click', handleModalClick);
+          
+          // También forzar la inicialización de Bootstrap
+          const targetModal = document.querySelector(targetSelector);
+          if (targetModal && !bootstrap.Modal.getInstance(targetModal)) {
+            new bootstrap.Modal(targetModal);
+          }
+        }
+      });
+
+      console.log('Bootstrap components reinitialized after carousel slide');
+    } catch (error) {
+      console.error('Error reinitializing Bootstrap components:', error);
+    }
+  }, 100);
+}
+
+/**
+ * Manejador de clicks para botones de modal
+ * Asegura que los modales se abran correctamente
+ */
+function handleModalClick(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  
+  const button = event.currentTarget;
+  const targetSelector = button.getAttribute('data-bs-target');
+  
+  console.log('Modal button clicked:', targetSelector);
+  
+  if (targetSelector) {
+    const targetModal = document.querySelector(targetSelector);
+    if (targetModal) {
+      console.log('Modal found, showing:', targetModal);
+      
+      // Asegurar que el modal tenga una instancia de Bootstrap
+      let modal = bootstrap.Modal.getInstance(targetModal);
+      if (!modal) {
+        modal = new bootstrap.Modal(targetModal);
+      }
+      
+      // Mostrar el modal
+      modal.show();
+    } else {
+      console.error('Modal not found:', targetSelector);
+      // Debug: mostrar todos los modales disponibles
+      const allModals = document.querySelectorAll('.modal');
+      console.log('Available modals:', Array.from(allModals).map(m => m.id));
+    }
+  }
+}
+
+/**
+ * Configurar un observer para detectar cambios en el DOM
+ * Útil para cuando se agregan elementos dinámicamente
+ */
+function setupDOMObserver() {
+  const observer = new MutationObserver(function(mutations) {
+    let shouldReinitialize = false;
+    
+    mutations.forEach(function(mutation) {
+      // Verificar si se agregaron nodos con data-bs-toggle
+      if (mutation.type === 'childList') {
+        const addedNodes = Array.from(mutation.addedNodes);
+        addedNodes.forEach(node => {
+          if (node.nodeType === Node.ELEMENT_NODE) {
+            const hasModalTriggers = node.querySelectorAll && node.querySelectorAll('[data-bs-toggle="modal"]').length > 0;
+            const isModalTrigger = node.getAttribute && node.getAttribute('data-bs-toggle') === 'modal';
+            
+            if (hasModalTriggers || isModalTrigger) {
+              shouldReinitialize = true;
+            }
+          }
+        });
+      }
+    });
+    
+    if (shouldReinitialize) {
+      console.log('DOM changes detected, reinitializing Bootstrap components');
+      reinitializeBootstrapComponents();
+    }
+  });
+  
+  // Observar cambios en todo el documento
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+  
+  return observer;
 }
 
 /**
@@ -237,18 +386,26 @@ window.initializeCarouselPagination = initializeCarouselPagination;
 window.reinitializePagination = reinitializePagination;
 window.navigateToPage = navigateToPage;
 window.updatePaginationState = updatePaginationState;
+window.reinitializeAllComponents = reinitializeAllComponents;
+window.reinitializeBootstrapComponents = reinitializeBootstrapComponents;
+window.handleModalClick = handleModalClick;
+
+// Variable global para el observer
+let domObserver = null;
 
 // Auto-inicializar en páginas compatibles
 document.addEventListener('DOMContentLoaded', function() {
-  // Detectar automáticamente el carrusel y inicializar
-  const carousel = document.querySelector('[id$="Carousel"]');
-  if (carousel) {
-    const carouselItems = carousel.querySelectorAll('.carousel-item');
-    if (carouselItems.length > 0) {
-      initializeCarouselPagination(carousel.id, carouselItems.length);
-      
-      // Opcional: activar navegación por teclado
-      // setupKeyboardNavigation();
+  // Pequeño delay para asegurar que Bootstrap esté completamente cargado
+  setTimeout(() => {
+    // Usar la función global de reinicialización
+    reinitializeAllComponents();
+    
+    // Configurar observer para cambios en el DOM
+    if (!domObserver) {
+      domObserver = setupDOMObserver();
     }
-  }
+    
+    // Opcional: activar navegación por teclado
+    // setupKeyboardNavigation();
+  }, 500);
 });

@@ -4,229 +4,1451 @@
 <!-- Incluye mensajes parciales, como notificaciones o alertas -->
 <%- include("partials/mensajes") %>
 
-<!-- Barra de navegación superior -->
-<nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm mb-4">
-  <div class="container-fluid">
-    <!-- Logo o nombre de la marca -->
-    <a class="navbar-brand" href="#">BravaBook Dashboard</a>
-    <!-- Botón para cerrar sesión -->
-    <div class="ms-auto">
-      <a href="/logout" class="btn btn-outline-primary">Cerrar sesión</a>
+<!-- Hero section del dashboard -->
+<div class="dashboard-hero position-relative overflow-hidden">
+  <div class="hero-background position-absolute top-0 start-0 w-100 h-100"
+       style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+  
+  <div class="hero-content position-relative py-4">
+    <div class="container-fluid">
+      <div class="row align-items-center">
+        <div class="col-lg-8">
+          <div class="dashboard-welcome text-white" style="animation: fadeInLeft 0.8s ease-out;">
+            <div class="welcome-badge mb-2">
+              <span class="badge bg-light text-primary px-3 py-2 rounded-pill fs-6 fw-medium">
+                <i class="bi bi-person-circle me-2"></i>Mi Dashboard
+              </span>
+            </div>
+            
+            <h1 class="display-5 fw-bold mb-2">
+              Bienvenido, <%= user.name %>
+            </h1>
+            
+            <p class="lead mb-0 text-light">
+              Gestiona tu perfil y reservas desde aquí
+            </p>
+          </div>
+        </div>
+        
+        <!-- Acciones rápidas -->
+        <div class="col-lg-4 text-center text-lg-end">
+          <div class="quick-actions backdrop-blur rounded-4 p-3 shadow-lg border border-light border-opacity-25"
+               style="background: rgba(255, 255, 255, 0.1); animation: slideInRight 0.8s ease-out 0.3s both;">
+            
+            <div class="d-flex gap-2 justify-content-center justify-content-lg-end flex-wrap">
+              <a href="/profile/edit" class="btn btn-light btn-sm rounded-pill px-3">
+                <i class="bi bi-gear me-1"></i>Configuración
+              </a>
+              <a href="/logout" class="btn btn-outline-light btn-sm rounded-pill px-3">
+                <i class="bi bi-box-arrow-right me-1"></i>Cerrar Sesión
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-</nav>
+</div>
 
-<!-- Contenedor principal del contenido -->
-<div class="container-fluid">
-  <div class="row">
-    <!-- Menú lateral -->
-    <aside class="col-md-3 col-lg-2 d-flex flex-column p-4 bg-light border-end">
-      <h5 class="mb-3">Menú</h5>
-      <!-- Enlaces del menú lateral -->
-      <ul class="nav nav-pills flex-column">
-        <li class="nav-item"><a href="#" class="nav-link active">Perfil</a></li>
-        <li class="nav-item"><a href="/reservation/<%= user.id %>" class="nav-link">Reservas</a></li>
-        <li class="nav-item"><a href="/profile/edit" class="nav-link">Configuración</a></li>
-      </ul>
-    </aside>
-
-    <!-- Contenido principal -->
-    <main class="col-md-9 col-lg-10 p-4">
-      <!-- Sección del perfil del usuario -->
-      <div class="row align-items-center mb-4">
-        <div class="col-auto">
-          <!-- Imagen del avatar del usuario -->
-          <img src="/uploads/<%= user.avatar %>" alt="Avatar de <%= user.name %>"
-            class="img-thumbnail rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
-        </div>
-        <div class="col">
-          <!-- Nombre del usuario -->
-          <h2><%= user.name %></h2>
-          <!-- Rol del usuario -->
-          <p class="text-muted">
-            <%= user.role === 'admin' ? 'Administrador' : 'Usuario estándar' %>
-          </p>
-        </div>
-      </div>
-
-      <!-- Tarjeta con datos de la cuenta del usuario -->
-      <div class="card shadow-sm mb-4">
-        <div class="card-body">
-          <h5 class="card-title">Datos de cuenta</h5>
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item"><strong>Email:</strong> <%= user.email %></li>
-            <li class="list-group-item"><strong>Rol:</strong> <%= user.role || 'Usuario' %></li>
-            <li class="list-group-item"><strong>Bio:</strong> <%= user.bio || 'Sin información' %></li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- Tarjeta con apartamentos añadidos por el usuario -->
-      <div class="card shadow-sm">
-        <% if (user.role === 'admin' && apartments.length > 0) { %>
-          <h2>Apartamentos añadidos por <%= user.name %></h2>
-          <!-- Contenedor de tarjetas de apartamentos -->
-          <div class="d-flex overflow-auto gap-4 pb-3" style="scroll-snap-type: x mandatory;">
-        <% } %>
-        <% apartments.forEach(apartment => { %>
-          <div class="flex-shrink-0" style="width: 300px; scroll-snap-align: start;">
-            <div class="card h-100 shadow-sm">
-              <!-- Enlace a la página de detalles del apartamento -->
-              <a href="/apartments/<%= apartment._id %>">
-                <!-- Imagen principal del apartamento -->
-                <img src="<%= apartment.photos.find(p => p.isMain)?.url || '/img/default.jpg' %>"
-                  class="card-img-top object-fit-cover" style="height: 200px;" alt="Imagen principal">
-              </a>
-              <div class="card-body">
-                <!-- Título del apartamento -->
-                <h5 class="card-title text-primary"><%= apartment.title %></h5>
-                <!-- Ubicación del apartamento -->
-                <p class="card-text small text-muted">
-                  <%= apartment.location.municipality.nm %>, <%= apartment.location.province.nm %>
-                </p>
-                <!-- Precio del apartamento -->
-                <p class="card-text fw-bold mb-2"><%= apartment.price.toLocaleString() %>€</p>
-                <!-- Detalles de habitaciones y baños -->
-                <div class="d-flex justify-content-between mb-3 small">
-                  <span><i class="icon-bed me-1"></i> <%= apartment.rooms %> habs</span>
-                  <span><i class="icon-bath me-1"></i> <%= apartment.bathrooms %> baños</span>
-                </div>
-                <!-- Enlace para ver detalles del apartamento -->
-                <a href="/apartments/<%= apartment._id %>" class="btn btn-outline-primary btn-sm w-100">Ver detalles</a>
+<!-- Dashboard principal -->
+<div class="dashboard-main py-5" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+  <div class="container-fluid">
+    <div class="row g-4">
+      
+      <!-- Sidebar moderno -->
+      <aside class="col-lg-3">
+        <div class="sidebar-container backdrop-blur rounded-4 shadow-lg border border-light border-opacity-25 overflow-hidden"
+             style="background: rgba(255, 255, 255, 0.95); position: sticky; top: 100px;">
+          
+          <!-- Header del sidebar -->
+          <div class="sidebar-header bg-primary bg-gradient text-white p-4">
+            <div class="d-flex align-items-center">
+              <div class="sidebar-icon me-3">
+                <i class="bi bi-speedometer2 fs-4"></i>
+              </div>
+              <div>
+                <h5 class="mb-0 fw-bold">Panel de Control</h5>
+                <small class="text-white-50">Navegación rápida</small>
               </div>
             </div>
           </div>
-        <% }); %>
+          
+          <!-- Menú de navegación -->
+          <div class="sidebar-menu p-3">
+            <ul class="nav nav-pills flex-column gap-2">
+              <li class="nav-item">
+                <a href="#profile-section" class="nav-link active modern-nav-link" data-section="profile">
+                  <i class="bi bi-person-circle me-3"></i>
+                  <span>Mi Perfil</span>
+                  <i class="bi bi-chevron-right ms-auto"></i>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#reservations-section" class="nav-link modern-nav-link" data-section="reservations">
+                  <i class="bi bi-calendar-check me-3"></i>
+                  <span>Mis Reservas</span>
+                  <span class="badge bg-primary ms-auto"><%= reservations.length %></span>
+                </a>
+              </li>
+              <% if (user.role === 'admin' && apartments.length > 0) { %>
+                <li class="nav-item">
+                  <a href="#apartments-section" class="nav-link modern-nav-link" data-section="apartments">
+                    <i class="bi bi-house me-3"></i>
+                    <span>Mis Apartamentos</span>
+                    <span class="badge bg-success ms-auto"><%= apartments.length %></span>
+                  </a>
+                </li>
+              <% } %>
+              <li class="nav-item">
+                <a href="#" class="nav-link modern-nav-link" data-section="settings">
+                  <i class="bi bi-gear me-3"></i>
+                  <span>Configuración</span>
+                  <i class="bi bi-chevron-right ms-auto"></i>
+                </a>
+              </li>
+            </ul>
+          </div>
+          
+          <!-- Footer del sidebar -->
+          <div class="sidebar-footer p-3 border-top border-light">
+            <div class="user-quick-info d-flex align-items-center">
+              <img src="/uploads/<%= user.avatar %>" 
+                   alt="Avatar de <%= user.name %>"
+                   class="rounded-circle me-2 border border-2 border-primary"
+                   style="width: 40px; height: 40px; object-fit: cover;">
+              <div class="flex-grow-1">
+                <div class="fw-semibold text-dark small"><%= user.name %></div>
+                <div class="text-muted small">
+                  <%= user.role === 'admin' ? 'Administrador' : 'Usuario' %>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-
-      <!-- Tarjeta con las últimas reservas del usuario -->
-      <div class="card shadow-sm">
-        <% if (reservations.length > 0) { %>
-          <h2>Últimas reservas de <%= user.name %></h2>
-          <!-- Tabla de reservas -->
-          <div class="table-responsive">
-            <table class="table table-hover align-middle text-center mb-0">
-              <thead class="table-dark">
-                <tr>
-                  <th>#</th>
-                  <th>Huésped</th>
-                  <th>Email</th>
-                  <th>Apartamento</th>
-                  <th>Usuario</th>
-                  <th>Fechas</th>
-                  <th>Total (€)</th>
-                  <th>Estado</th>
-                  <th>Pagado</th>
-                  <% if (currentUser.role === "admin") { %>
-                    <th>Acciones</th>
-                  <% } %>
-                </tr>
-              </thead>
-              <tbody>
-                <% reservations.forEach((reservation, index) => { %>
-                  <tr class="<%= new Date(reservation.endDate) < new Date() ? 'table-light' : 'table-success' %>">
-                    <td><%= index + 1 %></td>
-                    <td><strong><%= reservation.guestName %></strong></td>
-                    <td><%= reservation.guestEmail %></td>
-                    <td>
-                      <% if (reservation.apartment) { %>
-                        <a href="/apartments/<%= reservation.apartment._id %>">
-                          <%= reservation.apartment.title %>
-                        </a>
-                      <% } else { %>
-                        <em>No disponible</em>
-                      <% } %>
-                    </td>
-                    <td><%= reservation.user?.name || 'Desconocido' %></td>
-                    <td>
-                      <%= new Date(reservation.startDate).toLocaleDateString() %> –
-                      <%= new Date(reservation.endDate).toLocaleDateString() %>
-                    </td>
-                    <td><span class="badge bg-secondary">€ <%= reservation.totalPrice.toFixed(2) %></span></td>
-                    <td>
-                      <span class="badge <%= reservation.status === 'confirmed' ? 'bg-success' : 'bg-danger' %>">
-                        <%= reservation.status %>
+      </aside>
+      
+      <!-- Contenido principal -->
+      <main class="col-lg-9">
+        
+        <!-- Sección: Mi Perfil -->
+        <section id="profile-section" class="dashboard-section">
+          <div class="section-header mb-4">
+            <h2 class="section-title fw-bold text-dark mb-2" style="animation: fadeInUp 0.8s ease-out;">
+              <i class="bi bi-person-circle text-primary me-2"></i>Mi Perfil
+            </h2>
+            <p class="text-muted mb-0">Información personal y datos de la cuenta</p>
+          </div>
+          
+          <!-- Tarjeta de perfil principal -->
+          <div class="profile-card backdrop-blur rounded-4 shadow-lg border border-light border-opacity-25 overflow-hidden mb-4"
+               style="background: rgba(255, 255, 255, 0.95); animation: slideInUp 0.6s ease-out 0.1s both;">
+            
+            <div class="profile-header bg-gradient p-4" 
+                 style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+              <div class="row align-items-center">
+                <div class="col-auto">
+                  <div class="profile-avatar position-relative">
+                    <img src="/uploads/<%= user.avatar %>" 
+                         alt="Avatar de <%= user.name %>"
+                         class="img-fluid rounded-circle shadow-lg border border-4 border-white"
+                         style="width: 120px; height: 120px; object-fit: cover;">
+                    <div class="status-indicator position-absolute bottom-0 end-0 bg-success border border-white border-3 rounded-circle"
+                         style="width: 25px; height: 25px;"></div>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="profile-info text-white">
+                    <h3 class="fw-bold mb-2"><%= user.name %></h3>
+                    <p class="mb-2 d-flex align-items-center">
+                      <i class="bi bi-envelope me-2"></i><%= user.email %>
+                    </p>
+                    <div class="profile-badges">
+                      <span class="badge bg-light text-primary px-3 py-2 rounded-pill me-2">
+                        <i class="bi bi-shield-check me-1"></i>
+                        <%= user.role === 'admin' ? 'Administrador' : 'Usuario Verificado' %>
                       </span>
-                    </td>
-                    <td>
-                      <% if (reservation.paid) { %>
-                        <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                      <span class="badge bg-success bg-gradient px-3 py-2 rounded-pill">
+                        <i class="bi bi-check-circle me-1"></i>Activo
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-auto">
+                  <a href="/profile/edit" class="btn btn-light btn-lg rounded-pill px-4">
+                    <i class="bi bi-pencil-square me-2"></i>Editar Perfil
+                  </a>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Información detallada -->
+            <div class="profile-details p-4">
+              <div class="row g-4">
+                <div class="col-md-6">
+                  <div class="info-card bg-light rounded-3 p-3 h-100">
+                    <h6 class="fw-bold text-dark mb-3">
+                      <i class="bi bi-person-vcard text-primary me-2"></i>Información Personal
+                    </h6>
+                    <div class="info-list">
+                      <div class="info-item d-flex justify-content-between mb-2">
+                        <span class="text-muted">Email:</span>
+                        <span class="fw-medium"><%= user.email %></span>
+                      </div>
+                      <div class="info-item d-flex justify-content-between mb-2">
+                        <span class="text-muted">Rol:</span>
+                        <span class="fw-medium"><%= user.role || 'Usuario' %></span>
+                      </div>
+                      <div class="info-item d-flex justify-content-between">
+                        <span class="text-muted">Estado:</span>
+                        <span class="badge bg-success">Activo</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="col-md-6">
+                  <div class="bio-card bg-light rounded-3 p-3 h-100">
+                    <h6 class="fw-bold text-dark mb-3">
+                      <i class="bi bi-chat-quote text-primary me-2"></i>Biografía
+                    </h6>
+                    <div class="bio-content">
+                      <% if (user.bio && user.bio.trim() !== '') { %>
+                        <p class="text-muted mb-0 lh-base"><%= user.bio %></p>
                       <% } else { %>
-                        <i class="bi bi-x-circle-fill text-danger fs-5"></i>
-                      <% } %>
-                    </td>
-                    <!-- Acciones para administradores -->
-                    <% if (currentUser.role === "admin") { %>
-                      <td>
-                        <div class="d-flex flex-column flex-sm-row flex-wrap gap-1 justify-content-center align-items-center">
-                          <!-- Botón para editar la reserva -->
-                          <a href="/admin/reservations/edit/<%= reservation._id %>" class="btn btn-warning btn-sm px-2 py-1">
-                            <i class="bi bi-pencil-square"></i>
+                        <div class="text-center py-3">
+                          <i class="bi bi-chat-dots text-muted fs-1 mb-2"></i>
+                          <p class="text-muted mb-2">No hay biografía disponible</p>
+                          <a href="/profile/edit" class="btn btn-outline-primary btn-sm rounded-pill">
+                            <i class="bi bi-plus-circle me-1"></i>Añadir biografía
                           </a>
-                          <!-- Botón para eliminar la reserva -->
-                          <button class="btn btn-danger btn-sm px-2 py-1" data-bs-toggle="modal" data-bs-target="#deleteReservationModal-<%= reservation._id %>">
-                            <i class="bi bi-trash3"></i>
-                          </button>
-                          <!-- Botón para marcar como pagado -->
-                          <% if (!reservation.paid) { %>
-                            <button class="btn btn-success btn-sm px-2 py-1" data-bs-toggle="modal" data-bs-target="#markPaidModal-<%= reservation._id %>">
-                              <i class="bi bi-cash-coin"></i>
-                            </button>
+                        </div>
+                      <% } %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        <!-- Sección: Mis Apartamentos (solo para admins) -->
+        <% if (user.role === 'admin' && apartments.length > 0) { %>
+        <section id="apartments-section" class="dashboard-section mb-5">
+          <div class="section-header mb-4">
+            <h2 class="section-title fw-bold text-dark mb-2">
+              <i class="bi bi-house text-primary me-2"></i>Mis Apartamentos
+            </h2>
+            <p class="text-muted mb-0">Apartamentos que has añadido a la plataforma</p>
+          </div>
+          
+          <!-- Contenedor de apartamentos -->
+          <div class="apartments-container backdrop-blur rounded-4 shadow-lg border border-light border-opacity-25 p-4"
+               style="background: rgba(255, 255, 255, 0.95);">
+            
+            <!-- Header con estadísticas -->
+            <div class="apartments-header d-flex justify-content-between align-items-center mb-4">
+              <div class="apartments-stats d-flex gap-4">
+                <div class="stat-item text-center">
+                  <div class="stat-number h4 fw-bold text-primary mb-0"><%= apartments.length %></div>
+                  <small class="text-muted">Total</small>
+                </div>
+                <div class="stat-item text-center">
+                  <div class="stat-number h4 fw-bold text-success mb-0">
+                    <%= apartments.filter(apt => apt.active).length %>
+                  </div>
+                  <small class="text-muted">Activos</small>
+                </div>
+                <div class="stat-item text-center">
+                  <div class="stat-number h4 fw-bold text-warning mb-0">
+                    <%= apartments.filter(apt => !apt.active).length %>
+                  </div>
+                  <small class="text-muted">Pausados</small>
+                </div>
+              </div>
+              
+              <a href="/admin/apartment/new" class="btn btn-primary rounded-pill px-4">
+                <i class="bi bi-plus-circle me-2"></i>Nuevo Apartamento
+              </a>
+            </div>
+            
+            <!-- Carrusel de apartamentos -->
+            <div class="apartments-carousel">
+              <div class="d-flex overflow-auto gap-4 pb-3" style="scroll-snap-type: x mandatory;">
+                <% apartments.forEach((apartment, index) => { %>
+                  <div class="apartment-card-wrapper flex-shrink-0" 
+                       style="width: 320px; scroll-snap-align: start; animation: slideInUp 0.6s ease-out <%= index * 0.1 %>s both;">
+                    <div class="apartment-card card border-0 shadow-lg rounded-4 h-100 overflow-hidden transition-all">
+                      
+                      <!-- Imagen del apartamento -->
+                      <div class="card-img-container position-relative overflow-hidden">
+                        <a href="/apartments/<%= apartment._id %>" class="d-block">
+                          <img src="<%= apartment.photos.find(p => p.isMain)?.url || '/img/default.jpg' %>" 
+                               class="card-img-top transition-all" 
+                               style="height: 200px; object-fit: cover;" 
+                               alt="<%= apartment.title %>">
+                          <div class="image-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center opacity-0 transition-all">
+                            <span class="btn btn-light btn-lg rounded-circle shadow-lg">
+                              <i class="bi bi-eye-fill"></i>
+                            </span>
+                          </div>
+                        </a>
+                        
+                        <!-- Badge de estado -->
+                        <div class="position-absolute top-0 start-0 m-3">
+                          <% if (apartment.active) { %>
+                            <span class="badge bg-success bg-gradient px-3 py-2 rounded-pill shadow-sm">
+                              <i class="bi bi-check-circle me-1"></i>Activo
+                            </span>
+                          <% } else { %>
+                            <span class="badge bg-warning bg-gradient px-3 py-2 rounded-pill shadow-sm">
+                              <i class="bi bi-pause-circle me-1"></i>Pausado
+                            </span>
                           <% } %>
                         </div>
-                        <!-- Modal para confirmar eliminación -->
-                        <div class="modal fade" id="deleteReservationModal-<%= reservation._id %>" tabindex="-1" aria-labelledby="deleteReservationLabel-<%= reservation._id %>" aria-hidden="true">
-                          <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
-                              <div class="modal-header bg-danger text-white">
-                                <h5 class="modal-title" id="deleteReservationLabel-<%= reservation._id %>">Confirmar eliminación</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                              </div>
-                              <div class="modal-body">
-                                ¿Deseas eliminar la reserva de <strong><%= reservation.guestName %></strong>?
-                              </div>
-                              <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
-                                <form action="/reservations/delete/<%= reservation._id %>" method="POST">
-                                  <button type="submit" class="btn btn-danger btn-sm">Sí, eliminar</button>
-                                </form>
-                              </div>
-                            </div>
+                        
+                        <!-- Precio -->
+                        <div class="position-absolute bottom-0 end-0 m-3">
+                          <span class="badge bg-dark bg-gradient px-3 py-2 rounded-pill shadow-lg fs-6 fw-bold">
+                            <%= apartment.price.toLocaleString() %>€
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <!-- Contenido de la tarjeta -->
+                      <div class="card-body p-4">
+                        <h5 class="card-title text-dark fw-bold mb-2 lh-sm">
+                          <%= apartment.title %>
+                        </h5>
+                        <p class="text-muted mb-3 d-flex align-items-center">
+                          <i class="bi bi-geo-alt-fill text-primary me-2"></i>
+                          <small><%= apartment.location.municipality.nm %>, <%= apartment.location.province.nm %></small>
+                        </p>
+                        
+                        <!-- Detalles rápidos -->
+                        <div class="apartment-details d-flex justify-content-between mb-3 p-2 bg-light rounded-3">
+                          <div class="detail-item text-center">
+                            <i class="bi bi-door-closed text-primary d-block mb-1"></i>
+                            <small class="fw-medium"><%= apartment.rooms %> habs</small>
+                          </div>
+                          <div class="detail-item text-center">
+                            <i class="bi bi-droplet text-info d-block mb-1"></i>
+                            <small class="fw-medium"><%= apartment.bathrooms %> baños</small>
+                          </div>
+                          <div class="detail-item text-center">
+                            <i class="bi bi-people text-success d-block mb-1"></i>
+                            <small class="fw-medium"><%= apartment.maxGuests || 'N/A' %> huésp.</small>
                           </div>
                         </div>
-                        <!-- Modal para confirmar pago -->
-                        <div class="modal fade" id="markPaidModal-<%= reservation._id %>" tabindex="-1" aria-labelledby="markPaidLabel-<%= reservation._id %>" aria-hidden="true">
-                          <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
-                              <div class="modal-header bg-success text-white">
-                                <h5 class="modal-title" id="markPaidLabel-<%= reservation._id %>">Confirmar pago</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                              </div>
-                              <div class="modal-body">
-                                ¿Deseas marcar como pagada la reserva de <strong><%= reservation.guestName %></strong>?
-                              </div>
-                              <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
-                                <form action="/reservations/mark-paid/<%= reservation._id %>" method="POST">
-                                  <button type="submit" class="btn btn-success btn-sm">Sí, marcar</button>
-                                </form>
-                              </div>
-                            </div>
-                          </div>
+                        
+                        <!-- Botones de acción -->
+                        <div class="d-flex gap-2">
+                          <a href="/apartments/<%= apartment._id %>" 
+                             class="btn btn-outline-primary btn-sm flex-fill rounded-pill">
+                            <i class="bi bi-eye me-1"></i>Ver
+                          </a>
+                          <a href="/admin/apartments/edit/<%= apartment._id %>" 
+                             class="btn btn-warning btn-sm flex-fill rounded-pill">
+                            <i class="bi bi-pencil me-1"></i>Editar
+                          </a>
                         </div>
-                      </td>
-                    <% } %>
-                  </tr>
+                      </div>
+                    </div>
+                  </div>
                 <% }); %>
-              </tbody>
-            </table>
+              </div>
+            </div>
           </div>
+        </section>
         <% } %>
+        
+        <!-- Sección: Mis Reservas -->
+        <section id="reservations-section" class="dashboard-section">
+          <div class="section-header mb-4">
+            <h2 class="section-title fw-bold text-dark mb-2">
+              <i class="bi bi-calendar-check text-primary me-2"></i>Mis Reservas
+            </h2>
+            <p class="text-muted mb-0">Historial completo de reservas</p>
+          </div>
+          
+          <% if (reservations.length > 0) { %>
+            <!-- Contenedor de reservas -->
+            <div class="reservations-container backdrop-blur rounded-4 shadow-lg border border-light border-opacity-25 overflow-hidden"
+                 style="background: rgba(255, 255, 255, 0.95);">
+              
+              <!-- Header con estadísticas -->
+              <div class="reservations-header bg-light p-4 border-bottom">
+                <div class="row align-items-center">
+                  <div class="col-md-8">
+                    <div class="reservations-stats d-flex gap-4">
+                      <div class="stat-item text-center">
+                        <div class="stat-number h5 fw-bold text-primary mb-0"><%= reservations.length %></div>
+                        <small class="text-muted">Total</small>
+                      </div>
+                      <div class="stat-item text-center">
+                        <div class="stat-number h5 fw-bold text-success mb-0">
+                          <%= reservations.filter(r => r.status === 'confirmed').length %>
+                        </div>
+                        <small class="text-muted">Confirmadas</small>
+                      </div>
+                      <div class="stat-item text-center">
+                        <div class="stat-number h5 fw-bold text-info mb-0">
+                          <%= reservations.filter(r => r.paid).length %>
+                        </div>
+                        <small class="text-muted">Pagadas</small>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-4 text-end">
+                    <div class="filter-buttons">
+                      <button class="btn btn-outline-primary btn-sm rounded-pill me-2" onclick="filterReservations('all')">
+                        Todas
+                      </button>
+                      <button class="btn btn-outline-success btn-sm rounded-pill" onclick="filterReservations('confirmed')">
+                        Confirmadas
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Tabla de reservas moderna -->
+              <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 modern-table">
+                  <thead class="table-dark">
+                    <tr>
+                      <th class="text-center">#</th>
+                      <th><i class="bi bi-person me-1"></i>Huésped</th>
+                      <th><i class="bi bi-envelope me-1"></i>Email</th>
+                      <th><i class="bi bi-house me-1"></i>Apartamento</th>
+                      <th><i class="bi bi-calendar-range me-1"></i>Fechas</th>
+                      <th class="text-center"><i class="bi bi-currency-euro me-1"></i>Total</th>
+                      <th class="text-center"><i class="bi bi-check-circle me-1"></i>Estado</th>
+                      <th class="text-center"><i class="bi bi-credit-card me-1"></i>Pagado</th>
+                      <% if (currentUser.role === "admin") { %>
+                        <th class="text-center"><i class="bi bi-gear me-1"></i>Acciones</th>
+                      <% } %>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% reservations.forEach((reservation, index) => { %>
+                      <tr class="reservation-row <%= new Date(reservation.endDate) < new Date() ? 'past-reservation' : 'active-reservation' %>"
+                          data-status="<%= reservation.status %>">
+                        <td class="text-center">
+                          <span class="badge bg-secondary rounded-pill"><%= index + 1 %></span>
+                        </td>
+                        <td>
+                          <div class="guest-info">
+                            <div class="fw-bold text-dark"><%= reservation.guestName %></div>
+                            <small class="text-muted">Huésped principal</small>
+                          </div>
+                        </td>
+                        <td>
+                          <a href="mailto:<%= reservation.guestEmail %>" class="text-decoration-none">
+                            <i class="bi bi-envelope-fill text-primary me-1"></i>
+                            <%= reservation.guestEmail %>
+                          </a>
+                        </td>
+                        <td>
+                          <% if (reservation.apartment) { %>
+                            <div class="apartment-info">
+                              <a href="/apartments/<%= reservation.apartment._id %>" 
+                                 class="fw-medium text-decoration-none text-primary">
+                                <%= reservation.apartment.title %>
+                              </a>
+                              <small class="text-muted d-block">
+                                <i class="bi bi-geo-alt me-1"></i>
+                                <%= reservation.apartment.location?.municipality?.nm || 'N/A' %>
+                              </small>
+                            </div>
+                          <% } else { %>
+                            <span class="text-muted fst-italic">No disponible</span>
+                          <% } %>
+                        </td>
+                        <td>
+                          <div class="date-range">
+                            <div class="fw-medium text-dark">
+                              <i class="bi bi-calendar-event text-success me-1"></i>
+                              <%= new Date(reservation.startDate).toLocaleDateString('es-ES') %>
+                            </div>
+                            <div class="text-muted small">
+                              <i class="bi bi-calendar-x text-danger me-1"></i>
+                              <%= new Date(reservation.endDate).toLocaleDateString('es-ES') %>
+                            </div>
+                          </div>
+                        </td>
+                        <td class="text-center">
+                          <span class="badge bg-primary bg-gradient fs-6 px-3 py-2">
+                            €<%= reservation.totalPrice.toFixed(2) %>
+                          </span>
+                        </td>
+                        <td class="text-center">
+                          <span class="badge <%= reservation.status === 'confirmed' ? 'bg-success' : 'bg-danger' %> bg-gradient px-3 py-2">
+                            <i class="bi <%= reservation.status === 'confirmed' ? 'bi-check-circle' : 'bi-x-circle' %> me-1"></i>
+                            <%= reservation.status === 'confirmed' ? 'Confirmada' : 'Pendiente' %>
+                          </span>
+                        </td>
+                        <td class="text-center">
+                          <% if (reservation.paid) { %>
+                            <div class="payment-status text-success">
+                              <i class="bi bi-check-circle-fill fs-4"></i>
+                              <small class="d-block">Pagado</small>
+                            </div>
+                          <% } else { %>
+                            <div class="payment-status text-danger">
+                              <i class="bi bi-x-circle-fill fs-4"></i>
+                              <small class="d-block">Pendiente</small>
+                            </div>
+                          <% } %>
+                        </td>
+                        
+                        <!-- Acciones para administradores -->
+                        <% if (currentUser.role === "admin") { %>
+                          <td class="text-center">
+                            <div class="action-buttons d-flex gap-1 justify-content-center">
+                              <!-- Botón editar -->
+                              <a href="/admin/reservations/edit/<%= reservation._id %>" 
+                                 class="btn btn-warning btn-sm rounded-circle action-btn"
+                                 data-bs-toggle="tooltip" title="Editar reserva">
+                                <i class="bi bi-pencil-square"></i>
+                              </a>
+                              
+                              <!-- Botón eliminar -->
+                              <button class="btn btn-danger btn-sm rounded-circle action-btn" 
+                                      data-bs-toggle="modal" 
+                                      data-bs-target="#deleteReservationModal-<%= reservation._id %>"
+                                      title="Eliminar reserva">
+                                <i class="bi bi-trash3"></i>
+                              </button>
+                              
+                              <!-- Botón marcar como pagado -->
+                              <% if (!reservation.paid) { %>
+                                <button class="btn btn-success btn-sm rounded-circle action-btn" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#markPaidModal-<%= reservation._id %>"
+                                        title="Marcar como pagado">
+                                  <i class="bi bi-cash-coin"></i>
+                                </button>
+                              <% } %>
+                            </div>
+                            
+                            <!-- Modal para confirmar eliminación -->
+                            <div class="modal fade" id="deleteReservationModal-<%= reservation._id %>" tabindex="-1">
+                              <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content modern-modal border-0 shadow-lg rounded-4 overflow-hidden">
+                                  <div class="modal-header bg-danger bg-gradient text-white border-0">
+                                    <div class="d-flex align-items-center">
+                                      <div class="modal-icon me-3">
+                                        <i class="bi bi-exclamation-triangle-fill fs-3"></i>
+                                      </div>
+                                      <div>
+                                        <h5 class="modal-title fw-bold mb-0">Confirmar Eliminación</h5>
+                                        <small class="text-white-50">Esta acción no se puede deshacer</small>
+                                      </div>
+                                    </div>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                  </div>
+                                  <div class="modal-body p-4 text-center">
+                                    <div class="mb-3">
+                                      <i class="bi bi-trash3 text-danger" style="font-size: 3rem;"></i>
+                                    </div>
+                                    <p class="mb-0">
+                                      ¿Estás seguro de que deseas eliminar la reserva de 
+                                      <strong class="text-danger"><%= reservation.guestName %></strong>?
+                                    </p>
+                                  </div>
+                                  <div class="modal-footer border-0 p-4 pt-0">
+                                    <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">
+                                      <i class="bi bi-x-circle me-1"></i>Cancelar
+                                    </button>
+                                    <form action="/reservations/delete/<%= reservation._id %>" method="POST" class="d-inline">
+                                      <button type="submit" class="btn btn-danger rounded-pill px-4">
+                                        <i class="bi bi-trash3 me-1"></i>Sí, Eliminar
+                                      </button>
+                                    </form>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <!-- Modal para confirmar pago -->
+                            <% if (!reservation.paid) { %>
+                              <div class="modal fade" id="markPaidModal-<%= reservation._id %>" tabindex="-1">
+                                <div class="modal-dialog modal-dialog-centered">
+                                  <div class="modal-content modern-modal border-0 shadow-lg rounded-4 overflow-hidden">
+                                    <div class="modal-header bg-success bg-gradient text-white border-0">
+                                      <div class="d-flex align-items-center">
+                                        <div class="modal-icon me-3">
+                                          <i class="bi bi-cash-coin fs-3"></i>
+                                        </div>
+                                        <div>
+                                          <h5 class="modal-title fw-bold mb-0">Confirmar Pago</h5>
+                                          <small class="text-white-50">Marcar reserva como pagada</small>
+                                        </div>
+                                      </div>
+                                      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body p-4 text-center">
+                                      <div class="mb-3">
+                                        <i class="bi bi-check-circle text-success" style="font-size: 3rem;"></i>
+                                      </div>
+                                      <p class="mb-0">
+                                        ¿Confirmas que has recibido el pago de 
+                                        <strong class="text-success"><%= reservation.guestName %></strong>?
+                                      </p>
+                                      <div class="mt-3 p-3 bg-light rounded-3">
+                                        <div class="fw-bold text-success fs-4">€<%= reservation.totalPrice.toFixed(2) %></div>
+                                      </div>
+                                    </div>
+                                    <div class="modal-footer border-0 p-4 pt-0">
+                                      <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">
+                                        <i class="bi bi-x-circle me-1"></i>Cancelar
+                                      </button>
+                                      <form action="/reservations/mark-paid/<%= reservation._id %>" method="POST" class="d-inline">
+                                        <button type="submit" class="btn btn-success rounded-pill px-4">
+                                          <i class="bi bi-check-circle me-1"></i>Sí, Marcar Pagado
+                                        </button>
+                                      </form>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            <% } %>
+                          </td>
+                        <% } %>
+                      </tr>
+                    <% }); %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          <% } else { %>
+            <!-- Estado vacío -->
+            <div class="empty-state backdrop-blur rounded-4 shadow-lg border border-light border-opacity-25 p-5 text-center"
+                 style="background: rgba(255, 255, 255, 0.95);">
+              <div class="empty-icon mb-4">
+                <i class="bi bi-calendar-x text-muted" style="font-size: 4rem;"></i>
+              </div>
+              <h4 class="text-muted mb-3">No tienes reservas aún</h4>
+              <p class="text-muted mb-4">
+                Cuando realices tu primera reserva, aparecerá aquí con todos los detalles.
+              </p>
+              <a href="/" class="btn btn-primary btn-lg rounded-pill px-4">
+                <i class="bi bi-search me-2"></i>Explorar Apartamentos
+              </a>
+            </div>
+          <% } %>
+        </section>
+        
+        <!-- Sección: Configuración -->
+        <section id="settings-section" class="dashboard-section">
+          <div class="section-header mb-4">
+            <h2 class="section-title fw-bold text-dark mb-2" style="animation: fadeInUp 0.8s ease-out;">
+              <i class="bi bi-gear text-primary me-2"></i>Configuración
+            </h2>
+            <p class="text-muted mb-0">Edita tu perfil y configuraciones de cuenta</p>
+          </div>
+          
+          <!-- Contenedor de configuración -->
+          <div class="settings-container backdrop-blur rounded-4 shadow-lg border border-light border-opacity-25 overflow-hidden"
+               style="background: rgba(255, 255, 255, 0.95);">
+            
+            <!-- Header de configuración -->
+            <div class="settings-header bg-light p-4 border-bottom">
+              <div class="row align-items-center">
+                <div class="col-md-8">
+                  <h4 class="fw-bold text-dark mb-1">Editar Perfil</h4>
+                  <p class="text-muted mb-0">Actualiza tu información personal</p>
+                </div>
+                <div class="col-md-4 text-end">
+                  <span class="badge bg-info px-3 py-2 rounded-pill">
+            <i class="bi bi-person-gear me-1"></i>Configuración
+          </span>
+        </div>
       </div>
-    </main>
+    </div>
+    
+    <!-- Formulario de configuración -->
+    <div class="settings-form p-4">
+      <form action="/profile/update" method="POST" enctype="multipart/form-data" id="settingsForm">
+        
+        <!-- Sección de Avatar -->
+        <div class="avatar-section mb-4 p-4 bg-light rounded-3">
+          <h5 class="fw-bold text-dark mb-3">
+            <i class="bi bi-person-circle text-primary me-2"></i>Avatar
+          </h5>
+          
+          <div class="row align-items-center">
+            <div class="col-auto">
+              <div class="avatar-container position-relative">
+                <img src="/uploads/<%= currentUser.avatar %>" 
+                     class="rounded-circle border border-3 border-primary shadow-sm" 
+                     style="width: 100px; height: 100px; object-fit: cover;" 
+                     alt="Avatar">
+                <div class="avatar-badge position-absolute bottom-0 end-0 bg-primary rounded-circle d-flex align-items-center justify-content-center"
+                     style="width: 30px; height: 30px;">
+                  <i class="bi bi-camera text-white"></i>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="mb-3">
+                <label for="avatar" class="form-label fw-medium">Cambiar avatar</label>
+                <input type="file" name="avatar" id="avatar" class="form-control" accept="image/*">
+                <small class="text-muted">Formatos permitidos: JPG, PNG, GIF. Tamaño máximo: 5MB</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Información Personal -->
+        <div class="personal-info-section mb-4">
+          <h5 class="fw-bold text-dark mb-3">
+            <i class="bi bi-person-vcard text-primary me-2"></i>Información Personal
+          </h5>
+          
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="form-floating">
+                <input type="text" name="name" id="name" class="form-control" 
+                       value="<%= user.name %>" required placeholder="Nombre completo">
+                <label for="name">
+                  <i class="bi bi-person me-2"></i>Nombre completo
+                </label>
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <div class="form-floating">
+                <input type="email" name="email" id="email" class="form-control" 
+                       value="<%= user.email %>" required placeholder="Correo electrónico">
+                <label for="email">
+                  <i class="bi bi-envelope me-2"></i>Correo electrónico
+                </label>
+              </div>
+            </div>
+            
+            <div class="col-12">
+              <div class="form-floating">
+                <textarea name="bio" id="bio" class="form-control" 
+                          placeholder="Cuéntanos sobre ti..." 
+                          style="height: 120px;"><%= user.bio || '' %></textarea>
+                <label for="bio">
+                  <i class="bi bi-chat-text me-2"></i>Biografía
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Preferencias de Cuenta -->
+        <div class="account-preferences-section mb-4 p-4 bg-light rounded-3">
+          <h5 class="fw-bold text-dark mb-3">
+            <i class="bi bi-sliders text-primary me-2"></i>Preferencias de Cuenta
+          </h5>
+          
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="preference-item d-flex justify-content-between align-items-center p-3 bg-white rounded-3">
+                <div>
+                  <h6 class="mb-1">Notificaciones por email</h6>
+                  <small class="text-muted">Recibir actualizaciones por correo</small>
+                </div>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="emailNotifications" checked>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <div class="preference-item d-flex justify-content-between align-items-center p-3 bg-white rounded-3">
+                <div>
+                  <h6 class="mb-1">Perfil público</h6>
+                  <small class="text-muted">Mostrar perfil a otros usuarios</small>
+                </div>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="publicProfile" checked>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Botones de acción -->
+        <div class="action-buttons d-flex gap-3 justify-content-end">
+          <button type="button" class="btn btn-outline-secondary rounded-pill px-4" onclick="resetSettingsForm()">
+            <i class="bi bi-arrow-clockwise me-2"></i>Restablecer
+          </button>
+          <button type="submit" class="btn btn-primary rounded-pill px-4">
+            <i class="bi bi-check-circle me-2"></i>Guardar Cambios
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+      </main>
+    </div>
   </div>
 </div>
+
+<!-- MODAL DE CONFIRMACIÓN FUERA DE CONTENEDORES PARA EVITAR CONFLICTOS DE Z-INDEX -->
+<div class="modal fade" id="resetSettingsModal" tabindex="-1" aria-labelledby="resetSettingsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content modern-modal border-0 shadow-lg rounded-4 overflow-hidden">
+      <div class="modal-header bg-warning bg-gradient text-white border-0">
+        <div class="d-flex align-items-center">
+          <div class="modal-icon me-3">
+            <i class="bi bi-exclamation-triangle-fill fs-3"></i>
+          </div>
+          <div>
+            <h5 class="modal-title fw-bold mb-0" id="resetSettingsModalLabel">Confirmar Restablecimiento</h5>
+            <small class="text-white-50">Esta acción no se puede deshacer</small>
+          </div>
+        </div>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4 text-center">
+        <div class="mb-3">
+          <i class="bi bi-arrow-clockwise text-warning" style="font-size: 3rem;"></i>
+        </div>
+        <h6 class="fw-bold text-dark mb-2">¿Restablecer configuración?</h6>
+        <p class="text-muted mb-0">
+          Se perderán todos los cambios no guardados y el formulario volverá a su estado original.
+        </p>
+      </div>
+      <div class="modal-footer border-0 p-4 pt-0">
+        <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">
+          <i class="bi bi-x-circle me-1"></i>Cancelar
+        </button>
+        <button type="button" class="btn btn-warning rounded-pill px-4" onclick="confirmResetSettings()">
+          <i class="bi bi-arrow-clockwise me-1"></i>Sí, Restablecer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Estilos CSS personalizados -->
+<style>
+/* Efectos de transición globales */
+.transition-all {
+  transition: all 0.3s ease !important;
+}
+
+/* Hero section del dashboard */
+.dashboard-hero {
+  min-height: 25vh;
+  display: flex;
+  align-items: center;
+}
+
+.hero-background {
+  background-attachment: fixed;
+}
+
+/* Glassmorphism effects */
+.backdrop-blur {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Sidebar moderno */
+.sidebar-container {
+  animation: slideInLeft 0.8s ease-out;
+}
+
+.modern-nav-link {
+  background: transparent;
+  border: none;
+  color: #6c757d;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.modern-nav-link:hover {
+  background: rgba(13, 110, 253, 0.1);
+  color: #0d6efd;
+  transform: translateX(5px);
+}
+
+.modern-nav-link.active {
+  background: linear-gradient(135deg, #0d6efd, #6610f2);
+  color: white;
+  box-shadow: 0 4px 15px rgba(13, 110, 253, 0.3);
+}
+
+.modern-nav-link.active:hover {
+  background: linear-gradient(135deg, #0b5ed7, #520dc2);
+  transform: translateX(5px);
+}
+
+/* Perfil */
+.profile-avatar {
+  transition: all 0.3s ease;
+}
+
+.profile-avatar:hover {
+  transform: scale(1.05);
+}
+
+.status-indicator {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.7; }
+}
+
+/* Tarjetas de apartamentos */
+.apartment-card {
+  transition: all 0.4s ease;
+}
+
+.apartment-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15) !important;
+}
+
+.apartment-card:hover .card-img-top {
+  transform: scale(1.05);
+}
+
+.apartment-card:hover .image-overlay {
+  opacity: 1 !important;
+  background: rgba(0,0,0,0.6);
+}
+
+/* Tabla moderna */
+.modern-table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.modern-table thead th {
+  background: linear-gradient(135deg, #2c3e50, #34495e) !important;
+  border: none;
+  color: white;
+  font-weight: 600;
+  padding: 1rem 0.75rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.modern-table tbody tr {
+  transition: all 0.3s ease;
+}
+
+.modern-table tbody tr:hover {
+  background: rgba(13, 110, 253, 0.05);
+  transform: scale(1.01);
+}
+
+.reservation-row.past-reservation {
+  opacity: 0.7;
+  background: rgba(108, 117, 125, 0.05);
+}
+
+.reservation-row.active-reservation {
+  background: rgba(25, 135, 84, 0.05);
+}
+
+/* Botones de acción */
+.action-btn {
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.action-btn:hover {
+  transform: scale(1.1);
+}
+
+/* Modales modernos */
+.modern-modal {
+  animation: modalSlideIn 0.4s ease-out;
+}
+
+.modal-icon {
+  animation: iconBounce 0.6s ease-out;
+}
+
+/* Estados de pago */
+.payment-status {
+  transition: all 0.3s ease;
+}
+
+.payment-status:hover {
+  transform: scale(1.1);
+}
+
+/* Filtros */
+.filter-buttons .btn.active {
+  background: linear-gradient(135deg, #0d6efd, #6610f2);
+  border-color: transparent;
+  color: white;
+}
+
+/* Scrollbar personalizado */
+.apartments-carousel .d-flex::-webkit-scrollbar {
+  height: 8px;
+}
+
+.apartments-carousel .d-flex::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.apartments-carousel .d-flex::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #0d6efd, #6610f2);
+  border-radius: 10px;
+}
+
+/* Animaciones */
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes iconBounce {
+  0% { transform: scale(0.3); opacity: 0; }
+  50% { transform: scale(1.05); }
+  70% { transform: scale(0.9); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Responsive */
+@media (max-width: 991.98px) {
+  .dashboard-hero {
+    min-height: 40vh;
+  }
+  
+  .dashboard-welcome h1 {
+    font-size: 2rem !important;
+  }
+  
+  .sidebar-container {
+    position: relative !important;
+    top: auto !important;
+    margin-bottom: 2rem;
+  }
+  
+  .apartments-carousel .apartment-card-wrapper {
+    width: 280px !important;
+  }
+  
+  .modern-table {
+    font-size: 0.875rem;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    gap: 0.25rem !important;
+  }
+  
+  .action-btn {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .profile-header .row {
+    text-align: center;
+  }
+  
+  .profile-header .col-auto,
+  .profile-header .col {
+    margin-bottom: 1rem;
+  }
+  
+  .apartments-stats,
+  .reservations-stats {
+    justify-content: center;
+    text-align: center;
+  }
+  
+  .filter-buttons {
+    margin-top: 1rem;
+    text-align: center;
+  }
+}
+
+/* Efectos adicionales */
+.section-title {
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(135deg, #0d6efd, #6610f2);
+  border-radius: 2px;
+}
+
+.dashboard-section {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.dashboard-section:nth-child(1) { animation-delay: 0.1s; }
+.dashboard-section:nth-child(2) { animation-delay: 0.2s; }
+.dashboard-section:nth-child(3) { animation-delay: 0.3s; }
+
+/* Estados hover mejorados */
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+/* Mejoras en badges */
+.badge {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Loading states */
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Modal de confirmación - CSS simplificado para compatibilidad igual que en seeApartments.ejs */
+.modal-content {
+  border-radius: 1rem !important;
+  overflow: hidden !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important;
+  border: none !important;
+}
+
+.modal {
+  z-index: 1055 !important;
+}
+
+.modal-backdrop {
+  z-index: 1050 !important;
+}
+
+.modal-dialog {
+  z-index: 1060 !important;
+}
+
+.modal.show {
+  z-index: 1055 !important;
+}
+
+.modal.show .modal-dialog {
+  z-index: 1060 !important;
+}
+
+/* Modales modernos */
+.modern-modal {
+  animation: modalSlideIn 0.4s ease-out;
+}
+
+.modal-icon {
+  animation: iconBounce 0.6s ease-out;
+}
+
+/* Override para Bootstrap */
+body.modal-open .modal {
+  z-index: 1055 !important;
+}
+
+body.modal-open .modal-backdrop {
+  z-index: 1050 !important;
+}
+</style>
+
+<!-- Scripts mejorados -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Navegación del sidebar
+  const navLinks = document.querySelectorAll('.modern-nav-link[data-section]');
+  const sections = document.querySelectorAll('.dashboard-section');
+  
+  // Función para mostrar sección
+  function showSection(sectionId) {
+    sections.forEach(section => {
+      if (section.id === sectionId) {
+        section.style.display = 'block';
+        section.style.animation = 'fadeInUp 0.6s ease-out';
+      } else {
+        section.style.display = 'none';
+      }
+    });
+    
+    // Actualizar enlaces activos
+    navLinks.forEach(link => {
+      if (link.dataset.section === sectionId.replace('-section', '')) {
+        link.classList.add('active');
+      } else {
+        link.classList.remove('active');
+      }
+    });
+  }
+  
+  // Event listeners para navegación
+  navLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const sectionId = this.dataset.section + '-section';
+      showSection(sectionId);
+      
+      // Smooth scroll
+      document.getElementById(sectionId).scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    });
+  });
+  
+  // Mostrar sección inicial
+  showSection('profile-section');
+  
+  // Filtros de reservas
+  window.filterReservations = function(filter) {
+    const rows = document.querySelectorAll('.reservation-row');
+    const filterButtons = document.querySelectorAll('.filter-buttons .btn');
+    
+    // Actualizar botones activos
+    filterButtons.forEach(btn => {
+      btn.classList.remove('active');
+      if (btn.textContent.toLowerCase().includes(filter) || 
+          (filter === 'all' && btn.textContent.toLowerCase().includes('todas'))) {
+        btn.classList.add('active');
+      }
+    });
+    
+    // Filtrar filas
+    rows.forEach(row => {
+      const status = row.dataset.status;
+      if (filter === 'all' || status === filter) {
+        row.style.display = '';
+        row.style.animation = 'fadeInUp 0.4s ease-out';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+  };
+  
+  // Inicializar tooltips
+  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl);
+  });
+  
+  // Efectos de loading en formularios
+  const forms = document.querySelectorAll('form');
+  forms.forEach(form => {
+    form.addEventListener('submit', function() {
+      const submitBtn = this.querySelector('button[type="submit"]');
+      if (submitBtn) {
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>Procesando...';
+        submitBtn.disabled = true;
+        
+        // Restaurar después de 5 segundos si no hay redirección
+        setTimeout(() => {
+          submitBtn.innerHTML = originalText;
+          submitBtn.disabled = false;
+        }, 5000);
+      }
+    });
+  });
+  
+  // Animación de estadísticas
+  const observerOptions = {
+    threshold: 0.5,
+    rootMargin: '0px 0px -100px 0px'
+  };
+  
+  const observer = new IntersectionObserver(function(entries) {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const statNumbers = entry.target.querySelectorAll('.stat-number');
+        statNumbers.forEach(stat => {
+          const finalNumber = parseInt(stat.textContent);
+          if (!isNaN(finalNumber)) {
+            animateNumber(stat, 0, finalNumber, 1500);
+          }
+        });
+        observer.unobserve(entry.target);
+      }
+    });
+  }, observerOptions);
+  
+  // Observar secciones de estadísticas
+  const statSections = document.querySelectorAll('.apartments-stats, .reservations-stats');
+  statSections.forEach(section => {
+    observer.observe(section);
+  });
+  
+  function animateNumber(element, start, end, duration) {
+    const startTime = performance.now();
+    const update = (currentTime) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const current = Math.floor(start + (end - start) * progress);
+      element.textContent = current;
+      
+      if (progress < 1) {
+        requestAnimationFrame(update);
+      }
+    };
+    requestAnimationFrame(update);
+  }
+  
+  // Smooth scroll para enlaces internos
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    });
+  });
+  
+  // Auto-refresh de estadísticas (simulado)
+  function refreshStats() {
+    const statNumbers = document.querySelectorAll('.stat-number');
+    statNumbers.forEach(stat => {
+      const currentValue = parseInt(stat.textContent);
+      if (!isNaN(currentValue) && Math.random() > 0.8) {
+        const change = Math.floor(Math.random() * 3) - 1; // -1 a +1
+        const newValue = Math.max(0, currentValue + change);
+        stat.textContent = newValue;
+        
+        // Efecto visual
+        stat.style.color = change > 0 ? '#198754' : change < 0 ? '#dc3545' : '';
+        setTimeout(() => {
+          stat.style.color = '';
+        }, 1000);
+      }
+    });
+  }
+  
+  // Refresh cada 60 segundos
+  setInterval(refreshStats, 60000);
+});
+
+// Función para mostrar modal de confirmación para restablecer
+function resetSettingsForm() {
+  const resetModal = new bootstrap.Modal(document.getElementById('resetSettingsModal'));
+  resetModal.show();
+}
+
+// Función para confirmar el restablecimiento
+function confirmResetSettings() {
+  document.getElementById('settingsForm').reset();
+  const resetModal = bootstrap.Modal.getInstance(document.getElementById('resetSettingsModal'));
+  resetModal.hide();
+  
+  // Mostrar notificación de éxito
+  showNotification('Formulario restablecido correctamente', 'success');
+}
+
+// Función para mostrar notificaciones
+function showNotification(message, type = 'info') {
+  const notification = document.createElement('div');
+  notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+  notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+  notification.innerHTML = `
+    <i class="bi bi-${type === 'success' ? 'check-circle' : 'info-circle'} me-2"></i>
+    ${message}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  `;
+  
+  document.body.appendChild(notification);
+  
+  // Auto-remove después de 3 segundos
+  setTimeout(() => {
+    if (notification.parentNode) {
+      notification.remove();
+    }
+  }, 3000);
+}
+</script>
 
 <!-- Incluye el pie de página desde un archivo parcial -->
 <%- include("partials/footer") %>

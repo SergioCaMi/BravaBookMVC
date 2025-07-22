@@ -23,6 +23,12 @@
       <div class="row align-items-center">
         <div class="col-lg-8">
           <div class="users-welcome text-white" style="animation: fadeInLeft 0.8s ease-out;">
+            <!-- Botón de volver atrás moderno -->
+            <div class="back-button-container mb-3">
+              <button onclick="window.history.back()" class="btn btn-light btn-lg rounded-pill px-4 shadow-sm hover-lift">
+                <i class="bi bi-arrow-left me-2"></i>Volver atrás
+              </button>
+            </div>
             
             <div class="welcome-badge mb-3">
               <span class="badge bg-light text-primary px-4 py-2 rounded-pill fs-6 fw-medium">
@@ -176,83 +182,14 @@
                     <!-- Acciones para administradores -->
                     <% if (currentUser && currentUser.role === 'admin') { %>
                       <td class="text-center">
-                        <div class="action-buttons d-flex gap-2 justify-content-center">
+                        <div class="action-buttons d-flex gap-2 justify-content-center" onclick="event.stopPropagation();">
                           <!-- Botón para eliminar usuario -->
                           <button class="btn btn-outline-danger btn-sm rounded-pill px-3 hover-lift" 
                                   data-bs-toggle="modal" 
-                                  data-bs-target="#deleteUserModal-<%= user._id %>">
+                                  data-bs-target="#deleteUserModal-<%= user._id %>"
+                                  onclick="event.stopPropagation();">
                             <i class="bi bi-trash3"></i>
                           </button>
-                        </div>
-                        
-                        <!-- Modal moderno para confirmar eliminación -->
-                        <div class="modal fade" id="deleteUserModal-<%= user._id %>" tabindex="-1" 
-                             aria-labelledby="deleteUserModalLabel-<%= user._id %>" aria-hidden="true">
-                          <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content modern-modal border-0 shadow-lg rounded-4 overflow-hidden">
-                              <!-- Header del modal -->
-                              <div class="modal-header bg-danger bg-gradient text-white border-0 position-relative">
-                                <div class="modal-header-content d-flex align-items-center w-100">
-                                  <div class="modal-icon me-3">
-                                    <div class="icon-container bg-white bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center"
-                                         style="width: 50px; height: 50px;">
-                                      <i class="bi bi-exclamation-triangle-fill text-white fs-3"></i>
-                                    </div>
-                                  </div>
-                                  <div class="modal-title-content flex-grow-1">
-                                    <h4 class="modal-title fw-bold mb-1" id="deleteUserModalLabel-<%= user._id %>">
-                                      Confirmar Eliminación
-                                    </h4>
-                                    <p class="mb-0 text-white-50 small">Esta acción no se puede deshacer</p>
-                                  </div>
-                                </div>
-                                <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" 
-                                        data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                                
-                                <!-- Decoración de fondo -->
-                                <div class="modal-decoration position-absolute top-0 end-0 opacity-10">
-                                  <i class="bi bi-person-x" style="font-size: 6rem;"></i>
-                                </div>
-                              </div>
-                              
-                              <!-- Cuerpo del modal -->
-                              <div class="modal-body p-4">
-                                <div class="delete-content text-center">
-                                  <!-- Avatar del usuario a eliminar -->
-                                  <div class="user-to-delete mb-4">
-                                    <img src="/uploads/<%= user.avatar %>" 
-                                         alt="Avatar de <%= user.name %>"
-                                         class="rounded-circle shadow-lg border border-3 border-danger"
-                                         style="width: 80px; height: 80px; object-fit: cover;">
-                                    <h5 class="mt-3 mb-1 fw-bold text-dark"><%= user.name %></h5>
-                                    <p class="text-muted mb-0"><%= user.email %></p>
-                                  </div>
-                                  
-                                  <div class="warning-message mb-4">
-                                    <div class="alert alert-warning border-0 rounded-3" role="alert">
-                                      <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                                      <strong>¡Atención!</strong> Estás a punto de eliminar permanentemente este usuario.
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                              
-                              <!-- Pie del modal -->
-                              <div class="modal-footer border-0 p-4 pt-0">
-                                <div class="d-flex gap-2 w-100">
-                                  <button type="button" class="btn btn-outline-secondary rounded-pill px-4 flex-fill hover-lift" 
-                                          data-bs-dismiss="modal">
-                                    <i class="bi bi-x-circle me-2"></i>Cancelar
-                                  </button>
-                                  <form action="/admin/user/delete/<%= user._id %>" method="POST" class="flex-fill">
-                                    <button type="submit" class="btn btn-danger rounded-pill px-4 w-100 hover-lift">
-                                      <i class="bi bi-trash3 me-2"></i>Sí, eliminar
-                                    </button>
-                                  </form>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
                         </div>
                       </td>
                     <% } %>
@@ -266,40 +203,33 @@
         </div>
       </div>
       
-      <!-- Controles de carrusel con navegación -->
+      <!-- Indicadores del carrusel modernos -->
       <% if (totalPages > 1) { %>
-        <button class="carousel-control-prev" type="button" data-bs-target="#usersCarousel" data-bs-slide="prev">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#usersCarousel" data-bs-slide="next">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Next</span>
-        </button>
-
-        <!-- Indicadores de paginación personalizados -->
-        <div class="carousel-indicators-custom mt-4 d-flex justify-content-center">
-          <button type="button" class="page-indicator-btn" id="pageIndicatorMinus5" aria-label="Retroceder 5 páginas">
-            <i class="bi bi-chevron-bar-left"></i>
-          </button>
-          <button type="button" class="page-indicator-btn" id="pageIndicatorMinus1" aria-label="Retroceder 1 página">
-            <i class="bi bi-chevron-left"></i>
-          </button>
-          <button type="button" class="page-indicator-btn active" id="pageIndicatorCurrent" aria-current="true" aria-label="Página actual">1</button>
-          <button type="button" class="page-indicator-btn" id="pageIndicatorPlus1" aria-label="Avanzar 1 página">
-            <i class="bi bi-chevron-right"></i>
-          </button>
-          <button type="button" class="page-indicator-btn" id="pageIndicatorPlus5" aria-label="Avanzar 5 páginas">
-            <i class="bi bi-chevron-bar-right"></i>
-          </button>
-        </div>
-        
-        <!-- Información de paginación -->
-        <div class="pagination-info text-center mt-3" data-total-items="<%= users.length %>">
-          <small class="text-muted">
-            <i class="bi bi-info-circle me-1"></i>
-            Mostrando <strong><%= Math.min(chunkSize, users.length) %></strong> de <strong><%= users.length %></strong> usuarios
-          </small>
+        <div class="carousel-pagination py-4">
+          <div class="d-flex justify-content-center">
+            <div class="pagination-container backdrop-blur rounded-pill px-4 py-2 shadow-sm border border-light border-opacity-25"
+                 style="background: rgba(255, 255, 255, 0.9);">
+              <div class="carousel-indicators position-static m-0 d-flex gap-2">
+                <% for (let i = 0; i < totalPages; i++) { %>
+                  <button type="button" 
+                          data-bs-target="#usersCarousel" 
+                          data-bs-slide-to="<%= i %>" 
+                          class="carousel-indicator-modern <%= i === 0 ? 'active' : '' %>" 
+                          aria-label="Página <%= i + 1 %>">
+                    <span class="indicator-number"><%= i + 1 %></span>
+                  </button>
+                <% } %>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Información de paginación -->
+          <div class="pagination-info text-center mt-3">
+            <small class="text-muted">
+              <i class="bi bi-info-circle me-1"></i>
+              Mostrando <strong><%= Math.min(chunkSize, users.length) %></strong> de <strong><%= users.length %></strong> usuarios
+            </small>
+          </div>
         </div>
       <% } %>
     </div>
@@ -336,6 +266,86 @@
     <% } %>
   </div>
 </div>
+
+<!-- MODALES FUERA DE LA TABLA -->
+<% if (users && users.length > 0 && currentUser && currentUser.role === 'admin') { %>
+  <% users.forEach((user) => { %>
+    <!-- Modal moderno para confirmar eliminación -->
+    <div class="modal fade" id="deleteUserModal-<%= user._id %>" tabindex="-1" 
+         aria-labelledby="deleteUserModalLabel-<%= user._id %>" aria-hidden="true"
+         style="z-index: 1060;">
+      <div class="modal-dialog modal-dialog-centered" style="z-index: 1070;">
+        <div class="modal-content modern-modal border-0 shadow-lg rounded-4 overflow-hidden" style="z-index: 1080;">
+          <!-- Header del modal -->
+          <div class="modal-header bg-danger bg-gradient text-white border-0 position-relative">
+            <div class="modal-header-content d-flex align-items-center w-100">
+              <div class="modal-icon me-3">
+                <div class="icon-container bg-white bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center"
+                     style="width: 50px; height: 50px;">
+                  <i class="bi bi-exclamation-triangle-fill text-white fs-3"></i>
+                </div>
+              </div>
+              <div class="modal-title-content flex-grow-1">
+                <h4 class="modal-title fw-bold mb-1" id="deleteUserModalLabel-<%= user._id %>">
+                  Confirmar Eliminación
+                </h4>
+                <p class="mb-0 text-white-50 small">Esta acción no se puede deshacer</p>
+              </div>
+            </div>
+            <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" 
+                    data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            
+            <!-- Decoración de fondo -->
+            <div class="modal-decoration position-absolute top-0 end-0 opacity-10">
+              <i class="bi bi-person-x" style="font-size: 6rem;"></i>
+            </div>
+          </div>
+          
+          <!-- Cuerpo del modal -->
+          <div class="modal-body p-4">
+            <div class="delete-content text-center">
+              <!-- Avatar del usuario a eliminar -->
+              <div class="user-to-delete mb-4">
+                <img src="/uploads/<%= user.avatar %>" 
+                     alt="Avatar de <%= user.name %>"
+                     class="rounded-circle shadow-lg border border-3 border-danger"
+                     style="width: 80px; height: 80px; object-fit: cover;">
+                <h5 class="mt-3 mb-1 fw-bold text-dark"><%= user.name %></h5>
+                <p class="text-muted mb-0"><%= user.email %></p>
+                <small class="text-muted">
+                  <i class="bi bi-calendar3 me-1"></i>
+                  Registrado: <%= new Date(user.createdAt || Date.now()).toLocaleDateString('es-ES') %>
+                </small>
+              </div>
+              
+              <div class="warning-message mb-4">
+                <div class="alert alert-warning border-0 rounded-3" role="alert">
+                  <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                  <strong>¡Atención!</strong> Estás a punto de eliminar permanentemente este usuario.
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Pie del modal -->
+          <div class="modal-footer border-0 p-4 pt-0">
+            <div class="d-flex gap-2 w-100">
+              <button type="button" class="btn btn-outline-secondary rounded-pill px-4 flex-fill hover-lift" 
+                      data-bs-dismiss="modal">
+                <i class="bi bi-x-circle me-2"></i>Cancelar
+              </button>
+              <form action="/admin/user/delete/<%= user._id %>" method="POST" class="flex-fill">
+                <button type="submit" class="btn btn-danger rounded-pill px-4 w-100 hover-lift">
+                  <i class="bi bi-trash3 me-2"></i>Sí, eliminar
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% }) %>
+<% } %>
 
 <!-- Estilos CSS personalizados -->
 <style>
@@ -547,117 +557,76 @@
   transform: scale(1.02);
 }
 
-/* Sistema de paginación personalizada (compatible con seeApartments) */
-.carousel-indicators-custom {
-  gap: 0.5rem;
-  margin: 1rem auto 0;
-  padding: 0.75rem 1rem;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 50px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-  max-width: fit-content;
-}
-
-.page-indicator-btn {
-  width: 40px;
-  height: 40px;
+.carousel-indicator-modern {
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
-  border: 2px solid rgba(13, 110, 253, 0.3);
-  background: transparent;
-  opacity: 1;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
+  border: 2px solid #dee2e6;
+  background: linear-gradient(135deg, #fff, #f8f9fa);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
-  color: #0d6efd;
-  font-weight: 600;
-  padding: 0;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
-.page-indicator-btn i {
-  font-size: 1.2rem;
+.carousel-indicator-modern::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.3), transparent);
+  transition: left 0.5s ease;
 }
 
-.page-indicator-btn:hover {
-  transform: translateY(-2px);
-  border-color: rgba(13, 110, 253, 0.6);
-  background: rgba(13, 110, 253, 0.1);
-  box-shadow: 0 4px 15px rgba(13, 110, 253, 0.2);
+.carousel-indicator-modern:hover::before {
+  left: 100%;
 }
 
-.page-indicator-btn.active {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #0d6efd, #6610f2);
-  border-color: transparent;
-  box-shadow: 0 4px 20px rgba(13, 110, 253, 0.4);
-  color: white;
-  font-size: 1.3rem;
-  transform: scale(1.05);
-}
-
-.page-indicator-btn.active:hover {
+.carousel-indicator-modern:hover {
+  border-color: #667eea;
   transform: scale(1.1);
-  box-shadow: 0 6px 25px rgba(13, 110, 253, 0.6);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
 }
 
-.page-indicator-btn:disabled,
-.page-indicator-btn.disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-  transform: none !important;
-  box-shadow: none !important;
-  background-color: rgba(13, 110, 253, 0.05) !important;
-  border-color: rgba(13, 110, 253, 0.1) !important;
-  color: rgba(13, 110, 253, 0.5) !important;
+.carousel-indicator-modern.active {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-color: #667eea;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
 }
 
-/* Controles de carrusel */
-.carousel-control-prev,
-.carousel-control-next {
-  width: 5%;
-  opacity: 1;
-  transition: opacity 0.3s ease;
+.indicator-number {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #495057;
+  position: relative;
+  z-index: 2;
 }
 
-.carousel-control-prev:hover,
-.carousel-control-next:hover {
-  opacity: 0.8;
+.carousel-indicator-modern.active .indicator-number {
+  color: white;
 }
 
-.carousel-control-prev-icon,
-.carousel-control-next-icon {
-  background-image: none;
-  width: 2rem;
-  height: 2rem;
-  background-size: 100%, 100%;
+/* Modal moderno - Z-index corregido */
+.modal {
+  z-index: 1060 !important;
 }
 
-.carousel-control-prev-icon::after {
-  content: "\f2f6";
-  font-family: "bootstrap-icons";
-  color: #0d6efd;
-  font-size: 2rem;
-  display: block;
+.modal-backdrop {
+  z-index: 1050 !important;
 }
 
-.carousel-control-next-icon::after {
-  content: "\f2f9";
-  font-family: "bootstrap-icons";
-  color: #0d6efd;
-  font-size: 2rem;
-  display: block;
+.modal-dialog {
+  z-index: 1070 !important;
 }
 
-/* Modal moderno */
+.modal-content {
+  z-index: 1080 !important;
+}
+
 .modern-modal {
   animation: modalSlideIn 0.4s ease-out;
 }
@@ -803,27 +772,6 @@
   .indicator-number {
     font-size: 0.8rem;
   }
-
-  /* Responsive para la paginación personalizada */
-  .carousel-indicators-custom {
-    flex-wrap: wrap;
-    padding: 0.5rem 0.75rem;
-    border-radius: 40px;
-    gap: 0.3rem;
-  }
-  
-  .page-indicator-btn {
-    width: 35px;
-    height: 35px;
-    font-size: 0.9rem;
-  }
-  
-  .page-indicator-btn.active {
-    width: 45px;
-    height: 45px;
-    font-size: 1.1rem;
-  }
-}
   
   .modal-header {
     padding: 1rem;
@@ -891,9 +839,6 @@
   animation: fadeInUp 0.6s ease-out forwards;
 }
 </style>
-
-<!-- Script de paginación personalizada -->
-<script src="/js/carouselPagination.js"></script>
 
 <!-- Incluye el pie de página desde un archivo parcial -->
 <%- include("partials/footer") %>
