@@ -3,109 +3,166 @@ let cities = [];    // Array global para almacenar los datos de las ciudades/mun
 
 // Se ejecuta cuando el contenido del DOM ha sido completamente cargado.
 window.addEventListener("DOMContentLoaded", async () => {
+    console.log("=== municipiAndProvince.js iniciado ===");
+    
     // Realiza peticiones asíncronas para obtener los datos de 'province.json' y 'city.json'
-    // de forma concurrente utilizando `Promise.all`.
     const [provinceRes, cityRes] = await Promise.all([
-        fetch("/data/province.json"), // Petición para obtener datos de provincias.
-        fetch("/data/city.json"),     // Petición para obtener datos de ciudades/municipios.
+        fetch("/data/province.json"),
+        fetch("/data/city.json"),
     ]);
 
-    // Convierte las respuestas de las peticiones a formato JSON y las asigna a las variables globales.
     provinces = await provinceRes.json();
     cities = await cityRes.json();
+    
+    console.log("Provincias cargadas:", provinces.length);
+    console.log("Ciudades cargadas:", cities.length);
 
     // Ordena el array de provincias alfabéticamente por su nombre (`nm`).
     provinces.sort((a, b) => a.nm.localeCompare(b.nm));
 
-    // Obtiene las referencias a los elementos select del DOM para provincias y municipios.
     const provinceSelect = document.getElementById("provinceSelect");
     const municipalitySelect = document.getElementById("municipalitySelect");
 
-    // Obtiene las referencias a los campos de input ocultos que almacenarán los IDs y nombres
-    // de la provincia y el municipio seleccionados.
+    if (!provinceSelect || !municipalitySelect) {
+        console.error("No se encontraron los elementos select");
+        return;
+    }
+
     const provinceIdInput = document.getElementById("provinceIdInput");
     const provinceNameInput = document.getElementById("provinceNameInput");
     const municipalityIdInput = document.getElementById("municipalityIdInput");
     const municipalityNameInput = document.getElementById("municipalityNameInput");
 
-    // --- Rellenar el Select de Provincias Inicialmente ---
-
-    // Itera sobre el array de provincias y crea una opción `<option>` para cada una.
+    // Rellenar provincias
+    provinceSelect.innerHTML = '<option value="">-- Selecciona una provincia --</option>';
     provinces.forEach((prov) => {
-        const option = document.createElement("option"); // Crea un nuevo elemento <option>.
-        option.value = prov.id;       // Establece el valor de la opción con el ID de la provincia.
-        option.textContent = prov.nm; // Establece el texto visible de la opción con el nombre de la provincia.
-        provinceSelect.appendChild(option); // Añade la opción al select de provincias.
+        const option = document.createElement("option");
+        option.value = prov.id;
+        option.textContent = prov.nm;
+        provinceSelect.appendChild(option);
     });
 
-    // --- Lógica de precarga para el formulario de EDICIÓN ---
-    // Lee los IDs de provincia y municipio preseleccionados de los atributos data-selected en los <select>
+    // Obtener valores preseleccionados
     const preselectedProvinceId = provinceSelect.dataset.selected;
     const preselectedMunicipalityId = municipalitySelect.dataset.selected;
 
-    if (preselectedProvinceId) {
-        // Establece el valor del select de provincia al ID preseleccionado
-        provinceSelect.value = preselectedProvinceId;
+    console.log("Provincia preseleccionada:", preselectedProvinceId, typeof preselectedProvinceId);
+    console.log("Municipio preseleccionado:", preselectedMunicipalityId, typeof preselectedMunicipalityId);
 
-        // Dispara manualmente el evento 'change' en el select de provincia.
-        // Esto fuerza la ejecución del manejador de eventos `provinceSelect.addEventListener("change", ...)`
-        // que limpiará el select de municipios y lo rellenará con los municipios de la provincia seleccionada.
-        // Es crucial para que la lista de municipios se cargue.
-        provinceSelect.dispatchEvent(new Event('change'));
-
-        // Después de que los municipios de la provincia seleccionada se hayan cargado,
-        // establece el municipio preseleccionado. Usamos un setTimeout para asegurar
-        // que el DOM tenga tiempo de actualizarse después del `dispatchEvent`.
-        setTimeout(() => {
-            if (preselectedMunicipalityId) {
-                municipalitySelect.value = preselectedMunicipalityId;
-
-                // También actualiza los campos ocultos del municipio aquí para asegurarnos.
-                const selectedCity = cities.find((c) => String(c.id) === preselectedMunicipalityId);
-                municipalityIdInput.value = selectedCity?.id || "";
-                municipalityNameInput.value = selectedCity?.nm || "";
-            }
-        }, 0); // Un timeout de 0ms permite que la ejecución se posponga al siguiente ciclo del event loop.
+    // Si hay provincia preseleccionada, establecerla
+    if (preselectedProvinceId && preselectedProvinceId !== '') {
+        // Convertir a string y agregar cero si es necesario para que coincida con el formato del JSON
+        let provinceIdToFind = String(preselectedProvinceId);
+        if (provinceIdToFind.length === 1) {
+            provinceIdToFind = '0' + provinceIdToFind;
+        }
+        
+        console.log("Buscando provincia con ID:", provinceIdToFind);
+        
+        // Buscar la provincia que coincida
+        const matchingProvince = provinces.find(p => String(p.id) === provinceIdToFind);
+        console.log("Provincia encontrada:", matchingProvince);
+        
+        if (matchingProvince) {
+            provinceSelect.value = matchingProvince.id;
+            provinceIdInput.value = preselectedProvinceId; // Guardar el ID original
+            provinceNameInput.value = matchingProvince.nm;
+            console.log("Provincia establecida:", matchingProvince.id, matchingProvince.nm);
+            
+            // Cargar municipios de esa provincia
+            loadMunicipalities(matchingProvince.id, preselectedMunicipalityId);
+        } else {
+            console.error("No se encontró provincia con ID:", provinceIdToFind);
+        }
     }
 
-    // --- Manejo de Evento al Cambiar la Selección de Provincia (original) ---
+    // Evento para cambio de provincia
     provinceSelect.addEventListener("change", () => {
         const selectedProvinceId = provinceSelect.value;
-        const selectedProvince = provinces.find((p) => String(p.id) === selectedProvinceId);
+        const selectedProvince = provinces.find(p => String(p.id) === selectedProvinceId);
 
-        provinceIdInput.value = selectedProvince?.id || "";
-        provinceNameInput.value = selectedProvince?.nm || "";
+        if (selectedProvince) {
+            // Convertir el ID de vuelta al formato de la base de datos (sin ceros a la izquierda)
+            const dbProvinceId = String(parseInt(selectedProvince.id, 10));
+            provinceIdInput.value = dbProvinceId;
+            provinceNameInput.value = selectedProvince.nm;
+        } else {
+            provinceIdInput.value = "";
+            provinceNameInput.value = "";
+        }
 
+        // Limpiar municipios
         municipalitySelect.innerHTML = '<option value="">-- Selecciona un municipio --</option>';
         municipalityIdInput.value = "";
         municipalityNameInput.value = "";
 
         if (selectedProvinceId) {
-            const filteredCities = cities.filter((city) =>
-                String(city.id).startsWith(selectedProvinceId)
-            );
-            filteredCities.sort((a, b) => a.nm.localeCompare(b.nm));
-
-            filteredCities.forEach((city) => {
-                const option = document.createElement("option");
-                option.value = city.id;
-                option.textContent = city.nm;
-                municipalitySelect.appendChild(option);
-            });
+            loadMunicipalities(selectedProvinceId);
         }
     });
 
-    // --- Manejo de Evento al Cambiar la Selección de Municipio (original) ---
+    // Evento para cambio de municipio
     municipalitySelect.addEventListener("change", () => {
         const selectedCityId = municipalitySelect.value;
-        const selectedCity = cities.find((c) => String(c.id) === selectedCityId);
+        const selectedCity = cities.find(c => String(c.id) === selectedCityId);
 
-        municipalityIdInput.value = selectedCity?.id || "";
-        municipalityNameInput.value = selectedCity?.nm || "";
+        if (selectedCity) {
+            // Convertir el ID de vuelta al formato de la base de datos (sin ceros a la izquierda)
+            const dbCityId = String(parseInt(selectedCity.id, 10));
+            municipalityIdInput.value = dbCityId;
+            municipalityNameInput.value = selectedCity.nm;
+        } else {
+            municipalityIdInput.value = "";
+            municipalityNameInput.value = "";
+        }
     });
 
-    // La lógica de `generateBedInputs` si es global y debe ejecutarse.
-    // if (typeof generateBedInputs === 'function') {
-    //   generateBedInputs();
-    // }
+    // Función para cargar municipios
+    function loadMunicipalities(provinceId, preselectedMunicipalityId = null) {
+        console.log("=== CARGANDO MUNICIPIOS ===");
+        console.log("Provincia ID:", provinceId, typeof provinceId);
+        console.log("Municipio preseleccionado:", preselectedMunicipalityId, typeof preselectedMunicipalityId);
+        
+        municipalitySelect.innerHTML = '<option value="">-- Selecciona un municipio --</option>';
+        
+        const provinceIdStr = String(provinceId);
+        const filteredCities = cities.filter(city => String(city.id).startsWith(provinceIdStr));
+        console.log("Municipios encontrados para provincia", provinceIdStr + ":", filteredCities.length);
+        
+        if (filteredCities.length > 0) {
+            console.log("Primeros 3 municipios:", filteredCities.slice(0, 3).map(c => ({ id: c.id, nm: c.nm })));
+        }
+        
+        filteredCities.sort((a, b) => a.nm.localeCompare(b.nm));
+
+        filteredCities.forEach(city => {
+            const option = document.createElement("option");
+            option.value = city.id;
+            option.textContent = city.nm;
+            municipalitySelect.appendChild(option);
+        });
+
+        // Si hay municipio preseleccionado, establecerlo
+        if (preselectedMunicipalityId && preselectedMunicipalityId !== '') {
+            // Convertir a string y agregar ceros si es necesario para que coincida con el formato del JSON
+            let municipalityIdToFind = String(preselectedMunicipalityId);
+            if (municipalityIdToFind.length === 4) {
+                municipalityIdToFind = '0' + municipalityIdToFind;
+            }
+            
+            console.log("Buscando municipio con ID:", municipalityIdToFind);
+            
+            const matchingCity = cities.find(c => String(c.id) === municipalityIdToFind);
+            console.log("Municipio encontrado:", matchingCity);
+            
+            if (matchingCity) {
+                municipalitySelect.value = matchingCity.id;
+                municipalityIdInput.value = preselectedMunicipalityId; // Guardar el ID original
+                municipalityNameInput.value = matchingCity.nm;
+                console.log("Municipio establecido:", matchingCity.id, matchingCity.nm);
+            } else {
+                console.error("No se encontró municipio con ID:", municipalityIdToFind);
+            }
+        }
+    }
 });

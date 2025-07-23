@@ -165,7 +165,18 @@ export const getAdminPanel = async (req, res) => {
  * @param {object} res - Objeto de respuesta de Express.
  */
 export const getNewApartment = async (req, res) => {
-  res.render("addApartment.ejs", { title: "admin", error: undefined });
+  try {
+    const currentUser = await User.findById(req.session.userId);
+    res.render("addApartment.ejs", { 
+      title: "admin", 
+      error: undefined,
+      currentUser: currentUser
+    });
+  } catch (error) {
+    console.error("Error al cargar el formulario de nuevo apartamento:", error);
+    req.flash("error_msg", "Error al cargar el formulario.");
+    res.redirect("/admin");
+  }
 };
 
 /**
@@ -194,6 +205,9 @@ async function moveFile(oldPath, newPath) {
  * @param {object} res - Objeto de respuesta de Express.
  */
 export const postNewApartment = async (req, res) => {
+  console.log("=== POST NEW APARTMENT INICIADO ===");
+  console.log("URL solicitada:", req.originalUrl);
+  console.log("Método:", req.method);
   console.log("Datos recibidos para nuevo apartamento (req.body):", req.body);
   // req.files contendrá los archivos subidos a través de Multer.
   // req.body.newPhotos contendrá los datos del formulario, incluyendo descripciones y URLs.
@@ -202,10 +216,14 @@ export const postNewApartment = async (req, res) => {
   // Verificar errores de validación
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    console.log("=== ERRORES DE VALIDACIÓN ENCONTRADOS ===");
     const errorMessages = errors.array().map(error => error.msg);
-    req.flash("error", errorMessages.join(', '));
-    return res.redirect("/admin/apartments/new");
+    console.log("Errores:", errorMessages);
+    req.flash("error_msg", errorMessages.join(', '));
+    return res.redirect("/admin/apartment/new");
   }
+
+  console.log("=== VALIDACIÓN PASADA, PROCESANDO APARTAMENTO ===");
 
   const tempUploadDir = req.tempUploadDir; // Directorio temporal de Multer
   let newApartment = null; // Se inicializa para limpieza en el 'finally'
@@ -395,13 +413,15 @@ export const postNewApartment = async (req, res) => {
  */
 export const getApartmentEdit = async (req, res) => {
   const { id } = req.params;
+  
   try {
     const apartment = await Apartment.findById(id);
     if (!apartment) {
       req.flash("error_msg", "El apartamento no se ha encontrado.");
       return res.redirect("/admin");
     }
-    res.render("editApartment.ejs", { title: "admin", apartment: apartment }); // Usar 'apartments' para mantener la consistencia con la vista
+    
+    res.render("editApartment.ejs", { title: "admin", apartment: apartment });
   } catch (err) {
     console.error("Error al obtener apartamento para edición:", err);
     req.flash("error_msg", "Error interno del servidor al obtener apartamento.");

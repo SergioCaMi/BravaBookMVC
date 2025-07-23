@@ -7,7 +7,8 @@ import Reservation from '../models/reservation.model.js';
 export const handleValidationErrors = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    const errorMessages = errors.array().map(error => error.msg);
+    const errorMessages = errors.array().map(error => `${error.path}: ${error.msg}`);
+    console.log('Errores de validación:', errorMessages);
     
     // Si es una petición AJAX, devolver JSON
     if (req.xhr || req.headers.accept?.indexOf('json') > -1) {
@@ -17,8 +18,8 @@ export const handleValidationErrors = (req, res, next) => {
       });
     }
     
-    // Si es una petición normal, usar flash messages
-    req.flash('error', errorMessages.join(', '));
+    // Si es una petición normal, usar flash messages y redirigir back
+    req.flash('error_msg', errorMessages.join(', '));
     return res.redirect('back');
   }
   next();
@@ -139,15 +140,15 @@ export const validateApartment = [
     .trim()
     .notEmpty()
     .withMessage('El título es obligatorio')
-    .isLength({ min: 5, max: 100 })
-    .withMessage('El título debe tener entre 5 y 100 caracteres'),
+    .isLength({ min: 1, max: 100 })
+    .withMessage('El título debe tener entre 1 y 100 caracteres'),
 
   body('description')
     .trim()
     .notEmpty()
     .withMessage('La descripción es obligatoria')
-    .isLength({ min: 20, max: 1000 })
-    .withMessage('La descripción debe tener entre 20 y 1000 caracteres'),
+    .isLength({ min: 1, max: 3000 })
+    .withMessage('La descripción debe tener entre 1 y 3000 caracteres'),
 
   body('rules')
     .optional()
@@ -162,8 +163,8 @@ export const validateApartment = [
 
   body('rooms')
     .optional()
-    .isInt({ min: 1, max: 20 })
-    .withMessage('El número de habitaciones debe estar entre 1 y 20'),
+    .isInt({ min: 1 })
+    .withMessage('El número de habitaciones debe ser un número entero mayor a 0'),
 
   body('bedsPerRoom')
     .optional()
@@ -185,72 +186,79 @@ export const validateApartment = [
     .isInt({ min: 1, max: 50 })
     .withMessage('El número máximo de huéspedes debe estar entre 1 y 50'),
 
-  body('pricePerNight')
+  body('squareMeters')
+    .optional()
+    .isInt({ min: 1, max: 1000 })
+    .withMessage('Los metros cuadrados deben estar entre 1 y 1000'),
+
+  body('price')
+    .optional()
     .isNumeric()
     .withMessage('El precio por noche debe ser un número')
-    .isFloat({ min: 1, max: 10000 })
-    .withMessage('El precio por noche debe estar entre 1 y 10000'),
+    .isFloat({ min: 1 })
+    .withMessage('El precio por noche debe ser un número positivo'),
 
-  body('location.province')
+  body('location.province.id')
+    .optional({ checkFalsy: true })
+    .isNumeric()
+    .withMessage('El ID de provincia debe ser numérico'),
+
+  body('location.province.nm')
+    .optional({ checkFalsy: true })
     .trim()
-    .notEmpty()
-    .withMessage('La provincia es obligatoria')
     .isLength({ min: 2, max: 50 })
-    .withMessage('La provincia debe tener entre 2 y 50 caracteres'),
+    .withMessage('El nombre de provincia debe tener entre 2 y 50 caracteres'),
 
-  body('location.city')
+  body('location.municipality.id')
+    .optional({ checkFalsy: true })
+    .isNumeric()
+    .withMessage('El ID de municipio debe ser numérico'),
+
+  body('location.municipality.nm')
+    .optional({ checkFalsy: true })
     .trim()
-    .notEmpty()
-    .withMessage('La ciudad es obligatoria')
     .isLength({ min: 2, max: 50 })
-    .withMessage('La ciudad debe tener entre 2 y 50 caracteres'),
+    .withMessage('El nombre de municipio debe tener entre 2 y 50 caracteres'),
 
-  body('location.address')
-    .trim()
-    .notEmpty()
-    .withMessage('La dirección es obligatoria')
-    .isLength({ min: 5, max: 200 })
-    .withMessage('La dirección debe tener entre 5 y 200 caracteres'),
-
-  body('location.coordinates.lat')
-    .optional()
+  body('location.gpsCoordinates.lat')
+    .optional({ checkFalsy: true })
     .isFloat({ min: -90, max: 90 })
     .withMessage('La latitud debe estar entre -90 y 90'),
 
-  body('location.coordinates.lng')
-    .optional()
+  body('location.gpsCoordinates.lng')
+    .optional({ checkFalsy: true })
     .isFloat({ min: -180, max: 180 })
     .withMessage('La longitud debe estar entre -180 y 180'),
 
   // Validaciones para servicios (todos opcionales y booleanos)
   body('services.airConditioning')
-    .optional()
-    .isBoolean()
+    .optional({ checkFalsy: true })
+    .isIn(['on', 'true', true])
     .withMessage('Aire acondicionado debe ser verdadero o falso'),
 
   body('services.heating')
-    .optional()
-    .isBoolean()
+    .optional({ checkFalsy: true })
+    .isIn(['on', 'true', true])
     .withMessage('Calefacción debe ser verdadero o falso'),
 
   body('services.accessibility')
-    .optional()
-    .isBoolean()
+    .optional({ checkFalsy: true })
+    .isIn(['on', 'true', true])
     .withMessage('Accesibilidad debe ser verdadero o falso'),
 
   body('services.television')
-    .optional()
-    .isBoolean()
+    .optional({ checkFalsy: true })
+    .isIn(['on', 'true', true])
     .withMessage('Televisión debe ser verdadero o falso'),
 
   body('services.kitchen')
-    .optional()
-    .isBoolean()
+    .optional({ checkFalsy: true })
+    .isIn(['on', 'true', true])
     .withMessage('Cocina debe ser verdadero o falso'),
 
   body('services.internet')
-    .optional()
-    .isBoolean()
+    .optional({ checkFalsy: true })
+    .isIn(['on', 'true', true])
     .withMessage('Internet debe ser verdadero o falso')
 ];
 

@@ -1,5 +1,8 @@
 <!-- Incluye el pie de página desde un archivo parcial -->
 <%- include("partials/header") %>
+
+<!-- CSS específico para seeApartments -->
+<link rel="stylesheet" href="/css/seeApartments.css">
 <div class="container-fluid my-5">
   <div class="bg-white p-4 shadow rounded-4">
     <div class="catalog-header text-center mb-5">
@@ -161,14 +164,6 @@
         <% } %>
       </div>
 
-      <button class="carousel-control-prev" type="button" data-bs-target="#apartmentsCarousel" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
-      </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#apartmentsCarousel" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
-      </button>
 
       <div class="carousel-indicators-custom mt-4 d-flex justify-content-center">
         <button type="button" class="page-indicator-btn" id="pageIndicatorMinus5" aria-label="Retroceder 5 páginas">
@@ -1072,3 +1067,11 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+<!-- JavaScript específico para seeApartments -->
+<script src="/js/seeApartments.js"></script>
+
+<!-- Script de paginación personalizada -->
+<script src="/js/carouselPagination.js"></script>
+
+<!-- Incluye el pie de página desde un archivo parcial -->
+<%- include("partials/footer") %>

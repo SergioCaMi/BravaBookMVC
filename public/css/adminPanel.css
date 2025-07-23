@@ -1,0 +1,330 @@
+/* Efectos de transición globales */
+.transition-all {
+  transition: all 0.3s ease !important;
+}
+
+.hover-lift:hover {
+  transform: translateY(-5px) !important;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.15) !important;
+}
+
+/* Hero section del admin */
+.admin-hero {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.hero-background {
+  background-attachment: fixed;
+}
+
+/* Perfil del administrador */
+.profile-avatar {
+  transition: all 0.3s ease;
+}
+
+.profile-avatar:hover {
+  transform: scale(1.05);
+}
+
+.status-indicator {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.7; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Glassmorphism effects */
+.backdrop-blur {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Tarjetas de administración */
+.admin-card {
+  transition: all 0.4s ease;
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.admin-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15) !important;
+}
+
+.admin-card:hover .card-img-top {
+  transform: scale(1.05);
+}
+
+.admin-card:hover .card-overlay {
+  opacity: 1 !important;
+  background: rgba(0,0,0,0.7);
+}
+
+.card-img-top {
+  transition: transform 0.4s ease;
+}
+
+.card-overlay {
+  transition: all 0.4s ease;
+}
+
+/* Estadísticas */
+.admin-stats .stat-item {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.admin-stats .stat-item:nth-child(1) { animation-delay: 0.1s; }
+.admin-stats .stat-item:nth-child(2) { animation-delay: 0.2s; }
+.admin-stats .stat-item:nth-child(3) { animation-delay: 0.3s; }
+
+.stat-icon {
+  transition: all 0.3s ease;
+}
+
+.stat-item:hover .stat-icon {
+  transform: scale(1.1);
+}
+
+/* Estadísticas en tarjetas */
+.quick-stats,
+.apartment-stats,
+.reservation-stats {
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef) !important;
+}
+
+.quick-stats .stat:hover,
+.apartment-stats .stat:hover,
+.reservation-stats .stat:hover {
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
+}
+
+/* Botones mejorados */
+.btn {
+  transition: all 0.3s ease;
+  border-width: 2px;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #0d6efd, #6610f2);
+  border: none;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #0b5ed7, #520dc2);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #198754, #20c997);
+  border: none;
+}
+
+.btn-success:hover {
+  background: linear-gradient(135deg, #157347, #1aa179);
+}
+
+.btn-info {
+  background: linear-gradient(135deg, #0dcaf0, #6f42c1);
+  border: none;
+}
+
+.btn-info:hover {
+  background: linear-gradient(135deg, #0aa2c0, #59359a);
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, #ffc107, #fd7e14);
+  border: none;
+}
+
+.btn-warning:hover {
+  background: linear-gradient(135deg, #cc9a06, #ca6510);
+}
+
+/* Acciones rápidas */
+.quick-actions {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Animaciones de entrada */
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Badges mejorados */
+.badge {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Pasos de creación */
+.creation-steps {
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef) !important;
+}
+
+.step-item {
+  transition: all 0.3s ease;
+}
+
+.step-item:hover {
+  transform: translateX(5px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .admin-hero {
+    min-height: 80vh;
+  }
+  
+  .admin-welcome h1 {
+    font-size: 2.5rem !important;
+  }
+  
+  .admin-stats {
+    justify-content: center;
+    text-align: center;
+  }
+  
+  .admin-stats .stat-item {
+    margin-bottom: 1rem;
+  }
+  
+  .admin-profile {
+    margin-top: 2rem;
+  }
+  
+  .quick-actions {
+    padding: 1.5rem;
+  }
+  
+  .quick-actions .row {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .quick-actions .col-auto {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+  
+  .quick-actions .btn {
+    width: 100%;
+  }
+}
+
+/* Efectos adicionales */
+.section-header {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.admin-dashboard {
+  position: relative;
+}
+
+.admin-dashboard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+}
+
+/* Hover effects para estadísticas */
+.stat-number {
+  transition: all 0.3s ease;
+}
+
+.stat:hover .stat-number {
+  transform: scale(1.1);
+  color: #0d6efd !important;
+}
+
+/* Loading states */
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Mejoras en overlays */
+.overlay-icon {
+  animation: bounceIn 0.6s ease-out;
+}
+
+@keyframes bounceIn {
+  0% { transform: scale(0.3); opacity: 0; }
+  50% { transform: scale(1.05); }
+  70% { transform: scale(0.9); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Estilos adicionales para efectos */
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  transform: scale(0);
+  animation: ripple-animation 0.6s linear;
+  pointer-events: none;
+}
+
+@keyframes ripple-animation {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}

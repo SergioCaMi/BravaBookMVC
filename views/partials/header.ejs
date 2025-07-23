@@ -36,26 +36,21 @@
     <link rel="stylesheet" href="/css/header.css">
 </head>
 
-<!-- Barra de navegación principal mejorada -->
 <nav class="navbar navbar-expand-lg modern-navbar py-3" id="mainNavbar">
     <div class="container-fluid px-4">
-        <!-- Logo de la empresa mejorado -->
         <a class="navbar-brand d-flex align-items-center" href="/">
             <div class="logo-container">
                 <img src="/logo.png" width="120" height="40" alt="Logo BravaBook" class="img-fluid" />
             </div>
         </a>
         
-        <!-- Botón para alternar la navegación en dispositivos móviles -->
         <button class="navbar-toggler shadow-sm" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         
-        <!-- Elementos de la barra de navegación -->
         <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
             <ul class="navbar-nav align-items-center">
-                <!-- Enlaces a las diferentes secciones del sitio web -->
                 <li class="nav-item">
                     <a class="nav-link <%= title === 'home' ? 'active' : '' %>" aria-current="page" href="/">
                         <i class="bi bi-house-door me-2"></i>Inicio
@@ -74,7 +69,6 @@
                     </a>
                 </li>
                 
-                <!-- Enlace al panel de administración -->
                 <% if (currentUser && currentUser.role === "admin") { %>
                 <li class="nav-item">
                     <a class="nav-link <%= title === 'admin' ? 'active' : '' %>" href="/admin">
@@ -83,22 +77,6 @@
                 </li>
                 <% } %>
                 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                
-                <!-- Avatar del usuario mejorado -->
                 <% if (currentUser) { %>
                 <li class="nav-item ms-3">
                         <% if (currentUser.role === "admin") { %>
@@ -137,55 +115,4 @@
 
 <script src="/js/header.js"></script>
 
-<!-- Estilos adicionales para efectos -->
-<style>
-    
-.ripple {
-    position: absolute;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.6);
-    transform: scale(0);
-    animation: ripple-animation 0.6s linear;
-    pointer-events: none;
-}
-
-@keyframes ripple-animation {
-    to {
-        transform: scale(4);
-        opacity: 0;
-    }
-}
-
-/* Mejoras en el dropdown */
-.dropdown-menu {
-    animation: slideDown 0.3s ease-out;
-    border: none;
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(20px);
-}
-
-.dropdown-item {
-    transition: all 0.3s ease;
-    border-radius: 8px;
-    margin: 2px 8px;
-}
-
-.dropdown-item:hover {
-    background: linear-gradient(135deg, rgba(13, 110, 253, 0.1), rgba(102, 16, 242, 0.1));
-    transform: translateX(5px);
-}
-
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-</style>
-
-<!-- Contenido principal de la página -->
 <main>

@@ -1,0 +1,599 @@
+  /* Animaciones personalizadas */
+  @keyframes fadeInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideInUp {
+    from {
+      opacity: 0;
+      transform: translateY(50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Efectos de transición generales */
+  .transition-all {
+    transition: all 0.3s ease !important;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+  }
+
+  /* Sección de Cabecera del Catálogo */
+  .catalog-header {
+    animation: fadeInDown 0.8s ease-out;
+  }
+
+  .catalog-header h1 {
+    color: var(--bs-primary);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .catalog-header .lead {
+    color: var(--bs-gray-700);
+  }
+
+  .stat-item {
+    background: linear-gradient(135deg, var(--bs-light), var(--bs-white));
+    border: 1px solid var(--bs-gray-200);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+  }
+
+  .stat-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  .stat-item h3 {
+    font-size: 2.5rem;
+    line-height: 1;
+  }
+
+  .stat-item p {
+    font-weight: 500;
+    color: var(--bs-gray-800);
+  }
+
+  /* Tarjetas de apartamentos mejoradas */
+  .apartment-card {
+    transition: all 0.4s ease;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 0.75rem;
+  }
+
+  .apartment-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  /* Contenedor de la imagen de la tarjeta */
+  .card-img-container {
+    position: relative;
+    overflow: hidden;
+    border-top-left-radius: 0.75rem;
+    border-top-right-radius: 0.75rem;
+  }
+
+  .card-img-container .card-img-top {
+    height: 220px;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .apartment-card:hover .card-img-top {
+    transform: scale(1.05);
+  }
+
+  /* Overlay de la imagen al hacer hover */
+  .image-overlay {
+    background: rgba(0, 0, 0, 0.4);
+    transition: opacity 0.4s ease;
+    opacity: 0;
+  }
+
+  .apartment-card:hover .image-overlay {
+    opacity: 1 !important;
+    background: rgba(0, 0, 0, 0.6);
+  }
+
+  .image-overlay .overlay-content {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+
+  .apartment-card:hover .image-overlay .overlay-content {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Badges de estado y precio */
+  .card-img-container .badge {
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .price-badge {
+    backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.8) !important;
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Contenido de la tarjeta */
+  .card-body {
+    padding: 1.5rem;
+  }
+
+  .apartment-info .card-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    line-height: 1.3;
+  }
+
+  .location-info {
+    font-size: 0.875rem;
+    color: #6c757d;
+  }
+
+  /* Detalles de habitaciones y baños */
+  .apartment-details {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-radius: 0.5rem;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+
+  .detail-item {
+    text-align: center;
+  }
+
+  .detail-item i {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .detail-divider {
+    width: 1px;
+    background-color: #dee2e6;
+    margin: 0 0.75rem;
+  }
+
+  /* Sección de Servicios */
+  .services-section {
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    padding-top: 1rem;
+    margin-top: 1rem;
+  }
+
+  .services-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: #343a40;
+  }
+
+  .services-icons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem; /* Ajustado para mejor espaciado */
+  }
+
+  .service-badge {
+    background-color: #e9ecef;
+    color: #495057;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .service-badge:hover {
+    background-color: #ced4da;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .service-badge i {
+    font-size: 1rem;
+  }
+
+  /* Botón principal */
+  .card-body > .btn {
+    margin-top: auto;
+    font-weight: bold;
+    padding: 0.75rem 1.5rem;
+    border-radius: 2rem;
+    transition: all 0.3s ease;
+  }
+
+  .card-body > .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(13, 110, 253, 0.3);
+  }
+
+  /* Controles de administrador */
+  .admin-controls {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e9ecef;
+    background-color: rgba(248, 249, 250, 0.7);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.03);
+  }
+
+  .admin-controls .admin-title {
+    font-size: 0.9rem;
+    color: #6c757d;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .admin-controls .admin-title i {
+    margin-right: 0.5rem;
+  }
+
+  .admin-controls .btn-sm {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    border-radius: 1.5rem;
+    transition: all 0.2s ease;
+  }
+
+  .admin-controls .btn-sm:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Modal de confirmación - CSS simplificado para compatibilidad */
+  .modal-content {
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    border: none;
+  }
+
+  .modal-header {
+    border-bottom: none;
+    padding: 1.5rem;
+    background: linear-gradient(45deg, rgba(220, 53, 69, 0.9), rgba(255, 193, 7, 0.7));
+  }
+
+  .modal-header h5 {
+    color: white;
+    display: flex;
+    align-items: center;
+  }
+
+  .modal-header .btn-close {
+    color: white;
+    filter: brightness(2);
+  }
+
+  .modal-body {
+    padding: 2rem;
+    text-align: center;
+    font-size: 1.1rem;
+    color: #343a40;
+  }
+
+  .modal-body i {
+    font-size: 4rem;
+    color: #dc3545;
+    margin-bottom: 1rem;
+    animation: bounceIn 0.6s ease-out;
+  }
+
+  @keyframes bounceIn {
+    0% {
+      transform: scale(0.3);
+      opacity: 0;
+    }
+    50% {
+      transform: scale(1.05);
+      opacity: 1;
+    }
+    70% {
+      transform: scale(0.9);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  .modal-footer {
+    border-top: none;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .modal-footer .btn {
+    border-radius: 2rem;
+    padding: 0.6rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .modal-footer .btn-danger:hover {
+    background-color: #c82333;
+    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+    transform: translateY(-2px);
+  }
+
+  .modal-footer .btn-secondary:hover {
+    background-color: #5a6268;
+    box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
+    transform: translateY(-2px);
+  }
+
+  /* Responsive para las cards */
+  @media (max-width: 992px) {
+    .row-cols-xl-4 {
+      --bs-gutter-x: 1rem;
+      --bs-gutter-y: 1rem;
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .row-cols-lg-3 > *,
+    .row-cols-md-2 > * {
+      /* Consolidado */
+      flex: 0 0 auto;
+      width: 33.33333333%;
+    }
+    .apartment-card {
+      margin-bottom: 1rem;
+    }
+    .card-img-container .card-img-top {
+      height: 200px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .row-cols-md-2 > * {
+      width: 100%;
+    }
+    .apartment-card .card-body {
+      padding: 1rem;
+    }
+    .apartment-details {
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem;
+    }
+    .detail-divider {
+      display: none;
+    }
+    .detail-item {
+      flex: 1 1 45%;
+    }
+    .admin-controls .d-flex {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .catalog-header h1 {
+      font-size: 2.5rem;
+    }
+    .stat-item h3 {
+      font-size: 2rem;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .card-img-container .card-img-top {
+      height: 180px;
+    }
+    .apartment-info .card-title {
+      font-size: 1.1rem;
+    }
+    .price-badge {
+      font-size: 0.9rem;
+      padding: 0.4rem 0.8rem;
+    }
+    .card-body > .btn {
+      padding: 0.6rem 1rem;
+      font-size: 0.9rem;
+    }
+    .catalog-header h1 {
+      font-size: 2rem;
+    }
+    .catalog-header .lead {
+      font-size: 1rem;
+    }
+    .stat-item h3 {
+      font-size: 1.8rem;
+    }
+    .stat-item p {
+      font-size: 0.85rem;
+    }
+  }
+
+  /* Carousel Indicators (Custom Pagination) */
+  .carousel-indicators-custom {
+    gap: 0.5rem; /* Ajustado para los 5 botones */
+    margin: 1rem auto 0;
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 50px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    max-width: fit-content;
+  }
+
+  .page-indicator-btn {
+    width: 40px; /* Ancho fijo para botones */
+    height: 40px; /* Alto fijo para botones */
+    border-radius: 50%; /* Botones redondos por defecto */
+    border: 2px solid rgba(13, 110, 253, 0.3);
+    background: transparent;
+    opacity: 1;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    display: flex; /* Para centrar el contenido (icono/número) */
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem; /* Tamaño de fuente para números/iconos */
+    color: #0d6efd; /* Color de texto/icono por defecto */
+    font-weight: 600;
+    padding: 0; /* Eliminar padding por defecto del botón */
+  }
+
+  .page-indicator-btn i {
+    font-size: 1.2rem; /* Tamaño de icono */
+  }
+
+  .page-indicator-btn:hover {
+    transform: translateY(-2px);
+    border-color: rgba(13, 110, 253, 0.6);
+    background: rgba(13, 110, 253, 0.1);
+    box-shadow: 0 4px 15px rgba(13, 110, 253, 0.2);
+  }
+
+  .page-indicator-btn.active {
+    width: 50px; /* Más ancho para la página actual */
+    height: 50px; /* Más alto para la página actual */
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0d6efd, #6610f2);
+    border-color: transparent;
+    box-shadow: 0 4px 20px rgba(13, 110, 253, 0.4);
+    color: white; /* Color de texto/icono blanco para activo */
+    font-size: 1.3rem; /* Tamaño de fuente para número activo */
+    transform: scale(1.05);
+  }
+
+  .page-indicator-btn.active:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 25px rgba(13, 110, 253, 0.6);
+  }
+
+  .page-indicator-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+    background-color: rgba(13, 110, 253, 0.05) !important;
+    border-color: rgba(13, 110, 253, 0.1) !important;
+    color: rgba(13, 110, 253, 0.5) !important;
+  }
+
+  /* Carousel Control Icons (Added for completeness, if custom icons are desired) */
+  .carousel-control-prev-icon,
+  .carousel-control-next-icon {
+    background-image: none;
+    width: 2rem;
+    height: 2rem;
+    background-size: 100%, 100%;
+  }
+
+  .carousel-control-prev-icon::after {
+    content: "\f2f6"; /* Bootstrap icon for arrow-left-circle-fill */
+    font-family: "bootstrap-icons";
+    color: #0d6efd;
+    font-size: 2rem;
+    display: block;
+  }
+
+  .carousel-control-next-icon::after {
+    content: "\f2f9"; /* Bootstrap icon for arrow-right-circle-fill */
+    font-family: "bootstrap-icons";
+    color: #0d6efd;
+    font-size: 2rem;
+    display: block;
+  }
+
+  .carousel-control-prev,
+  .carousel-control-next {
+    width: 5%;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+  }
+
+  .carousel-control-prev:hover,
+  .carousel-control-next:hover {
+    opacity: 0.8;
+  }
+
+  @keyframes loadingPulse {
+    0%,
+    100% {
+      opacity: 0.3;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+
+  /* Responsive para la paginación e indicadores (Consolidado) */
+  @media (max-width: 768px) {
+    .carousel-indicators-custom {
+      flex-wrap: wrap;
+      padding: 0.5rem 0.75rem;
+      border-radius: 40px;
+      gap: 0.3rem;
+    }
+    .page-indicator-btn {
+      width: 35px;
+      height: 35px;
+      font-size: 0.9rem;
+    }
+    .page-indicator-btn.active {
+      width: 45px;
+      height: 45px;
+      font-size: 1.1rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .carousel-indicators-custom {
+      width: 95%;
+      max-width: 300px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
