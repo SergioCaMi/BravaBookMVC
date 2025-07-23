@@ -432,18 +432,16 @@
             
             <div class="col-md-6">
               <div class="map-placeholder bg-light rounded-3 d-flex align-items-center justify-content-center"
-                   style="height: 300px;">
-                <div class="text-center">
-                  <i class="bi bi-geo-alt text-muted" style="font-size: 3rem;"></i>
-                  <h6 class="text-muted mt-2">Mapa Interactivo</h6>
-                  <p class="text-muted small mb-0">
-                    Calonge i Sant Antoni<br>
-                    Costa Brava, Girona
-                  </p>
-                  <button class="btn btn-outline-primary btn-sm mt-3">
-                    <i class="bi bi-map me-1"></i>Ver en Google Maps
-                  </button>
-                </div>
+                   style="height: 300px; padding:0;">
+                <iframe
+                  src="https://www.google.com/maps?q=Av.+Catalunya,+15,+Calonge+i+Sant+Antoni,+17252,+Girona,+España&output=embed"
+                  width="100%" height="100%" style="border:0; border-radius: 0.5rem;" allowfullscreen="" loading="lazy"
+                  referrerpolicy="no-referrer-when-downgrade"></iframe>
+              </div>
+              <div class="text-center mt-2">
+                <a href="https://www.google.com/maps/place/Av.+Catalunya,+15,+17252+Calonge,+Girona,+España" target="_blank" class="btn btn-outline-primary btn-sm mt-2">
+                  <i class="bi bi-map me-1"></i>Ver en Google Maps
+                </a>
               </div>
             </div>
           </div>
