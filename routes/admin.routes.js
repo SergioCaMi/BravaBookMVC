@@ -32,6 +32,9 @@ router.get('/users', requireAuth, requireAdmin, adminController.getUsers);
 // Eliminar usuario
 router.post('/user/delete/:id', validateMongoId('id'), handleValidationErrors, requireAuth, requireAdmin, adminController.postDeleteUser);
 
+// Alternar rol de usuario
+router.post('/user/toggle-role/:id', validateMongoId('id'), handleValidationErrors, requireAuth, requireAdmin, adminController.postToggleUserRole);
+
 //  Rutas de Reservas 
 
 // Ver todas las reservas
@@ -58,6 +61,9 @@ router.post("/reservations/delete/:id", validateMongoId('id'), handleValidationE
 
 // Confirmar una reserva
 router.post("/reservations/confirm/:id", validateMongoId('id'), handleValidationErrors, requireAuth, requireAdmin, adminController.postConfirmReservation);
+
+// Marcar una reserva como pagada
+router.post("/reservations/mark-paid/:id", validateMongoId('id'), handleValidationErrors, requireAuth, requireAdmin, adminController.postMarkPaidReservation);
 
 // Formulario para editar una reserva
 router.get("/reservation/edit/:id", validateMongoId('id'), handleValidationErrors, requireAuth, requireAdmin, adminController.getReservationEdit);

@@ -87,7 +87,7 @@
         <!-- Verifica si hay datos de reserva disponibles -->
         <% if (reservation) { %>
         <!-- Formulario para editar la reserva -->
-        <form id="reservationForm" class="needs-validation" method="POST" action="/admin/reservations/edit/<%= reservation._id %>" novalidate>
+        <form id="reservationForm" class="needs-validation" method="POST" action="/admin/reservation/edit/<%= reservation._id %>" novalidate>
           
           <!-- Campo oculto para mantener el ID del apartamento -->
           <input type="hidden" name="apartment" value="<%= reservation.apartment._id || reservation.apartment %>">
@@ -694,6 +694,20 @@ document.addEventListener('DOMContentLoaded', function() {
     startDate: "<%= reservation.startDate.toISOString().split('T')[0] %>",
     endDate: "<%= reservation.endDate.toISOString().split('T')[0] %>",
   };
+  
+  // Inicializar los campos ocultos con las fechas existentes
+  document.addEventListener('DOMContentLoaded', function() {
+    const startDateInput = document.getElementById('startDateHidden');
+    const endDateInput = document.getElementById('endDateHidden');
+    
+    if (startDateInput && reservationData.startDate) {
+      startDateInput.value = reservationData.startDate;
+    }
+    
+    if (endDateInput && reservationData.endDate) {
+      endDateInput.value = reservationData.endDate;
+    }
+  });
 </script>
 <% } %>
 

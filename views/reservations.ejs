@@ -230,7 +230,7 @@
                     <td class="table-cell">
                       <div class="action-buttons d-flex flex-wrap gap-1 justify-content-center" onclick="event.stopPropagation();">
                         <!-- Botón para editar la reserva -->
-                        <a href="/admin/reservations/edit/<%= reservation._id %>" 
+                        <a href="/admin/reservation/edit/<%= reservation._id %>" 
                            class="btn btn-warning btn-sm action-btn" 
                            data-bs-toggle="tooltip" title="Editar reserva"
                            onclick="event.stopPropagation();">
@@ -397,7 +397,7 @@
             <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">
               <i class="bi bi-x-circle me-2"></i>Cancelar
             </button>
-            <form action="/reservations/mark-paid/<%= reservation._id %>" method="POST" style="display: inline;">
+            <form action="/admin/reservations/mark-paid/<%= reservation._id %>" method="POST" style="display: inline;">
               <button type="submit" class="btn btn-success rounded-pill px-4">
                 <i class="bi bi-check-circle me-2"></i>Sí, marcar como pagado
               </button>

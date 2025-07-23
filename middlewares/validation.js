@@ -60,8 +60,8 @@ export const validateUserRegistration = [
   body('password')
     .isLength({ min: 8, max: 16 })
     .withMessage('La contraseña debe tener entre 8 y 16 caracteres')
-    .matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]+$/)
-    .withMessage('La contraseña debe contener al menos una letra, un número y un símbolo especial'),
+    .matches(/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]+$/)
+    .withMessage('La contraseña debe contener al menos una mayúscula, un número y un símbolo especial'),
 
   body('role')
     .optional()
@@ -287,12 +287,16 @@ export const validateReservation = [
   body('startDate')
     .notEmpty()
     .withMessage('La fecha de inicio es obligatoria')
-    .isISO8601()
-    .withMessage('Formato de fecha de inicio inválido')
+    .matches(/^\d{4}-\d{2}-\d{2}$/)
+    .withMessage('Formato de fecha de inicio inválido (debe ser YYYY-MM-DD)')
     .custom((value) => {
-      const startDate = new Date(value);
+      const startDate = new Date(value + 'T00:00:00');
       const today = new Date();
       today.setHours(0, 0, 0, 0);
+      
+      if (isNaN(startDate.getTime())) {
+        throw new Error('Fecha de inicio inválida');
+      }
       
       if (startDate < today) {
         throw new Error('La fecha de inicio no puede ser anterior a hoy');
@@ -303,11 +307,15 @@ export const validateReservation = [
   body('endDate')
     .notEmpty()
     .withMessage('La fecha de fin es obligatoria')
-    .isISO8601()
-    .withMessage('Formato de fecha de fin inválido')
+    .matches(/^\d{4}-\d{2}-\d{2}$/)
+    .withMessage('Formato de fecha de fin inválido (debe ser YYYY-MM-DD)')
     .custom(async (value, { req }) => {
-      const startDate = new Date(req.body.startDate);
-      const endDate = new Date(value);
+      const startDate = new Date(req.body.startDate + 'T00:00:00');
+      const endDate = new Date(value + 'T00:00:00');
+      
+      if (isNaN(endDate.getTime())) {
+        throw new Error('Fecha de fin inválida');
+      }
       
       if (endDate <= startDate) {
         throw new Error('La fecha de fin debe ser posterior a la fecha de inicio');
@@ -443,17 +451,17 @@ export const validateApartmentFilters = [
 
   body('startDate')
     .optional()
-    .isISO8601()
-    .withMessage('Formato de fecha de inicio inválido'),
+    .matches(/^\d{4}-\d{2}-\d{2}$/)
+    .withMessage('Formato de fecha de inicio inválido (debe ser YYYY-MM-DD)'),
 
   body('endDate')
     .optional()
-    .isISO8601()
-    .withMessage('Formato de fecha de fin inválido')
+    .matches(/^\d{4}-\d{2}-\d{2}$/)
+    .withMessage('Formato de fecha de fin inválido (debe ser YYYY-MM-DD)')
     .custom((value, { req }) => {
       if (req.body.startDate && value) {
-        const startDate = new Date(req.body.startDate);
-        const endDate = new Date(value);
+        const startDate = new Date(req.body.startDate + 'T00:00:00');
+        const endDate = new Date(value + 'T00:00:00');
         
         if (endDate <= startDate) {
           throw new Error('La fecha de fin debe ser posterior a la fecha de inicio');

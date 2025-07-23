@@ -170,11 +170,27 @@
                     </td>
                     <td class="text-center">
                       <!-- Badge del rol con efectos -->
-                      <span class="role-badge badge <%= user.role === 'admin' ? 'bg-gradient' : 'bg-gradient' %> px-3 py-2 rounded-pill fw-medium"
-                            style="<%= user.role === 'admin' ? 'background: linear-gradient(135deg, #dc3545, #c82333) !important;' : 'background: linear-gradient(135deg, #6c757d, #5a6268) !important;' %>">
-                        <i class="bi <%= user.role === 'admin' ? 'bi-shield-fill' : 'bi-person-fill' %> me-1"></i>
-                        <%= user.role === 'admin' ? 'Administrador' : 'Usuario' %>
-                      </span>
+                      <% if (currentUser && currentUser._id.toString() !== user._id.toString()) { %>
+                        <!-- Rol clickeable para otros usuarios -->
+                        <form method="POST" action="/admin/user/toggle-role/<%= user._id %>" style="display: inline;">
+                          <button type="submit" class="btn p-0 border-0 bg-transparent role-toggle-btn" 
+                                  title="Clic para cambiar rol">
+                            <span class="role-badge badge <%= user.role === 'admin' ? 'bg-gradient' : 'bg-gradient' %> px-3 py-2 rounded-pill fw-medium hover-scale"
+                                  style="<%= user.role === 'admin' ? 'background: linear-gradient(135deg, #dc3545, #c82333) !important;' : 'background: linear-gradient(135deg, #6c757d, #5a6268) !important;' %>">
+                              <i class="bi <%= user.role === 'admin' ? 'bi-shield-fill' : 'bi-person-fill' %> me-1"></i>
+                              <%= user.role === 'admin' ? 'Administrador' : 'Usuario' %>
+                            </span>
+                          </button>
+                        </form>
+                      <% } else { %>
+                        <!-- Rol no clickeable para el usuario actual -->
+                        <span class="role-badge badge <%= user.role === 'admin' ? 'bg-gradient' : 'bg-gradient' %> px-3 py-2 rounded-pill fw-medium"
+                              style="<%= user.role === 'admin' ? 'background: linear-gradient(135deg, #dc3545, #c82333) !important;' : 'background: linear-gradient(135deg, #6c757d, #5a6268) !important;' %>">
+                          <i class="bi <%= user.role === 'admin' ? 'bi-shield-fill' : 'bi-person-fill' %> me-1"></i>
+                          <%= user.role === 'admin' ? 'Administrador' : 'Usuario' %>
+                          <i class="bi bi-lock-fill ms-1" title="No puedes cambiar tu propio rol"></i>
+                        </span>
+                      <% } %>
                     </td>
                     <!-- Acciones para administradores -->
                     <% if (currentUser && currentUser.role === 'admin') { %>
@@ -356,6 +372,29 @@
 .hover-lift:hover {
   transform: translateY(-3px) !important;
   box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+}
+
+/* Efectos para alternar rol */
+.role-toggle-btn {
+  transition: all 0.3s ease !important;
+}
+
+.role-toggle-btn:hover .role-badge {
+  transform: scale(1.05) !important;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
+}
+
+.role-toggle-btn:active .role-badge {
+  transform: scale(0.95) !important;
+}
+
+.hover-scale {
+  transition: all 0.3s ease !important;
+}
+
+.role-badge {
+  cursor: pointer;
+  transition: all 0.3s ease !important;
 }
 
 /* Hero section */

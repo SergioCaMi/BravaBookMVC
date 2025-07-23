@@ -108,7 +108,8 @@ export const postUpdateProfile = async (req, res) => {
 export const getUsers = async (req, res) => {
   try {
     const users = await User.find({}).sort({ name: 1 }); // Obtiene todos los usuarios, ordenados por nombre
-    res.render("users.ejs", { title: "admin", error: undefined, users });
+    const currentUser = await User.findById(req.session.userId); // Obtiene el usuario actual
+    res.render("users.ejs", { title: "admin", error: undefined, users, currentUser });
   } catch (error) {
     console.error("Error al obtener usuarios:", error);
     res.status(500).render("error.ejs", {
@@ -142,6 +143,42 @@ export const postDeleteUser = async (req, res) => {
   } catch (error) {
     console.error("Error al eliminar usuario:", error);
     req.flash("error_msg", "Error al eliminar usuario.");
+    return res.redirect("/admin/users");
+  }
+};
+
+/**
+ * Alterna el rol de un usuario entre 'admin' y 'user'.
+ * @param {object} req - Objeto de solicitud de Express.
+ * @param {object} res - Objeto de respuesta de Express.
+ */
+export const postToggleUserRole = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await User.findById(id);
+    if (!user) {
+      req.flash("error_msg", "Usuario no encontrado.");
+      return res.redirect("/admin/users");
+    }
+
+    // Evita que un usuario cambie su propio rol
+    if (id === req.session.userId) {
+      req.flash("error_msg", "No puedes cambiar tu propio rol.");
+      return res.redirect("/admin/users");
+    }
+
+    // Alterna el rol
+    const newRole = user.role === 'admin' ? 'user' : 'admin';
+    user.role = newRole;
+    await user.save();
+
+    const roleText = newRole === 'admin' ? 'Administrador' : 'Usuario';
+    req.flash("success_msg", `Rol de "${user.name}" cambiado a ${roleText} satisfactoriamente. 🔄`);
+    return res.redirect("/admin/users");
+  } catch (error) {
+    console.error("Error al cambiar el rol del usuario:", error);
+    req.flash("error_msg", "Error al cambiar el rol del usuario.");
     return res.redirect("/admin/users");
   }
 };
@@ -796,6 +833,31 @@ export const postConfirmReservation = async (req, res) => {
   } catch (error) {
     console.error("Error al confirmar la reserva:", error);
     req.flash("error_msg", "Error al confirmar la reserva.");
+    return res.redirect("/admin/reservations");
+  }
+};
+
+/**
+ * Marca una reserva como pagada.
+ * @param {object} req - Objeto de solicitud de Express.
+ * @param {object} res - Objeto de respuesta de Express.
+ */
+export const postMarkPaidReservation = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const reservation = await Reservation.findById(id);
+    if (!reservation) {
+      req.flash("error_msg", "Reserva no encontrada.");
+      return res.redirect("/admin/reservations");
+    }
+    reservation.paid = true; // Marca la reserva como pagada
+    await reservation.save();
+    req.flash("success_msg", "Reserva marcada como pagada satisfactoriamente. 💰");
+    return res.redirect("/admin/reservations");
+  } catch (error) {
+    console.error("Error al marcar la reserva como pagada:", error);
+    req.flash("error_msg", "Error al marcar la reserva como pagada.");
     return res.redirect("/admin/reservations");
   }
 };
