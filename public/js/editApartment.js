@@ -405,3 +405,81 @@ document
             }
         });
     }, false);
+
+// ========== FUNCIONALIDADES EXTRAÍDAS DE EDITAPARTMENT.EJS ==========
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Actualizar barra de progreso
+  function updateProgressBar() {
+    const sections = document.querySelectorAll('.form-section');
+    const totalSections = sections.length;
+    let completedSections = 0;
+    
+    sections.forEach(section => {
+      const requiredFields = section.querySelectorAll('[required]');
+      let sectionComplete = true;
+      
+      requiredFields.forEach(field => {
+        if (!field.value.trim()) {
+          sectionComplete = false;
+        }
+      });
+      
+      if (sectionComplete && requiredFields.length > 0) {
+        completedSections++;
+      }
+    });
+    
+    const progress = (completedSections / totalSections) * 100;
+    const progressBar = document.querySelector('.progress-fill');
+    if (progressBar) {
+      progressBar.style.width = progress + '%';
+    }
+  }
+  
+  // Actualizar progreso en tiempo real
+  document.addEventListener('input', updateProgressBar);
+  document.addEventListener('change', updateProgressBar);
+  
+  // Validación del formulario
+  const form = document.getElementById('apartmentForm');
+  if (form) {
+    form.addEventListener('submit', function(e) {
+      if (!form.checkValidity()) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      form.classList.add('was-validated');
+    });
+  }
+  
+  // Inicializar progreso
+  updateProgressBar();
+  
+  // Efecto hover en las secciones
+  const sections = document.querySelectorAll('.form-section');
+  sections.forEach(section => {
+    section.addEventListener('mouseenter', function() {
+      this.style.transform = 'translateY(-2px)';
+    });
+    
+    section.addEventListener('mouseleave', function() {
+      this.style.transform = 'translateY(0)';
+    });
+  });
+});
+
+// Función para añadir normas (mantenida del original)
+function addRuleInput() {
+  const container = document.getElementById('rulesContainer');
+  const div = document.createElement('div');
+  div.className = 'input-group mb-2';
+  div.innerHTML = `
+    <input type="text" name="rules[]" class="form-control" />
+    <div class="invalid-feedback">Por favor, ingresa una norma.</div>
+    <button type="button" class="btn btn-outline-danger" onclick="this.parentNode.remove()">Eliminar</button>
+  `;
+  container.appendChild(div);
+}
+
+// ========== FIN FUNCIONALIDADES EXTRAÍDAS ==========

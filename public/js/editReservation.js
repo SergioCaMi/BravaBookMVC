@@ -96,3 +96,73 @@ $(document).ready(function () {
     });
   }
 });
+
+// Funcionalidades adicionales para la edición de reservas
+document.addEventListener('DOMContentLoaded', function() {
+  // Contador de caracteres para notas
+  const notesField = document.getElementById('notes');
+  const notesCharCount = document.getElementById('notesCharCount');
+  
+  if (notesField && notesCharCount) {
+    // Inicializar contador
+    notesCharCount.textContent = notesField.value.length;
+    
+    notesField.addEventListener('input', function() {
+      notesCharCount.textContent = this.value.length;
+      if (this.value.length > 900) {
+        notesCharCount.style.color = '#dc3545';
+      } else if (this.value.length > 750) {
+        notesCharCount.style.color = '#ffc107';
+      } else {
+        notesCharCount.style.color = '#6c757d';
+      }
+    });
+  }
+  
+  // Actualizar barra de progreso
+  function updateProgressBar() {
+    const sections = document.querySelectorAll('.form-section');
+    const totalSections = sections.length;
+    let completedSections = 0;
+    
+    sections.forEach(section => {
+      const requiredFields = section.querySelectorAll('[required]');
+      let sectionComplete = true;
+      
+      requiredFields.forEach(field => {
+        if (!field.value.trim()) {
+          sectionComplete = false;
+        }
+      });
+      
+      if (sectionComplete && requiredFields.length > 0) {
+        completedSections++;
+      }
+    });
+    
+    const progress = (completedSections / totalSections) * 100;
+    const progressBar = document.querySelector('.progress-fill');
+    if (progressBar) {
+      progressBar.style.width = progress + '%';
+    }
+  }
+  
+  // Actualizar progreso en tiempo real
+  document.addEventListener('input', updateProgressBar);
+  document.addEventListener('change', updateProgressBar);
+  
+  // Inicializar progreso
+  updateProgressBar();
+  
+  // Efecto hover en las secciones
+  const sections = document.querySelectorAll('.form-section');
+  sections.forEach(section => {
+    section.addEventListener('mouseenter', function() {
+      this.style.transform = 'translateY(-2px)';
+    });
+    
+    section.addEventListener('mouseleave', function() {
+      this.style.transform = 'translateY(0)';
+    });
+  });
+});

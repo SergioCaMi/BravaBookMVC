@@ -1,5 +1,111 @@
 /* ========== USERS.JS - JAVASCRIPT ESPECÍFICO PARA GESTIÓN DE USUARIOS ========== */
 
+// Función específica para users.ejs
+function reinitializeUsersComponents() {
+  if (typeof reinitializeBootstrapComponents === 'function') {
+    reinitializeBootstrapComponents();
+  }
+  
+  // Forzar inicialización de todos los modales
+  setTimeout(() => {
+    // Encontrar todos los modales
+    const modals = document.querySelectorAll('.modal');
+    modals.forEach(modal => {
+      // Inicializar modal de Bootstrap si no existe
+      if (!bootstrap.Modal.getInstance(modal)) {
+        new bootstrap.Modal(modal);
+      }
+    });
+    
+    // Asegurar que todos los botones de modal tengan el event listener correcto
+    const modalButtons = document.querySelectorAll('[data-bs-toggle="modal"]');
+    console.log('Found modal buttons:', modalButtons.length);
+    
+    modalButtons.forEach(button => {
+      const targetSelector = button.getAttribute('data-bs-target');
+      console.log('Modal button target:', targetSelector);
+      
+      if (targetSelector) {
+        // Remover event listeners previos
+        button.removeEventListener('click', handleUserModalClick);
+        // Agregar event listener actualizado
+        button.addEventListener('click', handleUserModalClick);
+        
+        // Verificar que el modal target existe
+        const targetModal = document.querySelector(targetSelector);
+        if (!targetModal) {
+          console.error('Modal target not found:', targetSelector);
+        } else {
+          console.log('Modal target found:', targetModal);
+        }
+      }
+    });
+  }, 200);
+}
+
+// Manejador específico para modales de usuarios
+function handleUserModalClick(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  
+  const button = event.currentTarget;
+  const targetSelector = button.getAttribute('data-bs-target');
+  
+  console.log('Modal button clicked:', targetSelector);
+  
+  if (targetSelector) {
+    const targetModal = document.querySelector(targetSelector);
+    if (targetModal) {
+      console.log('Modal found, showing:', targetModal);
+      
+      // Asegurar que el modal esté inicializado
+      let modal = bootstrap.Modal.getInstance(targetModal);
+      if (!modal) {
+        modal = new bootstrap.Modal(targetModal, {
+          backdrop: true,
+          keyboard: true,
+          focus: true
+        });
+      }
+      
+      // Mostrar el modal
+      modal.show();
+      
+      // Verificar que se mostró
+      setTimeout(() => {
+        if (!targetModal.classList.contains('show')) {
+          console.error('Modal failed to show, forcing display');
+          targetModal.style.display = 'block';
+          targetModal.classList.add('show');
+          document.body.classList.add('modal-open');
+          
+          // Crear backdrop manualmente si no existe
+          if (!document.querySelector('.modal-backdrop')) {
+            const backdrop = document.createElement('div');
+            backdrop.className = 'modal-backdrop fade show';
+            backdrop.style.zIndex = '2050';
+            document.body.appendChild(backdrop);
+          }
+        }
+      }, 100);
+      
+    } else {
+      console.error('Modal not found:', targetSelector);
+    }
+  }
+}
+
+// Inicializar cuando se carga la página
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('DOM loaded, initializing users components');
+  setTimeout(() => {
+    reinitializeUsersComponents();
+  }, 1000);
+});
+
+// También reinicializar después de búsquedas con IA
+window.reinitializeUsersComponents = reinitializeUsersComponents;
+
 // Función para manejar modales de eliminación de usuarios
 function initializeUserModals() {
   // Encontrar todos los botones de eliminación
