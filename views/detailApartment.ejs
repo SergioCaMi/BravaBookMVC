@@ -4,16 +4,6 @@
 <!-- Incluye mensajes parciales, como notificaciones o alertas -->
 <%- include("partials/mensajes") %>
 
-<!-- Botón de volver atrás mejorado -->
-<!-- <div class="back-button-container position-fixed top-50 start-0 translate-middle-y ms-3" style="z-index: 1020;">
-  <button onclick="window.history.back()" 
-          class="btn btn-primary btn-lg rounded-circle shadow-lg back-btn d-flex align-items-center justify-content-center"
-          data-bs-toggle="tooltip" title="Volver atrás"
-          style="width: 60px; height: 60px;">
-    <i class="bi bi-arrow-left fs-4"></i>
-  </button>
-</div> -->
-
 <!-- Hero section con información básica -->
 <% if (apartments) { %>
 <div class="apartment-hero position-relative overflow-hidden d-flex justify-content-center align-items-center" style="min-height: 50vh;">
@@ -512,7 +502,6 @@
   </div>
 </main>
 
-<!-- Estilos CSS personalizados -->
 <style>
 /* Efectos de transición globales */
 .transition-all {

@@ -1,124 +1,102 @@
-<%- include("partials/header") %>
-
-<%- include("partials/mensajes") %>
+<%- include("partials/header") %> <%- include("partials/mensajes") %>
 
 <div id="videoHero" class="video-hero position-relative w-100 overflow-hidden">
-  
   <!-- Video de fondo con efecto zoom -->
-  <video class="hero-video position-absolute top-0 start-0 w-100 h-100" 
-         autoplay muted loop playsinline preload="auto">
-    <source src="/bg1.mp4" type="video/mp4">
+  <video class="hero-video position-absolute top-0 start-0 w-100 h-100" autoplay muted loop playsinline preload="auto">
+    <source src="/bg1.mp4" type="video/mp4" />
     <!-- Fallback para navegadores que no soporten video -->
-    <div class="hero-slide position-relative" 
-         style="background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('/img/hero_bg_1.jpg'); 
-                height: 110vh; background-size: cover; background-position: center; background-attachment: fixed;">
-    </div>
+    <div
+      class="hero-slide position-relative"
+      style="
+        background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url('/img/hero_bg_1.jpg');
+        height: 110vh;
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+      "
+    ></div>
   </video>
-  
-  <!-- Overlay oscuro para mejorar la legibilidad del texto -->
-  <div class="video-overlay position-absolute top-0 start-0 w-100 h-100" 
-       style="background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)); z-index: 2;"></div>
 
-  <div class="position-absolute top-50 start-50 translate-middle w-100 px-3" style="max-width: 1200px; z-index: 10; transform: translate(-50%, -40%);">
+  <!-- Overlay oscuro para mejorar la legibilidad del texto -->
+  <div class="video-overlay position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)); z-index: 2"></div>
+
+  <div class="position-absolute top-50 start-50 translate-middle w-100 px-3" style="max-width: 1200px; z-index: 10; transform: translate(-50%, -40%)">
     <div class="container text-white text-center">
       <div class="row justify-content-center">
         <div class="col-12 col-xl-11">
-          <div class="hero-content-card backdrop-blur rounded-4 p-4 p-md-5 shadow-lg border border-light border-opacity-25"
-               style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); animation: fadeInUp 1s ease-out; z-index: 3; position: relative;">
-
+          <div
+            class="hero-content-card backdrop-blur rounded-4 p-4 p-md-5 shadow-lg border border-light border-opacity-25"
+            style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); animation: fadeInUp 1s ease-out; z-index: 3; position: relative"
+          >
             <div class="hero-title-container mb-4">
-              <h1 class="display-4 display-md-3 fw-bold mb-3 text-shadow"
-                  style="animation: fadeInDown 1s ease-out 0.3s both; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">
+              <h1 class="display-4 display-md-3 fw-bold mb-3 text-shadow" style="animation: fadeInDown 1s ease-out 0.3s both; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5)">
                 La forma más fácil de encontrar tu lugar perfecto
               </h1>
-              <p class="lead fs-5 mb-3 text-light"
-                  style="animation: fadeInUp 1s ease-out 0.6s both;">
-                Descubre apartamentos únicos en los mejores destinos
-              </p>
+              <p class="lead fs-5 mb-3 text-light" style="animation: fadeInUp 1s ease-out 0.6s both">Descubre apartamentos únicos en los mejores destinos</p>
             </div>
 
-            <form id="busquedaForm" action="/apartments/search" method="GET" onsubmit="buscarApartamentos(event)"
-                  class="search-form p-3 p-md-4 rounded-3 shadow-lg"
-                  style="background: rgba(255, 255, 255, 0.95); animation: slideInUp 1s ease-out 0.9s both;">
-
+            <form
+              id="busquedaForm"
+              action="/apartments/search"
+              method="GET"
+              onsubmit="buscarApartamentos(event)"
+              class="search-form p-3 p-md-4 rounded-3 shadow-lg"
+              style="background: rgba(255, 255, 255, 0.95); animation: slideInUp 1s ease-out 0.9s both"
+            >
               <div class="row g-3 mb-3">
                 <div class="col-12 col-md-4">
-                  <label for="provinceSelect" class="form-label fw-semibold text-dark mb-1">
-                    <i class="bi bi-geo-alt-fill text-primary me-2"></i>Provincia
-                  </label>
+                  <label for="provinceSelect" class="form-label fw-semibold text-dark mb-1"> <i class="bi bi-geo-alt-fill text-primary me-2"></i>Provincia </label>
                   <select id="provinceSelect" class="form-select form-select-lg border-0 shadow-sm rounded-3 transition-all">
                     <option value="">Selecciona provincia</option>
                   </select>
                 </div>
 
                 <div class="col-12 col-md-4">
-                  <label for="municipalitySelect" class="form-label fw-semibold text-dark mb-1">
-                    <i class="bi bi-building text-primary me-2"></i>Municipio
-                  </label>
+                  <label for="municipalitySelect" class="form-label fw-semibold text-dark mb-1"> <i class="bi bi-building text-primary me-2"></i>Municipio </label>
                   <select id="municipalitySelect" class="form-select form-select-lg border-0 shadow-sm rounded-3 transition-all">
                     <option value="">Selecciona municipio</option>
                   </select>
                 </div>
 
                 <div class="col-12 col-md-4">
-                  <label for="maxGuests" class="form-label fw-semibold text-dark mb-1">
-                    <i class="bi bi-people-fill text-primary me-2"></i>Huéspedes
-                  </label>
-                  <input type="number" name="maxGuests" id="maxGuests"
-                         class="form-control form-control-lg border-0 shadow-sm rounded-3 transition-all"
-                         min="1" placeholder="Número de huéspedes">
+                  <label for="maxGuests" class="form-label fw-semibold text-dark mb-1"> <i class="bi bi-people-fill text-primary me-2"></i>Huéspedes </label>
+                  <input type="number" name="maxGuests" id="maxGuests" class="form-control form-control-lg border-0 shadow-sm rounded-3 transition-all" min="1" placeholder="Número de huéspedes" />
                 </div>
 
-                <input type="hidden" name="municipality[id]" id="municipalityIdInput">
-                <input type="hidden" name="municipality[nm]" id="municipalityNameInput">
-                <input type="hidden" name="province[id]" id="provinceIdInput">
-                <input type="hidden" name="province[nm]" id="provinceNameInput">
+                <input type="hidden" name="municipality[id]" id="municipalityIdInput" />
+                <input type="hidden" name="municipality[nm]" id="municipalityNameInput" />
+                <input type="hidden" name="province[id]" id="provinceIdInput" />
+                <input type="hidden" name="province[nm]" id="provinceNameInput" />
               </div>
 
               <div class="row g-3 mb-3">
                 <div class="col-12 col-md-4">
-                  <label for="minPrice" class="form-label fw-semibold text-dark mb-1">
-                    <i class="bi bi-currency-euro text-success me-2"></i>Precio Mínimo
-                  </label>
-                  <input type="number" name="minPrice" id="minPrice"
-                         class="form-control form-control-lg border-0 shadow-sm rounded-3 transition-all"
-                         min="0" step="1" placeholder="Desde €">
+                  <label for="minPrice" class="form-label fw-semibold text-dark mb-1"> <i class="bi bi-currency-euro text-success me-2"></i>Precio Mínimo </label>
+                  <input type="number" name="minPrice" id="minPrice" class="form-control form-control-lg border-0 shadow-sm rounded-3 transition-all" min="0" step="1" placeholder="Desde €" />
                 </div>
 
                 <div class="col-12 col-md-4">
-                  <label for="maxPrice" class="form-label fw-semibold text-dark mb-1">
-                    <i class="bi bi-currency-euro text-success me-2"></i>Precio Máximo
-                  </label>
-                  <input type="number" name="maxPrice" id="maxPrice"
-                         class="form-control form-control-lg border-0 shadow-sm rounded-3 transition-all"
-                         min="0" step="1" placeholder="Hasta €">
+                  <label for="maxPrice" class="form-label fw-semibold text-dark mb-1"> <i class="bi bi-currency-euro text-success me-2"></i>Precio Máximo </label>
+                  <input type="number" name="maxPrice" id="maxPrice" class="form-control form-control-lg border-0 shadow-sm rounded-3 transition-all" min="0" step="1" placeholder="Hasta €" />
                 </div>
 
                 <div class="col-12 col-md-4">
-                  <label for="dateRange" class="form-label fw-semibold text-dark mb-1">
-                    <i class="bi bi-calendar-range text-info me-2"></i>Fechas
-                  </label>
-                  <input type="text" id="dateRange" name="dateRange"
-                         class="form-control form-control-lg border-0 shadow-sm rounded-3 transition-all"
-                         readonly placeholder="Selecciona fechas">
-                  <input type="hidden" id="startDate" name="startDate">
-                  <input type="hidden" name="endDate" id="endDate">
+                  <label for="dateRange" class="form-label fw-semibold text-dark mb-1"> <i class="bi bi-calendar-range text-info me-2"></i>Fechas </label>
+                  <input type="text" id="dateRange" name="dateRange" class="form-control form-control-lg border-0 shadow-sm rounded-3 transition-all" readonly placeholder="Selecciona fechas" />
+                  <input type="hidden" id="startDate" name="startDate" />
+                  <input type="hidden" name="endDate" id="endDate" />
                 </div>
               </div>
 
               <div class="row g-3 mb-4">
                 <div class="col-12 col-lg-8">
-                  <label class="form-label fw-semibold text-dark mb-2 d-block">
-                    <i class="bi bi-gear-fill text-warning me-2"></i>Servicios incluidos
-                  </label>
+                  <label class="form-label fw-semibold text-dark mb-2 d-block"> <i class="bi bi-gear-fill text-warning me-2"></i>Servicios incluidos </label>
                   <div class="row g-2">
                     <div class="col-6 col-lg-4">
                       <div class="service-checkbox p-2 rounded-3 border border-light-subtle transition-all">
-                        <input type="checkbox" name="services.airConditioning" value="on"
-                               class="form-check-input me-2" id="airConditioning">
+                        <input type="checkbox" name="services.airConditioning" value="on" class="form-check-input me-2" id="airConditioning" />
                         <label class="form-check-label d-flex align-items-center" for="airConditioning">
-                          <span class="service-icon bg-primary bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center me-2"
-                                 style="width: 24px; height: 24px;">
+                          <span class="service-icon bg-primary bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center me-2" style="width: 24px; height: 24px">
                             <i class="bi bi-snow text-white"></i>
                           </span>
                           <small class="fw-medium text-dark">Aire Acondicionado</small>
@@ -128,11 +106,9 @@
 
                     <div class="col-6 col-lg-4">
                       <div class="service-checkbox p-2 rounded-3 border border-light-subtle transition-all">
-                        <input type="checkbox" name="services.heating" value="on"
-                               class="form-check-input me-2" id="heating">
+                        <input type="checkbox" name="services.heating" value="on" class="form-check-input me-2" id="heating" />
                         <label class="form-check-label d-flex align-items-center" for="heating">
-                          <span class="service-icon bg-danger bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center me-2"
-                                 style="width: 24px; height: 24px;">
+                          <span class="service-icon bg-danger bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center me-2" style="width: 24px; height: 24px">
                             <i class="bi bi-fire text-white"></i>
                           </span>
                           <small class="fw-medium text-dark">Calefacción</small>
@@ -142,11 +118,9 @@
 
                     <div class="col-6 col-lg-4">
                       <div class="service-checkbox p-2 rounded-3 border border-light-subtle transition-all">
-                        <input type="checkbox" name="services.accessibility" value="on"
-                               class="form-check-input me-2" id="accessibility">
+                        <input type="checkbox" name="services.accessibility" value="on" class="form-check-input me-2" id="accessibility" />
                         <label class="form-check-label d-flex align-items-center" for="accessibility">
-                          <span class="service-icon bg-info bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center me-2"
-                                 style="width: 24px; height: 24px;">
+                          <span class="service-icon bg-info bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center me-2" style="width: 24px; height: 24px">
                             <i class="bi bi-person-wheelchair text-white"></i>
                           </span>
                           <small class="fw-medium text-dark">Accesibilidad</small>
@@ -156,11 +130,9 @@
 
                     <div class="col-6 col-lg-4">
                       <div class="service-checkbox p-2 rounded-3 border border-light-subtle transition-all">
-                        <input type="checkbox" name="services.television" value="on"
-                               class="form-check-input me-2" id="television">
+                        <input type="checkbox" name="services.television" value="on" class="form-check-input me-2" id="television" />
                         <label class="form-check-label d-flex align-items-center" for="television">
-                          <span class="service-icon bg-secondary bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center me-2"
-                                 style="width: 24px; height: 24px;">
+                          <span class="service-icon bg-secondary bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center me-2" style="width: 24px; height: 24px">
                             <i class="bi bi-tv text-white"></i>
                           </span>
                           <small class="fw-medium text-dark">Televisión</small>
@@ -170,11 +142,9 @@
 
                     <div class="col-6 col-lg-4">
                       <div class="service-checkbox p-2 rounded-3 border border-light-subtle transition-all">
-                        <input type="checkbox" name="services.kitchen" value="on"
-                               class="form-check-input me-2" id="kitchen">
+                        <input type="checkbox" name="services.kitchen" value="on" class="form-check-input me-2" id="kitchen" />
                         <label class="form-check-label d-flex align-items-center" for="kitchen">
-                          <span class="service-icon bg-warning bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center me-2"
-                                 style="width: 24px; height: 24px;">
+                          <span class="service-icon bg-warning bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center me-2" style="width: 24px; height: 24px">
                             <i class="bi bi-cup-hot text-white"></i>
                           </span>
                           <small class="fw-medium text-dark">Cocina</small>
@@ -184,11 +154,9 @@
 
                     <div class="col-6 col-lg-4">
                       <div class="service-checkbox p-2 rounded-3 border border-light-subtle transition-all">
-                        <input type="checkbox" name="services.internet" value="on"
-                               class="form-check-input me-2" id="internet">
+                        <input type="checkbox" name="services.internet" value="on" class="form-check-input me-2" id="internet" />
                         <label class="form-check-label d-flex align-items-center" for="internet">
-                          <span class="service-icon bg-success bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center me-2"
-                                 style="width: 24px; height: 24px;">
+                          <span class="service-icon bg-success bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center me-2" style="width: 24px; height: 24px">
                             <i class="bi bi-wifi text-white"></i>
                           </span>
                           <small class="fw-medium text-dark">Internet</small>
@@ -199,9 +167,7 @@
                 </div>
 
                 <div class="col-12 col-lg-4">
-                  <label for="sortPrice" class="form-label fw-semibold text-dark mb-1">
-                    <i class="bi bi-sort-numeric-down text-primary me-2"></i>Ordenar por precio
-                  </label>
+                  <label for="sortPrice" class="form-label fw-semibold text-dark mb-1"> <i class="bi bi-sort-numeric-down text-primary me-2"></i>Ordenar por precio </label>
                   <select id="sortPrice" class="form-select form-select-lg border-0 shadow-sm rounded-3 transition-all" name="sortPrice">
                     <option value="">Selecciona orden</option>
                     <option value="1">Precio: Menor a Mayor</option>
@@ -233,16 +199,17 @@
                       <span class="input-group-text bg-warning border-0 rounded-start-pill">
                         <i class="bi bi-magic text-dark"></i>
                       </span>
-                      <input type="text" name="query"
-                             class="form-control border-0 rounded-end-pill transition-all"
-                             placeholder="Ej: Busco apartamento barato con wifi en Almería cerca de la playa"
-                             required>
+                      <input
+                        type="text"
+                        name="query"
+                        class="form-control border-0 rounded-end-pill transition-all"
+                        placeholder="Ej: Busco apartamento barato con wifi en Almería cerca de la playa"
+                        required
+                      />
                     </div>
                   </div>
                   <div class="col-12 col-lg-4 mt-3 mt-lg-0">
-                    <button type="submit" class="btn btn-warning btn-lg w-100 rounded-pill fw-bold shadow-lg transition-all hover-lift">
-                      <i class="bi bi-sparkles me-2"></i>Buscar con IA
-                    </button>
+                    <button type="submit" class="btn btn-warning btn-lg w-100 rounded-pill fw-bold shadow-lg transition-all hover-lift"><i class="bi bi-sparkles me-2"></i>Buscar con IA</button>
                   </div>
                 </div>
               </form>
@@ -254,136 +221,115 @@
   </div>
 </div>
 
-<div class="recommended-section py-5 py-md-6" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+<div class="recommended-section py-5 py-md-6" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)">
   <div class="container-fluid px-3 px-md-5">
     <div class="row mb-5 align-items-center">
       <div class="col-12 col-lg-6 text-center text-lg-start mb-3 mb-lg-0">
         <div class="section-header">
-          <span class="badge bg-primary bg-gradient px-3 py-2 rounded-pill mb-3 fw-medium">
-            <i class="bi bi-star-fill me-1"></i>Destacados
-          </span>
+          <span class="badge bg-primary bg-gradient px-3 py-2 rounded-pill mb-3 fw-medium"> <i class="bi bi-star-fill me-1"></i>Destacados </span>
           <h2 class="display-5 fw-bold text-dark mb-2">Apartamentos Recomendados</h2>
           <p class="text-muted fs-5 mb-0">Los mejores apartamentos seleccionados especialmente para ti</p>
         </div>
       </div>
       <div class="col-12 col-lg-6 text-center text-lg-end">
         <div class="action-buttons">
-          <a href="/seeApartments" class="btn btn-primary btn-lg rounded-pill px-4 py-2 me-2 mb-2 shadow-sm transition-all hover-lift">
-            <i class="bi bi-grid-3x3-gap-fill me-2"></i>Ver Todos
-          </a>
-          <a href="/map" class="btn btn-outline-primary btn-lg rounded-pill px-4 py-2 mb-2 shadow-sm transition-all hover-lift">
-            <i class="bi bi-map me-2"></i>Ver Mapa
-          </a>
+          <% if (currentUser) { %>
+          <a href="/seeApartments" class="btn btn-primary btn-lg rounded-pill px-4 py-2 me-2 mb-2 shadow-sm transition-all hover-lift"> <i class="bi bi-grid-3x3-gap-fill me-2"></i>Ver Todos </a>
+          <a href="/map" class="btn btn-outline-primary btn-lg rounded-pill px-4 py-2 mb-2 shadow-sm transition-all hover-lift"> <i class="bi bi-map me-2"></i>Ver Mapa </a>
+
+          <% } %>
         </div>
       </div>
     </div>
 
     <div class="apartments-carousel position-relative">
-      <div class="d-flex overflow-auto gap-4 pb-4 px-2"
-           style="scroll-snap-type: x mandatory; scrollbar-width: thin;">
+      <div class="d-flex overflow-auto gap-4 pb-4 px-2" style="scroll-snap-type: x mandatory; scrollbar-width: thin">
         <% apartments.slice(0, 15).forEach((apartment, index) => { %>
-          <div class="apartment-card-wrapper flex-shrink-0"
-               style="width: 320px; scroll-snap-align: start; animation: slideInUp 0.6s ease-out <%= index * 0.1 %>s both;">
-            <div class="apartment-card card border-0 shadow-lg rounded-4 h-100 overflow-hidden transition-all hover-lift">
-              <div class="card-img-container position-relative overflow-hidden">
-                <a href="/apartments/<%= apartment._id %>" class="d-block">
-                  <img src="<%= apartment.photos.find(p => p.isMain)?.url || '/img/default.jpg' %>"
-                       class="card-img-top transition-all"
-                       style="height: 220px; object-fit: cover; transition: transform 0.3s ease;"
-                       alt="<%= apartment.title %>">
-                  <div class="image-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center opacity-0 transition-all">
-                    <span class="btn btn-light btn-lg rounded-circle shadow-lg">
-                      <i class="bi bi-eye-fill"></i>
-                    </span>
-                  </div>
-                </a>
-
-                <div class="position-absolute top-0 end-0 m-3">
-                  <span class="badge bg-primary bg-gradient px-3 py-2 rounded-pill shadow-sm">
-                    <i class="bi bi-star-fill me-1"></i>Destacado
+        <div class="apartment-card-wrapper flex-shrink-0" style="width: 320px; scroll-snap-align: start; animation: slideInUp 0.6s ease-out <%= index * 0.1 %>s both">
+          <div class="apartment-card card border-0 shadow-lg rounded-4 h-100 overflow-hidden transition-all hover-lift">
+            <div class="card-img-container position-relative overflow-hidden">
+              <a href="/apartments/<%= apartment._id %>" class="d-block">
+                <img
+                  src="<%= apartment.photos.find(p => p.isMain)?.url || '/img/default.jpg' %>"
+                  class="card-img-top transition-all"
+                  style="height: 220px; object-fit: cover; transition: transform 0.3s ease"
+                  alt="<%= apartment.title %>"
+                />
+                <div class="image-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center opacity-0 transition-all">
+                  <span class="btn btn-light btn-lg rounded-circle shadow-lg">
+                    <i class="bi bi-eye-fill"></i>
                   </span>
                 </div>
+              </a>
 
-                <div class="position-absolute bottom-0 start-0 m-3">
-                  <span class="badge bg-success bg-gradient px-3 py-2 rounded-pill shadow-lg fs-6 fw-bold">
-                    <%= apartment.price.toLocaleString() %>€
-                  </span>
-                </div>
+              <div class="position-absolute top-0 end-0 m-3">
+                <span class="badge bg-primary bg-gradient px-3 py-2 rounded-pill shadow-sm"> <i class="bi bi-star-fill me-1"></i>Destacado </span>
               </div>
 
-              <div class="card-body p-4 d-flex flex-column">
-                <div class="mb-3">
-                  <h5 class="card-title text-dark mb-2 fw-bold lh-sm">
-                    <%= apartment.title %>
-                  </h5>
-                  <p class="text-muted mb-0 d-flex align-items-center">
-                    <i class="bi bi-geo-alt-fill text-primary me-2"></i>
-                    <small><%= apartment.location.municipality.nm %>, <%= apartment.location.province.nm %></small>
-                  </p>
-                </div>
-
-                <div class="apartment-details d-flex justify-content-between mb-3 p-2 bg-light rounded-3">
-                  <div class="detail-item text-center">
-                    <i class="bi bi-door-closed text-primary d-block mb-1"></i>
-                    <small class="fw-medium text-dark"><%= apartment.rooms %> habs</small>
-                  </div>
-                  <div class="detail-item text-center">
-                    <i class="bi bi-droplet text-info d-block mb-1"></i>
-                    <small class="fw-medium text-dark"><%= apartment.bathrooms %> baños</small>
-                  </div>
-                  <div class="detail-item text-center">
-                    <i class="bi bi-people text-success d-block mb-1"></i>
-                    <small class="fw-medium text-dark"><%= apartment.maxGuests || 'N/A' %> huésp.</small>
-                  </div>
-                </div>
-
-                <% const s = apartment.services; %>
-                <div class="services-icons d-flex flex-wrap gap-2 mb-4">
-                  <% if (s.airConditioning) { %>
-                    <span class="service-badge badge bg-primary bg-gradient rounded-pill px-2 py-1"
-                          data-bs-toggle="tooltip" title="Aire acondicionado">
-                      <i class="bi bi-snow"></i>
-                    </span>
-                  <% } %>
-                  <% if (s.heating) { %>
-                    <span class="service-badge badge bg-danger bg-gradient rounded-pill px-2 py-1"
-                          data-bs-toggle="tooltip" title="Calefacción">
-                      <i class="bi bi-fire"></i>
-                    </span>
-                  <% } %>
-                  <% if (s.accessibility) { %>
-                    <span class="service-badge badge bg-info bg-gradient rounded-pill px-2 py-1"
-                          data-bs-toggle="tooltip" title="Accesibilidad">
-                      <i class="bi bi-person-wheelchair"></i>
-                    </span>
-                  <% } %>
-                  <% if (s.television) { %>
-                    <span class="service-badge badge bg-secondary bg-gradient rounded-pill px-2 py-1"
-                          data-bs-toggle="tooltip" title="Televisión">
-                      <i class="bi bi-tv"></i>
-                    </span>
-                  <% } %>
-                  <% if (s.kitchen) { %>
-                    <span class="service-badge badge bg-warning bg-gradient rounded-pill px-2 py-1"
-                          data-bs-toggle="tooltip" title="Cocina">
-                      <i class="bi bi-cup-hot"></i>
-                    </span>
-                  <% } %>
-                  <% if (s.internet) { %>
-                    <span class="service-badge badge bg-success bg-gradient rounded-pill px-2 py-1"
-                          data-bs-toggle="tooltip" title="Internet">
-                      <i class="bi bi-wifi"></i>
-                    </span>
-                  <% } %>
-                </div>
-
-                <a href="/apartments/<%= apartment._id %>"
-                   class="btn btn-primary btn-lg w-100 mt-auto rounded-pill fw-bold transition-all hover-lift shadow-sm">
-                  <i class="bi bi-arrow-right-circle me-2"></i>Ver Detalles
-                </a>
+              <div class="position-absolute bottom-0 start-0 m-3">
+                <span class="badge bg-success bg-gradient px-3 py-2 rounded-pill shadow-lg fs-6 fw-bold"> <%= apartment.price.toLocaleString() %>€ </span>
               </div>
             </div>
+
+            <div class="card-body p-4 d-flex flex-column">
+              <div class="mb-3">
+                <h5 class="card-title text-dark mb-2 fw-bold lh-sm"><%= apartment.title %></h5>
+                <p class="text-muted mb-0 d-flex align-items-center">
+                  <i class="bi bi-geo-alt-fill text-primary me-2"></i>
+                  <small><%= apartment.location.municipality.nm %>, <%= apartment.location.province.nm %></small>
+                </p>
+              </div>
+
+              <div class="apartment-details d-flex justify-content-between mb-3 p-2 bg-light rounded-3">
+                <div class="detail-item text-center">
+                  <i class="bi bi-door-closed text-primary d-block mb-1"></i>
+                  <small class="fw-medium text-dark"><%= apartment.rooms %> habs</small>
+                </div>
+                <div class="detail-item text-center">
+                  <i class="bi bi-droplet text-info d-block mb-1"></i>
+                  <small class="fw-medium text-dark"><%= apartment.bathrooms %> baños</small>
+                </div>
+                <div class="detail-item text-center">
+                  <i class="bi bi-people text-success d-block mb-1"></i>
+                  <small class="fw-medium text-dark"><%= apartment.maxGuests || 'N/A' %> huésp.</small>
+                </div>
+              </div>
+
+              <% const s = apartment.services; %>
+              <div class="services-icons d-flex flex-wrap gap-2 mb-4">
+                <% if (s.airConditioning) { %>
+                <span class="service-badge badge bg-primary bg-gradient rounded-pill px-2 py-1" data-bs-toggle="tooltip" title="Aire acondicionado">
+                  <i class="bi bi-snow"></i>
+                </span>
+                <% } %> <% if (s.heating) { %>
+                <span class="service-badge badge bg-danger bg-gradient rounded-pill px-2 py-1" data-bs-toggle="tooltip" title="Calefacción">
+                  <i class="bi bi-fire"></i>
+                </span>
+                <% } %> <% if (s.accessibility) { %>
+                <span class="service-badge badge bg-info bg-gradient rounded-pill px-2 py-1" data-bs-toggle="tooltip" title="Accesibilidad">
+                  <i class="bi bi-person-wheelchair"></i>
+                </span>
+                <% } %> <% if (s.television) { %>
+                <span class="service-badge badge bg-secondary bg-gradient rounded-pill px-2 py-1" data-bs-toggle="tooltip" title="Televisión">
+                  <i class="bi bi-tv"></i>
+                </span>
+                <% } %> <% if (s.kitchen) { %>
+                <span class="service-badge badge bg-warning bg-gradient rounded-pill px-2 py-1" data-bs-toggle="tooltip" title="Cocina">
+                  <i class="bi bi-cup-hot"></i>
+                </span>
+                <% } %> <% if (s.internet) { %>
+                <span class="service-badge badge bg-success bg-gradient rounded-pill px-2 py-1" data-bs-toggle="tooltip" title="Internet">
+                  <i class="bi bi-wifi"></i>
+                </span>
+                <% } %>
+              </div>
+
+              <a href="/apartments/<%= apartment._id %>" class="btn btn-primary btn-lg w-100 mt-auto rounded-pill fw-bold transition-all hover-lift shadow-sm">
+                <i class="bi bi-arrow-right-circle me-2"></i>Ver Detalles
+              </a>
+            </div>
           </div>
+        </div>
         <% }) %>
       </div>
 
@@ -397,9 +343,7 @@
   </div>
 </div>
 
-<div id="apartmentsPartial" class="search-results-section">
-  <%- include("partials/seeApartments") %>
-</div>
+<div id="apartmentsPartial" class="search-results-section"><%- include("partials/seeApartments") %></div>
 
 <style>
   /* Animaciones personalizadas */
@@ -444,13 +388,13 @@
   /* Efecto hover lift */
   .hover-lift:hover {
     transform: translateY(-5px) !important;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
   }
 
   /* Efectos para las tarjetas de apartamentos */
   .apartment-card:hover {
     transform: translateY(-8px);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1) !important;
   }
 
   .apartment-card:hover .card-img-top {
@@ -459,7 +403,7 @@
 
   .apartment-card:hover .image-overlay {
     opacity: 1 !important;
-    background: rgba(0,0,0,0.4);
+    background: rgba(0, 0, 0, 0.4);
   }
 
   /* Efectos para checkboxes de servicios */
@@ -526,11 +470,11 @@
   }
 
   @keyframes videoZoom {
-    0% { 
-      transform: scale(1); 
+    0% {
+      transform: scale(1);
     }
-    100% { 
-      transform: scale(1.1); 
+    100% {
+      transform: scale(1.1);
     }
   }
 
@@ -586,11 +530,11 @@
   }
 
   @keyframes videoZoomMobile {
-    0% { 
-      transform: scale(1.05); 
+    0% {
+      transform: scale(1.05);
     }
-    100% { 
-      transform: scale(1.15); 
+    100% {
+      transform: scale(1.15);
     }
   }
 
@@ -602,86 +546,86 @@
 </style>
 
 <script>
-function buscarApartamentos(e) {
-  e.preventDefault();
+  function buscarApartamentos(e) {
+    e.preventDefault();
 
-  // Añadir efecto de loading al botón
-  const submitBtn = e.target.querySelector('button[type="submit"]');
-  const originalText = submitBtn.innerHTML;
-  submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Buscando...';
-  submitBtn.disabled = true;
+    // Añadir efecto de loading al botón
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Buscando...';
+    submitBtn.disabled = true;
 
-  const form = document.getElementById('busquedaForm');
-  const params = new URLSearchParams(new FormData(form)).toString();
-  
-  // Guardar parámetros de búsqueda para uso posterior
-  window.lastSearchParams = params;
+    const form = document.getElementById("busquedaForm");
+    const params = new URLSearchParams(new FormData(form)).toString();
 
-  fetch('/apartments/search?' + params, {
-    headers: { 'X-Requested-With': 'XMLHttpRequest' }
-  })
-    .then(res => res.text())
-    .then(html => {
-      const partial = document.getElementById('apartmentsPartial');
-      partial.innerHTML = html;
+    // Guardar parámetros de búsqueda para uso posterior
+    window.lastSearchParams = params;
 
-      // Añadir animación a los resultados
-      partial.style.animation = 'fadeInUp 0.6s ease-out';
+    fetch("/apartments/search?" + params, {
+      headers: { "X-Requested-With": "XMLHttpRequest" },
+    })
+      .then((res) => res.text())
+      .then((html) => {
+        const partial = document.getElementById("apartmentsPartial");
+        partial.innerHTML = html;
 
-      // Reinicializar tooltips de Bootstrap
-      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-      var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
+        // Añadir animación a los resultados
+        partial.style.animation = "fadeInUp 0.6s ease-out";
+
+        // Reinicializar tooltips de Bootstrap
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+          return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+
+        // Reinicializar la paginación del carrusel después de cargar nuevos resultados
+        setTimeout(() => {
+          initializeCarouselPagination();
+          // Reinicializar componentes del partial
+          if (typeof reinitializeComponents === "function") {
+            reinitializeComponents();
+          }
+        }, 100);
+
+        // Scroll suave al partial actualizado
+        partial.scrollIntoView({ behavior: "smooth", block: "start" });
+      })
+      .catch(() => {
+        alert("Error al buscar apartamentos.");
+      })
+      .finally(() => {
+        // Restaurar botón
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
       });
-
-      // Reinicializar la paginación del carrusel después de cargar nuevos resultados
-      setTimeout(() => {
-        initializeCarouselPagination();
-        // Reinicializar componentes del partial
-        if (typeof reinitializeComponents === 'function') {
-          reinitializeComponents();
-        }
-      }, 100);
-
-      // Scroll suave al partial actualizado
-      partial.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    })
-    .catch(() => {
-      alert('Error al buscar apartamentos.');
-    })
-    .finally(() => {
-      // Restaurar botón
-      submitBtn.innerHTML = originalText;
-      submitBtn.disabled = false;
-    });
-}
+  }
 </script>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener("DOMContentLoaded", function () {
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
       return new bootstrap.Tooltip(tooltipTriggerEl);
     });
 
     // Manejar la carga del video de fondo
-    const heroVideo = document.querySelector('.hero-video');
-    const videoHero = document.querySelector('.video-hero');
-    
+    const heroVideo = document.querySelector(".hero-video");
+    const videoHero = document.querySelector(".video-hero");
+
     if (heroVideo && videoHero) {
       // Asegurar que el video se reproduzca
-      heroVideo.addEventListener('loadeddata', function() {
-        console.log('Video de fondo cargado correctamente');
-        heroVideo.play().catch(function(error) {
-          console.log('Error al reproducir video:', error);
+      heroVideo.addEventListener("loadeddata", function () {
+        console.log("Video de fondo cargado correctamente");
+        heroVideo.play().catch(function (error) {
+          console.log("Error al reproducir video:", error);
           // Si el video no puede reproducirse, usar imagen de fallback
           showImageFallback();
         });
       });
 
       // Fallback si el video no se puede cargar
-      heroVideo.addEventListener('error', function() {
-        console.log('Error al cargar el video, usando imagen de fallback');
+      heroVideo.addEventListener("error", function () {
+        console.log("Error al cargar el video, usando imagen de fallback");
         showImageFallback();
       });
 
@@ -690,11 +634,11 @@ function buscarApartamentos(e) {
           linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), 
           url('/img/hero_bg_1.jpg')
         `;
-        videoHero.style.backgroundSize = 'cover';
-        videoHero.style.backgroundPosition = 'center';
-        videoHero.style.backgroundAttachment = 'fixed';
+        videoHero.style.backgroundSize = "cover";
+        videoHero.style.backgroundPosition = "center";
+        videoHero.style.backgroundAttachment = "fixed";
         if (heroVideo) {
-          heroVideo.style.display = 'none';
+          heroVideo.style.display = "none";
         }
       }
     }
@@ -702,163 +646,163 @@ function buscarApartamentos(e) {
 </script>
 
 <script>
-// Variable global para evitar múltiples inicializaciones
-let apartmentsCarouselInstance = null;
-let paginationEventHandlers = {
-  carouselHandler: null,
-  buttonHandlers: []
-};
-
-// Función para inicializar la paginación del carrusel
-function initializeCarouselPagination() {
-  const apartmentsCarouselElement = document.getElementById('apartmentsCarousel');
-  
-  if (typeof bootstrap === 'undefined' || !apartmentsCarouselElement) {
-    return;
-  }
-
-  // Limpiar event handlers previos
-  cleanupPaginationEvents();
-  
-  // Destruir instancia previa si existe
-  if (apartmentsCarouselInstance) {
-    apartmentsCarouselInstance.dispose();
-  }
-  
-  // Crear nueva instancia del carrusel
-  apartmentsCarouselInstance = new bootstrap.Carousel(apartmentsCarouselElement, {
-    interval: false
-  });
-  
-  const totalPagesCountElement = document.getElementById('totalPagesCount');
-  if (!totalPagesCountElement) {
-    return;
-  }
-  
-  const totalCarouselPages = parseInt(totalPagesCountElement.textContent);
-
-  const pageIndicatorMinus5 = document.getElementById('pageIndicatorMinus5');
-  const pageIndicatorMinus1 = document.getElementById('pageIndicatorMinus1');
-  const pageIndicatorCurrent = document.getElementById('pageIndicatorCurrent');
-  const pageIndicatorPlus1 = document.getElementById('pageIndicatorPlus1');
-  const pageIndicatorPlus5 = document.getElementById('pageIndicatorPlus5');
-
-  if (!pageIndicatorCurrent) {
-    return;
-  }
-
-  let currentPageIndex = 0;
-
-  // Función para actualizar los botones de paginación
-  function updatePaginationButtons(newPageIndex) {
-    currentPageIndex = newPageIndex;
-    const currentPageNum = currentPageIndex + 1;
-
-    // Actualizar texto del botón actual
-    pageIndicatorCurrent.textContent = currentPageNum;
-
-    // Calcular targets y estados de los botones
-    const targetMinus5 = Math.max(0, currentPageIndex - 5);
-    const targetMinus1 = Math.max(0, currentPageIndex - 1);
-    const targetPlus1 = Math.min(totalCarouselPages - 1, currentPageIndex + 1);
-    const targetPlus5 = Math.min(totalCarouselPages - 1, currentPageIndex + 5);
-
-    // Configurar botón -5
-    if (pageIndicatorMinus5) {
-      pageIndicatorMinus5.setAttribute('data-target-slide', targetMinus5);
-      pageIndicatorMinus5.disabled = (currentPageIndex < 5);
-    }
-
-    // Configurar botón -1
-    if (pageIndicatorMinus1) {
-      pageIndicatorMinus1.setAttribute('data-target-slide', targetMinus1);
-      pageIndicatorMinus1.disabled = (currentPageIndex === 0);
-    }
-
-    // Configurar botón +1
-    if (pageIndicatorPlus1) {
-      pageIndicatorPlus1.setAttribute('data-target-slide', targetPlus1);
-      pageIndicatorPlus1.disabled = (currentPageIndex === totalCarouselPages - 1);
-    }
-
-    // Configurar botón +5
-    if (pageIndicatorPlus5) {
-      pageIndicatorPlus5.setAttribute('data-target-slide', targetPlus5);
-      pageIndicatorPlus5.disabled = (currentPageIndex + 5 >= totalCarouselPages);
-    }
-    
-    // Deshabilitar todos si solo hay una página
-    if (totalCarouselPages <= 1) {
-      [pageIndicatorMinus5, pageIndicatorMinus1, pageIndicatorPlus1, pageIndicatorPlus5].forEach(btn => {
-        if (btn) btn.disabled = true;
-      });
-    }
-  }
-
-  // Event handler para el carrusel
-  paginationEventHandlers.carouselHandler = function(event) {
-    updatePaginationButtons(event.to);
+  // Variable global para evitar múltiples inicializaciones
+  let apartmentsCarouselInstance = null;
+  let paginationEventHandlers = {
+    carouselHandler: null,
+    buttonHandlers: [],
   };
 
-  // Agregar event listener al carrusel
-  apartmentsCarouselElement.addEventListener('slid.bs.carousel', paginationEventHandlers.carouselHandler);
+  // Función para inicializar la paginación del carrusel
+  function initializeCarouselPagination() {
+    const apartmentsCarouselElement = document.getElementById("apartmentsCarousel");
 
-  // Función para crear handler de botón
-  function createButtonHandler(button, label) {
-    const handler = function(event) {
-      event.preventDefault();
-      if (!this.disabled) {
-        const targetSlide = parseInt(this.getAttribute('data-target-slide'));
-        apartmentsCarouselInstance.to(targetSlide);
+    if (typeof bootstrap === "undefined" || !apartmentsCarouselElement) {
+      return;
+    }
+
+    // Limpiar event handlers previos
+    cleanupPaginationEvents();
+
+    // Destruir instancia previa si existe
+    if (apartmentsCarouselInstance) {
+      apartmentsCarouselInstance.dispose();
+    }
+
+    // Crear nueva instancia del carrusel
+    apartmentsCarouselInstance = new bootstrap.Carousel(apartmentsCarouselElement, {
+      interval: false,
+    });
+
+    const totalPagesCountElement = document.getElementById("totalPagesCount");
+    if (!totalPagesCountElement) {
+      return;
+    }
+
+    const totalCarouselPages = parseInt(totalPagesCountElement.textContent);
+
+    const pageIndicatorMinus5 = document.getElementById("pageIndicatorMinus5");
+    const pageIndicatorMinus1 = document.getElementById("pageIndicatorMinus1");
+    const pageIndicatorCurrent = document.getElementById("pageIndicatorCurrent");
+    const pageIndicatorPlus1 = document.getElementById("pageIndicatorPlus1");
+    const pageIndicatorPlus5 = document.getElementById("pageIndicatorPlus5");
+
+    if (!pageIndicatorCurrent) {
+      return;
+    }
+
+    let currentPageIndex = 0;
+
+    // Función para actualizar los botones de paginación
+    function updatePaginationButtons(newPageIndex) {
+      currentPageIndex = newPageIndex;
+      const currentPageNum = currentPageIndex + 1;
+
+      // Actualizar texto del botón actual
+      pageIndicatorCurrent.textContent = currentPageNum;
+
+      // Calcular targets y estados de los botones
+      const targetMinus5 = Math.max(0, currentPageIndex - 5);
+      const targetMinus1 = Math.max(0, currentPageIndex - 1);
+      const targetPlus1 = Math.min(totalCarouselPages - 1, currentPageIndex + 1);
+      const targetPlus5 = Math.min(totalCarouselPages - 1, currentPageIndex + 5);
+
+      // Configurar botón -5
+      if (pageIndicatorMinus5) {
+        pageIndicatorMinus5.setAttribute("data-target-slide", targetMinus5);
+        pageIndicatorMinus5.disabled = currentPageIndex < 5;
       }
+
+      // Configurar botón -1
+      if (pageIndicatorMinus1) {
+        pageIndicatorMinus1.setAttribute("data-target-slide", targetMinus1);
+        pageIndicatorMinus1.disabled = currentPageIndex === 0;
+      }
+
+      // Configurar botón +1
+      if (pageIndicatorPlus1) {
+        pageIndicatorPlus1.setAttribute("data-target-slide", targetPlus1);
+        pageIndicatorPlus1.disabled = currentPageIndex === totalCarouselPages - 1;
+      }
+
+      // Configurar botón +5
+      if (pageIndicatorPlus5) {
+        pageIndicatorPlus5.setAttribute("data-target-slide", targetPlus5);
+        pageIndicatorPlus5.disabled = currentPageIndex + 5 >= totalCarouselPages;
+      }
+
+      // Deshabilitar todos si solo hay una página
+      if (totalCarouselPages <= 1) {
+        [pageIndicatorMinus5, pageIndicatorMinus1, pageIndicatorPlus1, pageIndicatorPlus5].forEach((btn) => {
+          if (btn) btn.disabled = true;
+        });
+      }
+    }
+
+    // Event handler para el carrusel
+    paginationEventHandlers.carouselHandler = function (event) {
+      updatePaginationButtons(event.to);
     };
-    
-    if (button) {
-      button.addEventListener('click', handler);
-      paginationEventHandlers.buttonHandlers.push({ button, handler });
+
+    // Agregar event listener al carrusel
+    apartmentsCarouselElement.addEventListener("slid.bs.carousel", paginationEventHandlers.carouselHandler);
+
+    // Función para crear handler de botón
+    function createButtonHandler(button, label) {
+      const handler = function (event) {
+        event.preventDefault();
+        if (!this.disabled) {
+          const targetSlide = parseInt(this.getAttribute("data-target-slide"));
+          apartmentsCarouselInstance.to(targetSlide);
+        }
+      };
+
+      if (button) {
+        button.addEventListener("click", handler);
+        paginationEventHandlers.buttonHandlers.push({ button, handler });
+      }
+
+      return handler;
     }
-    
-    return handler;
+
+    // Agregar event listeners a los botones
+    createButtonHandler(pageIndicatorMinus5, "-5");
+    createButtonHandler(pageIndicatorMinus1, "-1");
+    createButtonHandler(pageIndicatorPlus1, "+1");
+    createButtonHandler(pageIndicatorPlus5, "+5");
+
+    // Inicializar estado de los botones
+    updatePaginationButtons(0);
   }
 
-  // Agregar event listeners a los botones
-  createButtonHandler(pageIndicatorMinus5, '-5');
-  createButtonHandler(pageIndicatorMinus1, '-1');
-  createButtonHandler(pageIndicatorPlus1, '+1');
-  createButtonHandler(pageIndicatorPlus5, '+5');
+  // Función para limpiar event handlers
+  function cleanupPaginationEvents() {
+    const apartmentsCarouselElement = document.getElementById("apartmentsCarousel");
 
-  // Inicializar estado de los botones
-  updatePaginationButtons(0);
-}
-
-// Función para limpiar event handlers
-function cleanupPaginationEvents() {
-  const apartmentsCarouselElement = document.getElementById('apartmentsCarousel');
-  
-  // Limpiar handler del carrusel
-  if (paginationEventHandlers.carouselHandler && apartmentsCarouselElement) {
-    apartmentsCarouselElement.removeEventListener('slid.bs.carousel', paginationEventHandlers.carouselHandler);
-  }
-  
-  // Limpiar handlers de botones
-  paginationEventHandlers.buttonHandlers.forEach(({ button, handler }) => {
-    if (button && handler) {
-      button.removeEventListener('click', handler);
+    // Limpiar handler del carrusel
+    if (paginationEventHandlers.carouselHandler && apartmentsCarouselElement) {
+      apartmentsCarouselElement.removeEventListener("slid.bs.carousel", paginationEventHandlers.carouselHandler);
     }
+
+    // Limpiar handlers de botones
+    paginationEventHandlers.buttonHandlers.forEach(({ button, handler }) => {
+      if (button && handler) {
+        button.removeEventListener("click", handler);
+      }
+    });
+
+    // Resetear handlers
+    paginationEventHandlers.carouselHandler = null;
+    paginationEventHandlers.buttonHandlers = [];
+  }
+
+  // Inicializar cuando se carga la página
+  document.addEventListener("DOMContentLoaded", function () {
+    // Esperar un poco para asegurar que Bootstrap y todos los elementos estén listos
+    setTimeout(() => {
+      initializeCarouselPagination();
+    }, 500);
   });
-  
-  // Resetear handlers
-  paginationEventHandlers.carouselHandler = null;
-  paginationEventHandlers.buttonHandlers = [];
-}
-
-// Inicializar cuando se carga la página
-document.addEventListener('DOMContentLoaded', function() {
-  // Esperar un poco para asegurar que Bootstrap y todos los elementos estén listos
-  setTimeout(() => {
-    initializeCarouselPagination();
-  }, 500);
-});
 </script>
 
 <script>
@@ -872,9 +816,9 @@ document.addEventListener('DOMContentLoaded', function() {
         endDate: moment().add(1, "days"),
         autoUpdateInput: false,
         ranges: {
-          'Hoy': [moment(), moment()],
-          'Mañana': [moment().add(1, "days"), moment().add(1, "days")],
-          'Próximos 7 días': [moment(), moment().add(6, "days")],
+          Hoy: [moment(), moment()],
+          Mañana: [moment().add(1, "days"), moment().add(1, "days")],
+          "Próximos 7 días": [moment(), moment().add(6, "days")],
         },
       },
       function (start, end, label) {
