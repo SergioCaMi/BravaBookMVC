@@ -151,18 +151,7 @@ main {
 .contact-info {
     margin: 0;
 }
-.contact-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-    padding: 0.75rem;
-    border-radius: 10px;
-    transition: all 0.3s ease;
-}
-.contact-item:hover {
-    background: rgba(255, 255, 255, 0.05);
-    transform: translateX(5px);
-}
+/* Eliminamos .contact-item ya que usamos clases de Bootstrap */
 .contact-icon {
     display: flex;
     align-items: center;
@@ -176,9 +165,7 @@ main {
     flex-shrink: 0;
 }
 .contact-text {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
+    flex: 1;
 }
 .contact-label {
     font-size: 0.8rem;
@@ -190,6 +177,13 @@ main {
 .contact-value {
     color: rgba(255, 255, 255, 0.9);
     font-weight: 500;
+}
+.contact-link {
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+.contact-link:hover {
+    color: #3498db;
 }
 .contact-link {
     text-decoration: none;
