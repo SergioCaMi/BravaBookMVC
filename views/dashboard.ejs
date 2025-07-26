@@ -388,26 +388,38 @@
                         <small class="text-muted">Total</small>
                       </div>
                       <div class="stat-item text-center">
-                        <div class="stat-number h5 fw-bold text-success mb-0">
-                          <%= reservations.filter(r => r.status === 'confirmed').length %>
+                        <div class="stat-number h5 fw-bold text-info mb-0">
+                          <%= reservations.filter(r => {
+                            // Reservas recibidas (en apartamentos del admin)
+                            const isMyReservation = r.user && r.user._id ? 
+                                                    r.user._id.toString() === user._id.toString() : 
+                                                    r.user.toString() === user._id.toString();
+                            return !isMyReservation;
+                          }).length %>
                         </div>
-                        <small class="text-muted">Confirmadas</small>
+                        <small class="text-muted">Recibidas</small>
                       </div>
                       <div class="stat-item text-center">
-                        <div class="stat-number h5 fw-bold text-info mb-0">
-                          <%= reservations.filter(r => r.paid).length %>
+                        <div class="stat-number h5 fw-bold text-success mb-0">
+                          <%= reservations.filter(r => {
+                            // Reservas realizadas (por el admin)
+                            const isMyReservation = r.user && r.user._id ? 
+                                                    r.user._id.toString() === user._id.toString() : 
+                                                    r.user.toString() === user._id.toString();
+                            return isMyReservation;
+                          }).length %>
                         </div>
-                        <small class="text-muted">Pagadas</small>
+                        <small class="text-muted">Realizadas</small>
                       </div>
                     </div>
                   </div>
                   <div class="col-md-4 text-end">
                     <div class="filter-buttons">
-                      <button class="btn btn-outline-primary btn-sm rounded-pill me-2" onclick="filterReservations('all')">
-                        Todas
+                      <button class="btn btn-outline-primary btn-sm rounded-pill me-2 active" onclick="filterReservations('received')">
+                        Recibidas
                       </button>
-                      <button class="btn btn-outline-success btn-sm rounded-pill" onclick="filterReservations('confirmed')">
-                        Confirmadas
+                      <button class="btn btn-outline-success btn-sm rounded-pill" onclick="filterReservations('made')">
+                        Realizadas
                       </button>
                     </div>
                   </div>
@@ -433,9 +445,16 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <% reservations.forEach((reservation, index) => { %>
+                    <% reservations.forEach((reservation, index) => { 
+                         // Determinar si es una reserva hecha por el admin o recibida en sus apartamentos
+                         const isMyReservation = reservation.user && reservation.user._id ? 
+                                                 reservation.user._id.toString() === user._id.toString() : 
+                                                 reservation.user.toString() === user._id.toString();
+                         const reservationType = isMyReservation ? 'made' : 'received';
+                    %>
                       <tr class="reservation-row <%= new Date(reservation.endDate) < new Date() ? 'past-reservation' : 'active-reservation' %>"
-                          data-status="<%= reservation.status %>">
+                          data-status="<%= reservation.status %>" 
+                          data-type="<%= reservationType %>">
                         <td class="text-center">
                           <span class="badge bg-secondary rounded-pill"><%= index + 1 %></span>
                         </td>

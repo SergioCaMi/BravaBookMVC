@@ -5,6 +5,9 @@ import fs from "fs/promises"; // Para operaciones de sistema de archivos asíncr
 import path from "path"; // Para manejar rutas de archivos y directorios
 import { validationResult } from 'express-validator';
 
+
+// *************************** createdBy: req.session.userId, ***************************
+
 //  Gestión de Usuarios 
 
 /**
@@ -16,17 +19,44 @@ export const dashboard = async (req, res) => {
   console.log("Dashboard - Acceso de administrador");
   try {
     const user = await User.findById(req.session.userId);
-    const reservations = await Reservation.find({
+    
+    // Reservas realizadas por el usuario en apartamentos de otros
+    const myReservations = await Reservation.find({
       user: req.session.userId,
     })
       .populate("apartment")
       .limit(10)
       .sort({ endDate: 1 }); // Ordena las reservas por fecha de fin ascendente
-    const apartments = await Apartment.find({
+    
+    // Apartamentos creados por el usuario
+    const myApartments = await Apartment.find({
       createdBy: req.session.userId,
-    }).limit(50);
+    }).populate("createdBy").limit(50);
+    
+    // Reservas en los apartamentos del usuario (reservas que otros han hecho en sus apartamentos)
+    const apartmentIds = myApartments.map(apt => apt._id);
+    const reservationsInMyApartments = await Reservation.find({
+      apartment: { $in: apartmentIds }
+    })
+      .populate("apartment")
+      .populate("user")
+      .limit(10)
+      .sort({ endDate: 1 });
 
-    res.render("dashboard", { title: "home", user, reservations, apartments });
+    // Combinar todas las reservas para la vista pero mantener la separación lógica
+    const allReservations = [...myReservations, ...reservationsInMyApartments];
+
+    // Mantengo compatibilidad con la vista existente
+    res.render("dashboard", { 
+      title: "home", 
+      user, 
+      currentUser: user, // Para las comparaciones en la vista
+      reservations: allReservations, // Todas las reservas para la vista
+      apartments: myApartments, // Para compatibilidad con la vista
+      myReservations, 
+      myApartments, 
+      reservationsInMyApartments 
+    });
   } catch (error) {
     console.error("Error al cargar el dashboard:", error);
     req.flash("error_msg", "Error al cargar el dashboard.");
@@ -184,17 +214,25 @@ export const postToggleUserRole = async (req, res) => {
 };
 
 export const getAdminPanel = async (req, res) => {
-    const apartments = await Apartment.find({});
+    // Solo apartamentos creados por el usuario actual
+    const apartments = await Apartment.find({
+      createdBy: req.session.userId
+    }).populate("createdBy");
+    
     const users = await User.find({});
-    const reservations = await Reservation.find({});
+    
+    // Solo reservas relacionadas con los apartamentos del usuario actual
+    const apartmentIds = apartments.map(apt => apt._id);
+    const reservations = await Reservation.find({
+      $or: [
+        { user: req.session.userId }, // Reservas hechas por el usuario
+        { apartment: { $in: apartmentIds } } // Reservas en apartamentos del usuario
+      ]
+    }).populate("apartment").populate("user");
 
     res.render('adminPanel', {title: "admin", apartments, reservations, users}); // Renderiza el panel de administración con los datos de apartamentos, reservas y usuarios
 }
 
-// import fs from 'fs/promises'; // Para operaciones con el sistema de archivos
-// import path from 'path';     // Para manejar rutas de archivos
-// import Apartment from '../models/apartment.js'; // Tu modelo de Apartamento
-// (Asegúrate de que 'Apartment' y 'fs', 'path' estén correctamente importados según tu estructura de proyecto)
 
 /**
  * Muestra el formulario para añadir un nuevo apartamento.
@@ -452,9 +490,14 @@ export const getApartmentEdit = async (req, res) => {
   const { id } = req.params;
   
   try {
-    const apartment = await Apartment.findById(id);
+    // Solo permite editar apartamentos creados por el usuario actual
+    const apartment = await Apartment.findOne({
+      _id: id,
+      createdBy: req.session.userId
+    });
+    
     if (!apartment) {
-      req.flash("error_msg", "El apartamento no se ha encontrado.");
+      req.flash("error_msg", "El apartamento no se ha encontrado o no tienes permisos para editarlo.");
       return res.redirect("/admin");
     }
     
@@ -484,9 +527,14 @@ export const putApartmentEdit = async (req, res) => {
   }
 
   try {
-    const apartment = await Apartment.findById(id);
+    // Solo permite editar apartamentos creados por el usuario actual
+    const apartment = await Apartment.findOne({
+      _id: id,
+      createdBy: req.session.userId
+    });
+    
     if (!apartment) {
-      req.flash("error_msg", "Apartamento no encontrado.");
+      req.flash("error_msg", "Apartamento no encontrado o no tienes permisos para editarlo.");
       return res.redirect("/admin");
     }
 
@@ -719,11 +767,17 @@ export const postDeleteApartment = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const apartment = await Apartment.findById(id);
+    // Solo permite eliminar apartamentos creados por el usuario actual
+    const apartment = await Apartment.findOne({
+      _id: id,
+      createdBy: req.session.userId
+    }).populate("createdBy");
+    
     if (!apartment) {
-      req.flash("error_msg", "Apartamento no encontrado.");
+      req.flash("error_msg", "Apartamento no encontrado o no tienes permisos para eliminarlo.");
       return res.redirect("/seeApartments"); // Redirecciona a la lista de apartamentos públicos
     }
+    
     apartment.active = false; // Desactiva el apartamento en lugar de eliminarlo físicamente
     await apartment.save();
     req.flash("success_msg", "Apartamento eliminado satisfactoriamente. ");
@@ -744,9 +798,14 @@ export const postActiveApartment = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const apartment = await Apartment.findById(id);
+    // Solo permite activar apartamentos creados por el usuario actual
+    const apartment = await Apartment.findOne({
+      _id: id,
+      createdBy: req.session.userId
+    });
+    
     if (!apartment) {
-      req.flash("error_msg", "Apartamento no encontrado.");
+      req.flash("error_msg", "Apartamento no encontrado o no tienes permisos para activarlo.");
       return res.redirect("/seeApartments");
     }
     apartment.active = true; // Activa el apartamento
@@ -770,10 +829,20 @@ export const postActiveApartment = async (req, res) => {
  */
 export const getReservations = async (req, res) => {
   try {
-    const reservations = await Reservation.find({})
+    // Obtener apartamentos del usuario actual
+    const myApartments = await Apartment.find({
+      createdBy: req.session.userId
+    });
+    const apartmentIds = myApartments.map(apt => apt._id);
+    
+    // Solo obtener reservas recibidas en apartamentos del usuario actual
+    const reservations = await Reservation.find({
+      apartment: { $in: apartmentIds } // Solo reservas en apartamentos del usuario
+    })
       .populate("apartment")
       .populate("user")
       .sort({ endDate: 1 }); // Ordena por fecha de fin ascendente
+      
     res.render("reservations.ejs", {
       title: "admin",
       reservations,
@@ -796,11 +865,20 @@ export const postCancelReservation = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const reservation = await Reservation.findById(id);
+    const reservation = await Reservation.findById(id).populate("apartment");
     if (!reservation) {
       req.flash("error_msg", "Reserva no encontrada.");
       return res.redirect("/admin/reservations");
     }
+    
+    // Verificar permisos: debe ser una reserva en un apartamento del usuario
+    const isMyApartment = reservation.apartment && reservation.apartment.createdBy.toString() === req.session.userId;
+    
+    if (!isMyApartment) {
+      req.flash("error_msg", "No tienes permisos para cancelar esta reserva.");
+      return res.redirect("/admin/reservations");
+    }
+    
     reservation.status = "cancelled"; // Cambia el estado a "cancelled"
     await reservation.save();
     req.flash("success_msg", "Reserva cancelada satisfactoriamente. ❌");
@@ -821,11 +899,20 @@ export const postConfirmReservation = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const reservation = await Reservation.findById(id);
+    const reservation = await Reservation.findById(id).populate("apartment");
     if (!reservation) {
       req.flash("error_msg", "Reserva no encontrada.");
       return res.redirect("/admin/reservations");
     }
+    
+    // Verificar permisos: debe ser una reserva en un apartamento del usuario
+    const isMyApartment = reservation.apartment && reservation.apartment.createdBy.toString() === req.session.userId;
+    
+    if (!isMyApartment) {
+      req.flash("error_msg", "No tienes permisos para confirmar esta reserva.");
+      return res.redirect("/admin/reservations");
+    }
+    
     reservation.status = "confirmed"; // Cambia el estado a "confirmed"
     await reservation.save();
     req.flash("success_msg", "Reserva confirmada satisfactoriamente. ✅");
@@ -846,11 +933,20 @@ export const postMarkPaidReservation = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const reservation = await Reservation.findById(id);
+    const reservation = await Reservation.findById(id).populate("apartment");
     if (!reservation) {
       req.flash("error_msg", "Reserva no encontrada.");
       return res.redirect("/admin/reservations");
     }
+    
+    // Verificar permisos: debe ser una reserva en un apartamento del usuario
+    const isMyApartment = reservation.apartment && reservation.apartment.createdBy.toString() === req.session.userId;
+    
+    if (!isMyApartment) {
+      req.flash("error_msg", "No tienes permisos para modificar esta reserva.");
+      return res.redirect("/admin/reservations");
+    }
+    
     reservation.paid = true; // Marca la reserva como pagada
     await reservation.save();
     req.flash("success_msg", "Reserva marcada como pagada satisfactoriamente. 💰");
@@ -863,6 +959,39 @@ export const postMarkPaidReservation = async (req, res) => {
 };
 
 /**
+ * Elimina una reserva por su ID.
+ * @param {object} req - Objeto de solicitud de Express.
+ * @param {object} res - Objeto de respuesta de Express.
+ */
+export const postDeleteReservation = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const reservation = await Reservation.findById(id).populate("apartment");
+    if (!reservation) {
+      req.flash("error_msg", "Reserva no encontrada.");
+      return res.redirect("/admin/reservations");
+    }
+    
+    // Verificar permisos: debe ser una reserva en un apartamento del usuario
+    const isMyApartment = reservation.apartment && reservation.apartment.createdBy.toString() === req.session.userId;
+    
+    if (!isMyApartment) {
+      req.flash("error_msg", "No tienes permisos para eliminar esta reserva.");
+      return res.redirect("/admin/reservations");
+    }
+    
+    await Reservation.findByIdAndDelete(id);
+    req.flash("success_msg", "Reserva eliminada satisfactoriamente. 🗑️");
+    return res.redirect("/admin/reservations");
+  } catch (error) {
+    console.error("Error al eliminar la reserva:", error);
+    req.flash("error_msg", "Error al eliminar la reserva.");
+    return res.redirect("/admin/reservations");
+  }
+};
+
+/**
  * Muestra el formulario para editar una reserva existente.
  * @param {object} req - Objeto de solicitud de Express.
  * @param {object} res - Objeto de respuesta de Express.
@@ -870,11 +999,21 @@ export const postMarkPaidReservation = async (req, res) => {
 export const getReservationEdit = async (req, res) => {
   const { id } = req.params;
   try {
+    // Verificar que la reserva sea en un apartamento del usuario
     const reservation = await Reservation.findById(id).populate("apartment");
     if (!reservation) {
       req.flash("error_msg", "La reserva no se ha encontrado.");
-      return res.redirect("/admin/reservations"); // Redirige a la lista de reservas
+      return res.redirect("/admin/reservations");
     }
+    
+    // Verificar permisos: debe ser una reserva en un apartamento del usuario
+    const isMyApartment = reservation.apartment && reservation.apartment.createdBy.toString() === req.session.userId;
+    
+    if (!isMyApartment) {
+      req.flash("error_msg", "No tienes permisos para editar esta reserva.");
+      return res.redirect("/admin/reservations");
+    }
+    
     res.render("editReservation.ejs", { title: "admin", reservation });
   } catch (err) {
     console.error("Error al obtener reserva para edición:", err);
@@ -956,10 +1095,14 @@ export const putReservationEdit = async (req, res) => {
 
 
 export const getAllApartments = async (req, res) => {
-  try {
-    const apartments = await Apartment.find({ active: true }).
-    res.render("homeAdmin", { title: "admin", error: undefined, apartments });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+  try {
+    // Solo apartamentos creados por el usuario actual
+    const apartments = await Apartment.find({ 
+      active: true,
+      createdBy: req.session.userId 
+    }).populate("createdBy");
+    res.render("homeAdmin", { title: "admin", error: undefined, apartments });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };

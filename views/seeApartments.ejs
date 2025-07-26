@@ -68,6 +68,14 @@
                       <i class="bi bi-geo-alt-fill text-primary me-2"></i>
                       <small><%= apartment.location.municipality.nm %>, <%= apartment.location.province.nm %></small>
                     </p>
+                                                                    <% if (currentUser && currentUser.role === 'admin' && apartment.createdBy) { %>
+                                                                      <p class="text-muted mb-1 small">
+                                                                        <i class="bi bi-person-circle me-1"></i>
+                                                                        Creado por: <strong>
+                                                                          <%= apartment.createdBy && (apartment.createdBy.name || apartment.createdBy.email || apartment.createdBy.username || apartment.createdBy._id) %>
+                                                                        </strong>
+                                                                        </p>
+                                                                        <% } %>
                   </div>
 
                   <div class="apartment-details d-flex justify-content-between mb-3 p-3 bg-light rounded-3">
@@ -123,10 +131,11 @@
                     <i class="bi bi-arrow-right-circle me-2"></i>Ver Detalles
                   </a>
 
-                  <% if (currentUser && currentUser.role === 'admin') { %>
+                  <% if (currentUser && currentUser.role === 'admin' && apartment.createdBy && apartment.createdBy._id.toString() === currentUser._id.toString()) { %>
                   <div class="admin-controls mt-3 pt-3 border-top border-light">
                     <h6 class="admin-title text-muted mb-2 fw-semibold"><i class="bi bi-gear-fill me-1"></i>Controles Admin</h6>
                     <div class="d-flex gap-2">
+                      
                       <a
                         href="/admin/apartments/edit/<%= apartment._id %>"
                         class="btn btn-warning btn-sm flex-fill rounded-pill transition-all hover-lift"
@@ -191,7 +200,7 @@
 <!-- MODALES DE CONFIRMACIÓN DE ELIMINACIÓN - UBICADOS CORRECTAMENTE FUERA DE CONTENEDORES -->
 <% if (apartments && apartments.length > 0 && currentUser && currentUser.role === 'admin') { %>
   <% apartments.forEach((apartment) => { %>
-    <% if (apartment.active == true) { %>
+    <% if (apartment.active == true && apartment.createdBy && apartment.createdBy._id.toString() === currentUser._id.toString()) { %>
       <div class="modal fade" id="deleteModal-<%= apartment._id %>" tabindex="-1" aria-labelledby="deleteModalLabel-<%= apartment._id %>" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">

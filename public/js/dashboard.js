@@ -42,6 +42,11 @@ document.addEventListener('DOMContentLoaded', function() {
   // Mostrar sección inicial
   showSection('profile-section');
   
+  // Inicializar filtro de reservas por defecto a "Recibidas"
+  if (typeof filterReservations === 'function') {
+    filterReservations('received');
+  }
+  
   // Filtros de reservas
   window.filterReservations = function(filter) {
     const rows = document.querySelectorAll('.reservation-row');
@@ -50,16 +55,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // Actualizar botones activos
     filterButtons.forEach(btn => {
       btn.classList.remove('active');
-      if (btn.textContent.toLowerCase().includes(filter) || 
-          (filter === 'all' && btn.textContent.toLowerCase().includes('todas'))) {
+      if ((filter === 'received' && btn.textContent.toLowerCase().includes('recibidas')) || 
+          (filter === 'made' && btn.textContent.toLowerCase().includes('realizadas'))) {
         btn.classList.add('active');
       }
     });
     
-    // Filtrar filas
+    // Filtrar filas según el tipo de reserva
     rows.forEach(row => {
-      const status = row.dataset.status;
-      if (filter === 'all' || status === filter) {
+      const reservationType = row.dataset.type; // 'made' o 'received'
+      
+      if (filter === reservationType) {
         row.style.display = '';
         row.style.animation = 'fadeInUp 0.4s ease-out';
       } else {

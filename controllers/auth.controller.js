@@ -6,7 +6,7 @@ import Reservation from "../models/reservation.model.js";
 import axios from "axios";
 import { validationResult } from 'express-validator';
 
-// --- Gestión de Usuario ---
+/    const apartments = await Apartment.find(query).sort({ price: sortvalue }).populate("createdBy"); --- Gestión de Usuario ---
 
 // Registro de un nuevo usuario
 export const register = async (req, res) => {
@@ -160,45 +160,42 @@ export const postUpdateProfile = async (req, res) => {
 
 // Obtener todos los apartamentos para la página principal
 export const getAllApartments = async (req, res) => {
-  try {
-    const apartments = await Apartment.find({ active: true });
-    res.render("home", { title: "home", error: undefined, apartments });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-// Mostrar mapa con apartamentos
+  try {
+    const apartments = await Apartment.find({ active: true }).populate("createdBy");
+    res.render("home", { title: "home", error: undefined, apartments });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};// Mostrar mapa con apartamentos
 export const getMap = async (req, res) => {
-  try {
-    const apartments = await Apartment.find({ active: true }); // Recupera apartamentos activos
-    res.render("map", { title: "home", apartments }); // Renderiza la vista del mapa
-  } catch (error) {
-    console.error("Error al recuperar los apartamentos:", error);
-    res.status(500).send("Error al cargar los datos de los apartamentos");
-  }
-};
-
-// Ver lista de apartamentos (admin vs. usuario)
+  try {
+    const apartments = await Apartment.find({ active: true }).populate("createdBy"); // Recupera apartamentos activos
+    res.render("map", { title: "home", apartments }); // Renderiza la vista del mapa
+  } catch (error) {
+    console.error("Error al recuperar los apartamentos:", error);
+    res.status(500).send("Error al cargar los datos de los apartamentos");
+  }
+};// Ver lista de apartamentos (admin vs. usuario)
 export const getSeeApartments = async (req, res) => {
-  let apartments;
-  try {
-    if (res.locals.currentUser.role == "admin") {
-      apartments = await Apartment.find({}); // Admin ve todos
-    } else {
-      apartments = await Apartment.find({ active: true }); // Usuario solo ve activos
-    }
-    console.log(apartments.length);
-    res.render("seeApartments", {
-      title: "home",
-      apartments,
-    });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-// Búsqueda de apartamentos (con filtros y fechas)
+  let apartments;
+  try {
+    if (res.locals.currentUser.role == "admin") {
+      // Admin solo ve sus propios apartamentos
+      apartments = await Apartment.find({ 
+        createdBy: req.session.userId 
+      }).populate("createdBy");
+    } else {
+      apartments = await Apartment.find({ active: true }).populate("createdBy"); // Usuario solo ve activos
+    }
+    console.log(apartments.length);
+    res.render("seeApartments", {
+      title: "home",
+      apartments,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};// Búsqueda de apartamentos (con filtros y fechas)
 export const getApartmentSearch = async (req, res) => {
   console.log("Query recibida:", req.query);
   req.session.lastSearch = req.query; // Guarda la última búsqueda en sesión
@@ -433,7 +430,7 @@ export const searchApartments = async (req, res) => {
     console.log("🔍 Consulta MongoDB:", query);
 
     // 4. Ejecuta la búsqueda
-    const apartments = await Apartment.find(query).sort({ price: 1 });
+    const apartments = await Apartment.find(query).sort({ price: 1 }).populate("createdBy");
     
     console.log(`✅ Encontrados ${apartments.length} apartamentos`);
 
