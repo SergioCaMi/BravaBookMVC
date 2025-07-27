@@ -214,6 +214,8 @@ export const postToggleUserRole = async (req, res) => {
 };
 
 export const getAdminPanel = async (req, res) => {
+    const currentUser = await User.findById(req.session.userId);
+    
     // Solo apartamentos creados por el usuario actual
     const apartments = await Apartment.find({
       createdBy: req.session.userId
@@ -230,7 +232,14 @@ export const getAdminPanel = async (req, res) => {
       ]
     }).populate("apartment").populate("user");
 
-    res.render('adminPanel', {title: "admin", apartments, reservations, users}); // Renderiza el panel de administración con los datos de apartamentos, reservas y usuarios
+    res.render('adminPanel', {
+      title: "admin", 
+      apartments, 
+      reservations, 
+      users,
+      currentUser: currentUser,
+      isSuperAdmin: currentUser.isSuperAdmin
+    });
 }
 
 

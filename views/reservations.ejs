@@ -33,10 +33,17 @@
               </span>
             </div>
             
-            <h1 class="display-4 fw-bold mb-3">Reservas del Sistema</h1>
+            <h1 class="display-4 fw-bold mb-3">Reservas Recibidas</h1>
             <p class="lead mb-4 text-light">
-              Administra y supervisa todas las reservas de la plataforma
+              Administra las reservas que han recibido tus apartamentos
             </p>
+            
+            <!-- Indicador de filtro activo -->
+            <div class="filter-indicator mb-3">
+              <span class="badge bg-success bg-gradient px-3 py-2 rounded-pill shadow-sm">
+                <i class="bi bi-funnel-fill me-2"></i>Filtro: Reservas Recibidas
+              </span>
+            </div>
           </div>
         </div>
         
@@ -46,7 +53,7 @@
                style="background: rgba(255, 255, 255, 0.1); animation: slideInRight 0.8s ease-out 0.3s both;">
             
             <h5 class="text-white fw-bold mb-3 text-center">
-              <i class="bi bi-graph-up me-2"></i>Estadísticas
+              <i class="bi bi-graph-up me-2"></i>Reservas Recibidas
             </h5>
             
             <div class="stats-grid">
@@ -58,7 +65,7 @@
                 <div class="stat-number h4 fw-bold text-white mb-0">
                   <%= reservations ? reservations.length : 0 %>
                 </div>
-                <small class="text-light">Total Reservas</small>
+                <small class="text-light">Reservas Recibidas</small>
               </div>
               
               <div class="row">
@@ -100,7 +107,7 @@
 <div class="reservations-content py-5" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
   <div class="container">
     <div class="main-container backdrop-blur rounded-4 shadow-lg border border-light border-opacity-25 overflow-hidden"
-         style="background: rgba(255, 255, 255, 0.9);">
+         style="background: rgba(255, 255, 255, 0.9);">>
       
       <!-- Verifica si hay reservas disponibles -->
       <% if (reservations && reservations.length > 0) {

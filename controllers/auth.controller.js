@@ -37,21 +37,29 @@ export const register = async (req, res) => {
       return res.redirect("/register");
     }
 
-    // Asignar rol directamente sin validación adicional por ahora para debug
+    // Asignar rol directamente y verificar si es el primer admin
     const finalRole = role || 'user';
+    
+    // Verificar si ya existe un super administrador
+    const existingSuperAdmin = await User.findOne({ isSuperAdmin: true });
+    const isFirstAdmin = finalRole === 'admin' && !existingSuperAdmin;
+    
     console.log("Role final asignado:", finalRole);
+    console.log("¿Es el primer admin?:", isFirstAdmin);
 
     const user = new User({
       name: name.trim(),
       email: email.toLowerCase().trim(),
       password,
       role: finalRole,
+      isSuperAdmin: isFirstAdmin,
     });
 
     console.log("Usuario antes de guardar:", {
       name: user.name,
       email: user.email,
-      role: user.role
+      role: user.role,
+      isSuperAdmin: user.isSuperAdmin
     });
 
     await user.save();
@@ -142,7 +150,8 @@ export const dashboard = async (req, res) => {
     user, 
     reservations, 
     apartments,
-    currentUser: user 
+    currentUser: user,
+    isSuperAdmin: user.isSuperAdmin || false
   });
 };// Obtener página de Contacto
 export const getContactUs = async (req, res) => {

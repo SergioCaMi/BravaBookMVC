@@ -31,6 +31,15 @@ document.addEventListener('DOMContentLoaded', function() {
       const sectionId = this.dataset.section + '-section';
       showSection(sectionId);
       
+      // Si es la sección de reservas, aplicar filtro por defecto
+      if (sectionId === 'reservations-section') {
+        setTimeout(() => {
+          if (typeof filterReservations === 'function') {
+            filterReservations('received');
+          }
+        }, 100);
+      }
+      
       // Smooth scroll
       document.getElementById(sectionId).scrollIntoView({
         behavior: 'smooth',
@@ -51,15 +60,37 @@ document.addEventListener('DOMContentLoaded', function() {
   window.filterReservations = function(filter) {
     const rows = document.querySelectorAll('.reservation-row');
     const filterButtons = document.querySelectorAll('.filter-buttons .btn');
+    const indicator = document.getElementById('reservations-filter-indicator');
+    const description = document.getElementById('reservations-description');
     
     // Actualizar botones activos
     filterButtons.forEach(btn => {
       btn.classList.remove('active');
-      if ((filter === 'received' && btn.textContent.toLowerCase().includes('recibidas')) || 
-          (filter === 'made' && btn.textContent.toLowerCase().includes('realizadas'))) {
+      const btnFilter = btn.getAttribute('data-filter');
+      if (filter === btnFilter) {
         btn.classList.add('active');
       }
     });
+    
+    // Actualizar indicador visual
+    if (indicator) {
+      if (filter === 'received') {
+        indicator.textContent = 'Recibidas';
+        indicator.className = 'badge bg-primary ms-2';
+      } else {
+        indicator.textContent = 'Realizadas';
+        indicator.className = 'badge bg-success ms-2';
+      }
+    }
+    
+    // Actualizar descripción
+    if (description) {
+      if (filter === 'received') {
+        description.textContent = 'Reservas que otros usuarios han hecho en tus apartamentos';
+      } else {
+        description.textContent = 'Reservas que has realizado en apartamentos de otros usuarios';
+      }
+    }
     
     // Filtrar filas según el tipo de reserva
     rows.forEach(row => {
@@ -72,6 +103,30 @@ document.addEventListener('DOMContentLoaded', function() {
         row.style.display = 'none';
       }
     });
+    
+    // Mostrar mensaje si no hay reservas del tipo seleccionado
+    const visibleRows = document.querySelectorAll('.reservation-row[style=""], .reservation-row:not([style*="none"])');
+    const noDataMessage = document.querySelector('.no-reservations-message');
+    
+    if (visibleRows.length === 0 && !noDataMessage) {
+      const tableBody = document.querySelector('.modern-table tbody');
+      if (tableBody) {
+        const messageRow = document.createElement('tr');
+        messageRow.className = 'no-reservations-message';
+        messageRow.innerHTML = `
+          <td colspan="100%" class="text-center py-5">
+            <div class="text-muted">
+              <i class="bi bi-calendar-x fs-1 mb-3 d-block"></i>
+              <h5>No hay reservas ${filter === 'received' ? 'recibidas' : 'realizadas'}</h5>
+              <p class="mb-0">No se encontraron reservas de este tipo.</p>
+            </div>
+          </td>
+        `;
+        tableBody.appendChild(messageRow);
+      }
+    } else if (visibleRows.length > 0 && noDataMessage) {
+      noDataMessage.remove();
+    }
   };
   
   // Inicializar tooltips

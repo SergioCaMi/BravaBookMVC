@@ -170,6 +170,11 @@
                         <i class="bi bi-shield-check me-1"></i>
                         <%= user.role === 'admin' ? 'Administrador' : 'Usuario Verificado' %>
                       </span>
+                      <% if (user.isSuperAdmin) { %>
+                        <span class="badge bg-danger bg-gradient px-3 py-2 rounded-pill me-2">
+                          <i class="bi bi-crown me-1"></i>Super Admin
+                        </span>
+                      <% } %>
                       <span class="badge bg-success bg-gradient px-3 py-2 rounded-pill">
                         <i class="bi bi-check-circle me-1"></i>Activo
                       </span>
@@ -366,8 +371,11 @@
           <div class="section-header mb-4">
             <h2 class="section-title fw-bold text-dark mb-2">
               <i class="bi bi-calendar-check text-primary me-2"></i>Mis Reservas
+              <span id="reservations-filter-indicator" class="badge bg-primary ms-2">Recibidas</span>
             </h2>
-            <p class="text-muted mb-0">Historial completo de reservas</p>
+            <p class="text-muted mb-0">
+              <span id="reservations-description">Reservas que otros usuarios han hecho en tus apartamentos</span>
+            </p>
           </div>
           
           <% if (reservations.length > 0) { %>
@@ -412,11 +420,15 @@
                   </div>
                   <div class="col-md-4 text-end">
                     <div class="filter-buttons">
-                      <button class="btn btn-outline-primary btn-sm rounded-pill me-2 active" onclick="filterReservations('received')">
-                        Recibidas
+                      <button class="btn btn-outline-primary btn-sm rounded-pill me-2 active" 
+                              onclick="filterReservations('received')" 
+                              data-filter="received">
+                        <i class="bi bi-arrow-down-circle me-1"></i>Recibidas
                       </button>
-                      <button class="btn btn-outline-success btn-sm rounded-pill" onclick="filterReservations('made')">
-                        Realizadas
+                      <button class="btn btn-outline-success btn-sm rounded-pill" 
+                              onclick="filterReservations('made')" 
+                              data-filter="made">
+                        <i class="bi bi-arrow-up-circle me-1"></i>Realizadas
                       </button>
                     </div>
                   </div>

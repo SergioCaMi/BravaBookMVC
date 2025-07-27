@@ -55,3 +55,22 @@ export const requireAdmin = (req, res, next) => {
   }
   next(); // Si el usuario es administrador, pasa el control al siguiente middleware o ruta.
 };
+
+/**
+ * Middleware para requerir rol de super administrador.
+ * Este middleware debe usarse DESPUÉS de `requireAuth`,
+ * ya que depende de que `req.user` esté disponible.
+ * Solo el primer administrador creado puede acceder a estas rutas.
+ * @param {object} req - Objeto de solicitud de Express.
+ * @param {object} res - Objeto de respuesta de Express.
+ * @param {function} next - Función para pasar el control al siguiente middleware.
+ */
+export const requireSuperAdmin = (req, res, next) => {
+  // Verifica si req.user existe y si el usuario es super administrador.
+  if (!req.user.isSuperAdmin) {
+    // Si el usuario no es super administrador, deniega el acceso.
+    req.flash("error_msg", "Acceso denegado. Solo el administrador principal puede acceder a esta función.");
+    return res.redirect("/dashboard");
+  }
+  next(); // Si el usuario es super administrador, continúa.
+};

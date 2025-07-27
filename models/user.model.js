@@ -27,6 +27,10 @@ const userSchema = new mongoose.Schema({
     enum: ["user", "admin"], // El rol solo puede ser 'user' o 'admin'.
     default: "user",         // El rol por defecto es 'user'.
   },
+  isSuperAdmin: {
+    type: Boolean,
+    default: false,          // Solo el primer admin será super administrador.
+  },
   bio: {
     type: String,
     default: "",           // Campo de biografía opcional, por defecto cadena vacía.

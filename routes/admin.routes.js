@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { requireAuth, requireAdmin } from '../middlewares/auth.js';
+import { requireAuth, requireAdmin, requireSuperAdmin } from '../middlewares/auth.js';
 import * as adminController from '../controllers/admin.controller.js';
 import { uploadApartmentImages } from '../middlewares/uploadApartments.js'; 
 import { uploadNewApartmentTempImages  } from '../middlewares/uploadApartments.js'; 
@@ -26,14 +26,14 @@ router.get('/profile/edit', requireAuth, requireAdmin, adminController.getEditPr
 // Editar perfil de usuario (POST)
 router.post('/profile/update', validateUserUpdate, handleValidationErrors, requireAuth, requireAdmin, adminController.postUpdateProfile);
 
-// Ver todos los usuarios
-router.get('/users', requireAuth, requireAdmin, adminController.getUsers);
+// Ver todos los usuarios (solo super admin)
+router.get('/users', requireAuth, requireAdmin, requireSuperAdmin, adminController.getUsers);
 
-// Eliminar usuario
-router.post('/user/delete/:id', validateMongoId('id'), handleValidationErrors, requireAuth, requireAdmin, adminController.postDeleteUser);
+// Eliminar usuario (solo super admin)
+router.post('/user/delete/:id', validateMongoId('id'), handleValidationErrors, requireAuth, requireAdmin, requireSuperAdmin, adminController.postDeleteUser);
 
-// Alternar rol de usuario
-router.post('/user/toggle-role/:id', validateMongoId('id'), handleValidationErrors, requireAuth, requireAdmin, adminController.postToggleUserRole);
+// Alternar rol de usuario (solo super admin)
+router.post('/user/toggle-role/:id', validateMongoId('id'), handleValidationErrors, requireAuth, requireAdmin, requireSuperAdmin, adminController.postToggleUserRole);
 
 //  Rutas de Reservas 
 

@@ -121,7 +121,8 @@
     <!-- Grid de tarjetas de acciones -->
     <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-4 justify-content-center">
       
-      <!-- Tarjeta: Gestión de Usuarios -->
+      <!-- Tarjeta: Gestión de Usuarios (solo para super administrador) -->
+      <% if (isSuperAdmin) { %>
       <div class="col">
         <div class="admin-card card border-0 shadow-lg rounded-4 h-100 overflow-hidden transition-all"
              style="animation: slideInUp 0.6s ease-out 0.1s both;">
@@ -141,8 +142,8 @@
             
             <!-- Badge de categoría -->
             <div class="position-absolute top-0 start-0 m-3">
-              <span class="badge bg-primary bg-gradient px-3 py-2 rounded-pill shadow-sm">
-                <i class="bi bi-people me-1"></i>Usuarios
+              <span class="badge bg-danger bg-gradient px-3 py-2 rounded-pill shadow-sm">
+                <i class="bi bi-shield-check me-1"></i>Super Admin
               </span>
             </div>
           </div>
@@ -162,21 +163,22 @@
                 <small class="text-muted">Total</small>
               </div>
               <div class="stat text-center">
-                <div class="stat-number fw-bold text-success"><%= users.length %></div>
-                <small class="text-muted">Activos</small>
+                <div class="stat-number fw-bold text-success"><%= users.filter(u => u.role === 'admin').length %></div>
+                <small class="text-muted">Admins</small>
               </div>
               <div class="stat text-center">
-                <div class="stat-number fw-bold text-warning">2</div>
-                <small class="text-muted">Nuevos</small>
+                <div class="stat-number fw-bold text-info"><%= users.filter(u => u.role === 'user').length %></div>
+                <small class="text-muted">Usuarios</small>
               </div>
             </div>
             
-            <a href="/admin/users" class="btn btn-primary btn-lg w-100 mt-auto rounded-pill fw-bold transition-all hover-lift">
-              <i class="bi bi-arrow-right-circle me-2"></i>Ver Usuarios
+            <a href="/admin/users" class="btn btn-danger btn-lg w-100 mt-auto rounded-pill fw-bold transition-all hover-lift">
+              <i class="bi bi-shield-check me-2"></i>Panel de Control
             </a>
           </div>
         </div>
       </div>
+      <% } %>
       
       <!-- Tarjeta: Crear Apartamento -->
       <div class="col">
