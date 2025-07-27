@@ -335,7 +335,7 @@ export const validateReservation = [
         const conflictingReservations = await Reservation.find({
           apartment: req.body.apartment,
           status: 'confirmed',
-          _id: { $ne: req.params.id }, // Excluir la reserva actual si es una edición
+          _id: { $ne: req.params.id }, 
           $and: [
             { endDate: { $gt: startDate } },
             { startDate: { $lt: endDate } }
@@ -401,17 +401,17 @@ export const validateMongoId = (paramName = 'id') => [
 /**
  * Validación para paginación
  */
-export const validatePagination = [
-  body('page')
-    .optional()
-    .isInt({ min: 1 })
-    .withMessage('La página debe ser un número positivo'),
+// export const validatePagination = [
+//   body('page')
+//     .optional()
+//     .isInt({ min: 1 })
+//     .withMessage('La página debe ser un número positivo'),
 
-  body('limit')
-    .optional()
-    .isInt({ min: 1, max: 100 })
-    .withMessage('El límite debe estar entre 1 y 100')
-];
+//   body('limit')
+//     .optional()
+//     .isInt({ min: 1, max: 100 })
+//     .withMessage('El límite debe estar entre 1 y 100')
+// ];
 
 /**
  * Validación para filtros de búsqueda de apartamentos

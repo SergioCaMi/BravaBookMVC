@@ -26,13 +26,13 @@ router.get('/profile/edit', requireAuth, requireAdmin, adminController.getEditPr
 // Editar perfil de usuario (POST)
 router.post('/profile/update', validateUserUpdate, handleValidationErrors, requireAuth, requireAdmin, adminController.postUpdateProfile);
 
-// Ver todos los usuarios (solo super admin)
+// Ver todos los usuarios (SUPER ADMIN)
 router.get('/users', requireAuth, requireAdmin, requireSuperAdmin, adminController.getUsers);
 
-// Eliminar usuario (solo super admin)
+// Eliminar usuario (SUPER ADMIN)
 router.post('/user/delete/:id', validateMongoId('id'), handleValidationErrors, requireAuth, requireAdmin, requireSuperAdmin, adminController.postDeleteUser);
 
-// Alternar rol de usuario (solo super admin)
+// Alternar rol de usuario (SUPER ADMIN)
 router.post('/user/toggle-role/:id', validateMongoId('id'), handleValidationErrors, requireAuth, requireAdmin, requireSuperAdmin, adminController.postToggleUserRole);
 
 //  Rutas de Reservas 
@@ -48,12 +48,12 @@ router.get("/apartment/new", requireAuth, requireAdmin, adminController.getNewAp
 // Enviar formulario de nuevo apartamento (con subida temporal de fotos)
 router.post("/apartment/new", uploadNewApartmentTempImages.any(), validateApartment, handleValidationErrors, adminController.postNewApartment);
 
-//  Rutas Dinámicas (con Parámetros :id) 
+//  Rutas Dinámicas
 
 // Formulario para editar un apartamento existente
 router.get("/apartments/edit/:id", validateMongoId('id'), handleValidationErrors, requireAuth, requireAdmin, adminController.getApartmentEdit);
 
-// Enviar formulario de edición de apartamento (con subida de fotos y otros campos)
+// Enviar formulario de edición de apartamento 
 router.post("/apartment/edit/:id/save", validateMongoId('id'), requireAuth, requireAdmin, uploadApartmentImages.fields([{ name: 'apartmentPhotos'},]), validateApartment, handleValidationErrors, adminController.putApartmentEdit);
 
 // Cancelar una reserva

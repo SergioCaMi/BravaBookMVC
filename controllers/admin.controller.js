@@ -1,8 +1,8 @@
 import User from "../models/user.model.js";
 import Apartment from "../models/apartment.model.js";
 import Reservation from "../models/reservation.model.js";
-import fs from "fs/promises"; // Para operaciones de sistema de archivos asíncronas
-import path from "path"; // Para manejar rutas de archivos y directorios
+import fs from "fs/promises"; 
+import path from "path"; 
 import { validationResult } from 'express-validator';
 
 
@@ -19,21 +19,15 @@ export const dashboard = async (req, res) => {
   console.log("Dashboard - Acceso de administrador");
   try {
     const user = await User.findById(req.session.userId);
-    
-    // Reservas realizadas por el usuario en apartamentos de otros
     const myReservations = await Reservation.find({
       user: req.session.userId,
     })
       .populate("apartment")
       .limit(10)
-      .sort({ endDate: 1 }); // Ordena las reservas por fecha de fin ascendente
-    
-    // Apartamentos creados por el usuario
+      .sort({ endDate: 1 });
     const myApartments = await Apartment.find({
       createdBy: req.session.userId,
     }).populate("createdBy").limit(50);
-    
-    // Reservas en los apartamentos del usuario (reservas que otros han hecho en sus apartamentos)
     const apartmentIds = myApartments.map(apt => apt._id);
     const reservationsInMyApartments = await Reservation.find({
       apartment: { $in: apartmentIds }
@@ -42,17 +36,13 @@ export const dashboard = async (req, res) => {
       .populate("user")
       .limit(10)
       .sort({ endDate: 1 });
-
-    // Combinar todas las reservas para la vista pero mantener la separación lógica
     const allReservations = [...myReservations, ...reservationsInMyApartments];
-
-    // Mantengo compatibilidad con la vista existente
     res.render("dashboard", { 
       title: "home", 
       user, 
-      currentUser: user, // Para las comparaciones en la vista
-      reservations: allReservations, // Todas las reservas para la vista
-      apartments: myApartments, // Para compatibilidad con la vista
+      currentUser: user, 
+      reservations: allReservations, 
+      apartments: myApartments, 
       myReservations, 
       myApartments, 
       reservationsInMyApartments 
@@ -70,7 +60,7 @@ export const dashboard = async (req, res) => {
  * @param {object} res - Objeto de respuesta de Express.
  */
 export const getEditProfile = async (req, res) => {
-  const { id } = req.params; // Aunque el ID no se usa actualmente, se mantiene por si se quiere editar perfiles de otros usuarios.
+  const { id } = req.params; 
   console.log(`Accediendo a editar perfil con ID (actualmente no usado): ${id}`);
   res.render("aboutUs", { title: "about", error: undefined }); // Esto parece incorrecto, debería ser 'editProfile'
 };

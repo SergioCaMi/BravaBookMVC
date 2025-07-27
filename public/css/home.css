@@ -123,15 +123,129 @@
 
 /* Responsive improvements */
 @media (max-width: 768px) {
-  .hero-video {
+  .video-hero {
+    height: auto !important;
     min-height: 100vh;
   }
   
+  .hero-video {
+    min-height: 50vh;
+    position: relative !important;
+    object-fit: cover;
+  }
+  
+  .video-overlay {
+    position: relative !important;
+    height: auto;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  }
+  
+  /* Contenedor principal adaptado para móvil */
+  .hero-container {
+    position: relative !important;
+    margin: 0 auto !important;
+    padding-top: 2rem !important;
+    max-width: 100% !important;
+  }
+  
+  .hero-content-card {
+    margin: 1rem !important;
+    padding: 1.5rem !important;
+    backdrop-filter: none !important;
+    background: rgba(255, 255, 255, 0.98) !important;
+    border: none !important;
+  }
+  
+  /* Títulos adaptados para móvil */
+  .hero-title-container h1 {
+    font-size: 1.75rem !important;
+    color: #333 !important;
+    text-shadow: none !important;
+  }
+  
+  .hero-title-container .lead {
+    color: #666 !important;
+    font-size: 1rem !important;
+  }
+  
+  /* Formulario adaptado para móvil */
   .search-form {
-    margin-top: 2rem;
+    padding: 1rem !important;
+    background: rgba(255, 255, 255, 1) !important;
+    margin-top: 1rem !important;
+  }
+  
+  .search-form .form-control,
+  .search-form .form-select {
+    padding: 0.75rem;
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .search-form .btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+  }
+  
+  /* IA search section adaptada */
+  .ai-search-section h4 {
+    color: #333 !important;
+    font-size: 1.2rem !important;
+  }
+  
+  .ai-search-section p {
+    color: #666 !important;
+  }
+  
+  .ai-search-section .btn {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
   }
   
   .apartment-card-wrapper {
     width: 280px !important;
+  }
+}
+
+/* Ajustes para pantallas muy pequeñas */
+@media (max-width: 576px) {
+  .hero-video {
+    min-height: 40vh;
+  }
+  
+  .hero-container {
+    padding-top: 1rem !important;
+  }
+  
+  .hero-content-card {
+    margin: 0.5rem !important;
+    padding: 1rem !important;
+  }
+  
+  .hero-title-container h1 {
+    font-size: 1.5rem !important;
+  }
+  
+  .hero-title-container .lead {
+    font-size: 0.9rem !important;
+  }
+  
+  .search-form {
+    padding: 0.75rem !important;
+  }
+  
+  .search-form .form-control,
+  .search-form .form-select {
+    padding: 0.6rem;
+    font-size: 0.9rem;
+  }
+  
+  .ai-search-section .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
+  
+  .apartment-card-wrapper {
+    width: 260px !important;
   }
 }

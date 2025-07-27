@@ -18,9 +18,10 @@
   </video>
 
   <!-- Overlay oscuro para mejorar la legibilidad del texto -->
-  <div class="video-overlay position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)); z-index: 2"></div>
+  <div class="video-overlay position-absolute top-0 start-0 w-100 h-100 d-none d-md-block" style="background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)); z-index: 2"></div>
 
-  <div class="position-absolute top-50 start-50 translate-middle w-100 px-3" style="max-width: 1200px; z-index: 10; transform: translate(-50%, -40%)">
+  <!-- Contenedor principal responsive -->
+  <div class="hero-container w-100 px-3" style="max-width: 1200px; z-index: 10; margin: 0 auto; padding-top: 5rem;">
     <div class="container text-white text-center">
       <div class="row justify-content-center">
         <div class="col-12 col-xl-11">
@@ -512,26 +513,151 @@
 
   /* Responsive adjustments */
   @media (max-width: 768px) {
+    /* Eliminar posicionamiento absoluto problemático en móviles */
+    .video-hero {
+      height: auto;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    .hero-video {
+      position: relative !important;
+      height: 50vh;
+      object-fit: cover;
+      animation: none;
+    }
+
+    .video-overlay {
+      position: relative !important;
+      height: auto;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    }
+
+    /* Contenedor principal sin posicionamiento absoluto */
+    .position-absolute.top-50.start-50.translate-middle {
+      position: relative !important;
+      top: auto !important;
+      left: auto !important;
+      transform: none !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      padding: 1rem !important;
+      margin-top: 0 !important;
+    }
+
     .hero-content-card {
-      margin: 0 10px;
+      position: relative !important;
+      margin: 1rem !important;
+      padding: 1rem !important;
+      backdrop-filter: none !important;
+      background: rgba(255, 255, 255, 0.95) !important;
+      border: none !important;
     }
 
     .display-4 {
-      font-size: 2rem !important;
+      font-size: 1.8rem !important;
+      color: #333 !important;
+      text-shadow: none !important;
+    }
+
+    .lead {
+      color: #666 !important;
+      font-size: 1rem !important;
     }
 
     .apartment-card-wrapper {
       width: 280px !important;
     }
 
-    /* Ajustes específicos para video en móviles */
+    /* Ajustar espaciado */
+    .recommended-section {
+      padding: 2rem 0 !important;
+    }
+
+    .container-fluid {
+      padding: 0 1rem !important;
+    }
+
+    /* Mejorar botones */
+    .btn-lg {
+      padding: 0.75rem 1.5rem !important;
+      font-size: 1rem !important;
+    }
+
+    /* Formulario más compacto */
+    .search-form {
+      padding: 1rem !important;
+      margin-top: 1rem !important;
+    }
+
+    .search-form .row {
+      margin-bottom: 0.5rem !important;
+    }
+
+    .search-form .col-12 {
+      margin-bottom: 0.75rem !important;
+    }
+
+    /* IA search section */
+    .ai-search-section {
+      margin-top: 1rem !important;
+      padding-top: 1rem !important;
+    }
+
+    .ai-search-section h4 {
+      color: #333 !important;
+      font-size: 1.2rem !important;
+    }
+
+    .ai-search-section p {
+      color: #666 !important;
+    }
+  }
+
+  /* Ajustes para pantallas muy pequeñas */
+  @media (max-width: 576px) {
     .video-hero {
-      height: 100vh;
+      height: auto;
     }
 
     .hero-video {
-      /* En móviles, reducir el zoom para evitar que se vea muy cortado */
-      animation: videoZoomMobile 15s ease-in-out infinite alternate;
+      height: 40vh;
+    }
+
+    .hero-content-card {
+      margin: 0.5rem !important;
+      padding: 0.75rem !important;
+    }
+
+    .display-4 {
+      font-size: 1.5rem !important;
+    }
+
+    .lead {
+      font-size: 0.9rem !important;
+    }
+
+    .search-form {
+      padding: 0.75rem !important;
+    }
+
+    .apartment-card-wrapper {
+      width: 260px !important;
+    }
+
+    .action-buttons .btn {
+      font-size: 0.85rem !important;
+      padding: 0.5rem 1rem !important;
+      margin-bottom: 0.5rem !important;
+    }
+
+    .section-header h2 {
+      font-size: 1.5rem !important;
+    }
+
+    .apartments-carousel .d-flex {
+      padding-left: 0.5rem !important;
+      gap: 1rem !important;
     }
   }
 
@@ -813,6 +939,7 @@
 
 <script>
   $(document).ready(function () {
+    // Daterangepicker para el formulario principal (funciona en desktop y móvil)
     $("#dateRange").daterangepicker(
       {
         locale: {
@@ -830,12 +957,14 @@
       function (start, end, label) {
         $("#startDate").val(start.format("YYYY-MM-DD"));
         $("#endDate").val(end.format("YYYY-MM-DD"));
+        $("#dateRange").val(start.format("YYYY-MM-DD") + " - " + end.format("YYYY-MM-DD"));
       }
     );
 
     $("#dateRange").on("apply.daterangepicker", function (ev, picker) {
       $("#startDate").val(picker.startDate.format("YYYY-MM-DD"));
       $("#endDate").val(picker.endDate.format("YYYY-MM-DD"));
+      $(this).val(picker.startDate.format("YYYY-MM-DD") + " - " + picker.endDate.format("YYYY-MM-DD"));
     });
   });
 </script>
