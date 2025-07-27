@@ -1,13 +1,12 @@
 <!-- Incluye el encabezado de la página desde un archivo parcial -->
 <%- include("partials/header") %>
 
-<!-- CSS específico para aboutUs -->
+<!-- Enlace a los estilos específicos de la página about -->
 <link rel="stylesheet" href="/css/aboutUs.css">
 
 <!-- Hero section moderno -->
 <div class="about-hero position-relative overflow-hidden">
-  <div class="hero-background position-absolute top-0 start-0 w-100 h-100"
-       style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+  <div class="hero-background position-absolute top-0 start-0 w-100 h-100"></div>
   
   <!-- Partículas animadas de fondo -->
   <div class="particles-container position-absolute top-0 start-0 w-100 h-100">
@@ -22,31 +21,47 @@
     <div class="container">
       <div class="row align-items-center">
         <div class="col-lg-8">
-          <div class="hero-title text-white" style="animation: fadeInLeft 0.8s ease-out;">
+          <div class="hero-title text-white">
             <div class="title-badge mb-3">
               <span class="badge bg-light text-primary px-4 py-2 rounded-pill fs-6 fw-medium">
-                <i class="bi bi-code-slash me-2"></i>Stack Tecnológico
+                <i class="bi bi-building me-2"></i>BravaBook MVC
               </span>
             </div>
             
-            <h1 class="display-4 fw-bold mb-3">Sobre Nuestro Proyecto</h1>
-            <p class="lead mb-0 text-light">
-              Una aplicación web full-stack moderna para gestión de alquileres vacacionales, 
-              implementando las mejores prácticas de desarrollo web
+            <h1 class="display-4 fw-bold mb-3">Plataforma de Alquiler Vacacional</h1>
+            <p class="lead mb-4 text-light">
+              Sistema completo de gestión de apartamentos con IA, mapas interactivos 
+              y herramientas administrativas avanzadas
             </p>
+            
+            <div class="hero-features d-flex flex-wrap gap-3">
+              <div class="feature-pill">
+                <i class="bi bi-robot me-2"></i>IA Integrada
+              </div>
+              <div class="feature-pill">
+                <i class="bi bi-geo-alt me-2"></i>Mapas Interactivos
+              </div>
+              <div class="feature-pill">
+                <i class="bi bi-shield-check me-2"></i>Seguro
+              </div>
+            </div>
           </div>
         </div>
         
         <div class="col-lg-4 text-center text-lg-end">
-          <div class="hero-stats backdrop-blur rounded-4 p-4 shadow-lg border border-light border-opacity-25"
-               style="background: rgba(255, 255, 255, 0.1); animation: slideInRight 0.8s ease-out 0.3s both;">
+          <div class="hero-stats backdrop-blur rounded-4 p-4 shadow-lg border border-light border-opacity-25">
             <div class="stat-item mb-3">
-              <div class="stat-icon bg-success bg-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2"
-                   style="width: 60px; height: 60px;">
-                <i class="bi bi-gear-wide-connected text-white fs-3"></i>
+              <div class="stat-icon bg-success bg-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2">
+                <i class="bi bi-code-slash text-white fs-3"></i>
               </div>
               <h4 class="text-white fw-bold mb-1">Full-Stack</h4>
-              <p class="text-light small mb-0">Tecnología Moderna</p>
+              <p class="text-light small mb-0">Node.js + MongoDB</p>
+            </div>
+            
+            <div class="version-badge">
+              <span class="badge bg-warning text-dark px-3 py-2">
+                <i class="bi bi-star-fill me-1"></i>v2.0 MVC
+              </span>
             </div>
           </div>
         </div>
@@ -56,25 +71,77 @@
 </div>
 
 <!-- Contenedor principal -->
-<div class="about-container py-5" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+<div class="about-container py-5">
   <div class="container">
     
-    <!-- Sección Backend -->
-    <div class="tech-section mb-5" data-section="backend">
-      <div class="section-wrapper backdrop-blur rounded-4 shadow-lg border border-light border-opacity-50 overflow-hidden"
-           style="background: rgba(255, 255, 255, 0.95);">
+    <!-- Sección Descripción del Proyecto -->
+    <div class="tech-section mb-5" data-section="overview">
+      <div class="section-wrapper backdrop-blur rounded-4 shadow-lg border border-light border-opacity-50 overflow-hidden">
         <div class="section-content p-5">
           <div class="section-header text-center mb-5">
-            <div class="section-icon bg-primary bg-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
-                 style="width: 80px; height: 80px;">
+            <div class="section-icon bg-primary bg-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
+              <i class="bi bi-info-circle text-white fs-2"></i>
+            </div>
+            <h2 class="fw-bold text-dark mb-3">🏨 Descripción del Proyecto</h2>
+            <p class="text-muted">Plataforma integral de alquiler de apartamentos</p>
+          </div>
+          
+          <div class="row g-4">
+            <div class="col-md-6">
+              <div class="overview-card">
+                <div class="overview-icon bg-info">
+                  <i class="bi bi-bullseye"></i>
+                </div>
+                <h5>Objetivo Principal</h5>
+                <p>Sistema completo de reservas con gestión de usuarios, listados de apartamentos y herramientas administrativas avanzadas.</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="overview-card">
+                <div class="overview-icon bg-success">
+                  <i class="bi bi-cpu"></i>
+                </div>
+                <h5>IA Integrada</h5>
+                <p>Búsqueda inteligente potenciada por Google Gemini API que convierte lenguaje natural en filtros estructurados.</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="overview-card">
+                <div class="overview-icon bg-warning">
+                  <i class="bi bi-map"></i>
+                </div>
+                <h5>Mapas Interactivos</h5>
+                <p>Visualización geográfica de apartamentos con marcadores interactivos y navegación por ubicación.</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="overview-card">
+                <div class="overview-icon bg-danger">
+                  <i class="bi bi-people"></i>
+                </div>
+                <h5>Sistema de Roles</h5>
+                <p>Gestión diferenciada para usuarios regulares, administradores y super administradores.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección Stack Tecnológico Backend -->
+    <div class="tech-section mb-5" data-section="backend">
+      <div class="section-wrapper backdrop-blur rounded-4 shadow-lg border border-light border-opacity-50 overflow-hidden">
+        <div class="section-content p-5">
+          <div class="section-header text-center mb-5">
+            <div class="section-icon bg-dark bg-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
               <i class="bi bi-server text-white fs-2"></i>
             </div>
-            <h2 class="fw-bold text-dark mb-3">🛠️ Backend</h2>
+            <h2 class="fw-bold text-dark mb-3">🛠️ Backend Technologies</h2>
             <p class="text-muted">Servidor robusto y escalable</p>
           </div>
           
           <div class="row g-4">
-            <div class="col-md-6 col-xl-2-4">
+            <div class="col-md-6 col-xl-3">
               <div class="tech-card h-100">
                 <div class="tech-icon bg-success">
                   <i class="bi bi-nodejs"></i>
@@ -83,7 +150,7 @@
                 <p>Runtime de JavaScript para el servidor, permitiendo desarrollo full-stack con un solo lenguaje</p>
               </div>
             </div>
-            <div class="col-md-6 col-xl-2-4">
+            <div class="col-md-6 col-xl-3">
               <div class="tech-card h-100">
                 <div class="tech-icon bg-dark">
                   <i class="bi bi-lightning"></i>
@@ -92,7 +159,7 @@
                 <p>Framework web minimalista y flexible para Node.js, ideal para APIs REST y aplicaciones web</p>
               </div>
             </div>
-            <div class="col-md-6 col-xl-2-4">
+            <div class="col-md-6 col-xl-3">
               <div class="tech-card h-100">
                 <div class="tech-icon bg-success">
                   <i class="bi bi-database"></i>
@@ -101,22 +168,13 @@
                 <p>Base de datos NoSQL con Mongoose ODM para modelado de datos flexible y escalable</p>
               </div>
             </div>
-            <div class="col-md-6 col-xl-2-4">
+            <div class="col-md-6 col-xl-3">
               <div class="tech-card h-100">
                 <div class="tech-icon bg-warning">
                   <i class="bi bi-file-earmark-code"></i>
                 </div>
-                <h5>EJS</h5>
+                <h5>EJS Templates</h5>
                 <p>Motor de plantillas para renderizado server-side con sintaxis JavaScript familiar</p>
-              </div>
-            </div>
-            <div class="col-md-6 col-xl-2-4">
-              <div class="tech-card h-100">
-                <div class="tech-icon bg-danger">
-                  <i class="bi bi-check-circle"></i>
-                </div>
-                <h5>express-validator</h5>
-                <p>Middleware de validación y sanitización de datos de entrada para mayor seguridad</p>
               </div>
             </div>
           </div>
@@ -126,15 +184,13 @@
 
     <!-- Sección Frontend -->
     <div class="tech-section mb-5" data-section="frontend">
-      <div class="section-wrapper backdrop-blur rounded-4 shadow-lg border border-light border-opacity-50 overflow-hidden"
-           style="background: rgba(255, 255, 255, 0.95);">
+      <div class="section-wrapper backdrop-blur rounded-4 shadow-lg border border-light border-opacity-50 overflow-hidden">
         <div class="section-content p-5">
           <div class="section-header text-center mb-5">
-            <div class="section-icon bg-info bg-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
-                 style="width: 80px; height: 80px;">
+            <div class="section-icon bg-info bg-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
               <i class="bi bi-palette text-white fs-2"></i>
             </div>
-            <h2 class="fw-bold text-dark mb-3">🎨 Frontend</h2>
+            <h2 class="fw-bold text-dark mb-3">🎨 Frontend Technologies</h2>
             <p class="text-muted">Interfaz moderna y responsive</p>
           </div>
           
@@ -150,20 +206,11 @@
             </div>
             <div class="col-md-6 col-lg-3">
               <div class="tech-card h-100">
-                <div class="tech-icon bg-primary">
-                  <i class="bi bi-icons"></i>
-                </div>
-                <h5>Bootstrap Icons</h5>
-                <p>Librería completa de iconos vectoriales optimizados para web</p>
-              </div>
-            </div>
-            <div class="col-md-6 col-lg-3">
-              <div class="tech-card h-100">
                 <div class="tech-icon bg-warning">
                   <i class="bi bi-code-square"></i>
                 </div>
-                <h5>JavaScript Vanilla</h5>
-                <p>JavaScript puro para interactividad del cliente sin dependencias externas</p>
+                <h5>JavaScript ES6+</h5>
+                <p>JavaScript moderno para interactividad del cliente con características avanzadas</p>
               </div>
             </div>
             <div class="col-md-6 col-lg-3">
@@ -171,55 +218,17 @@
                 <div class="tech-icon bg-info">
                   <i class="bi bi-brush"></i>
                 </div>
-                <h5>CSS3 Moderno</h5>
+                <h5>CSS3</h5>
                 <p>Efectos glassmorphism, animaciones keyframes y diseño responsive avanzado</p>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Sección Autenticación & Seguridad -->
-    <div class="tech-section mb-5" data-section="security">
-      <div class="section-wrapper backdrop-blur rounded-4 shadow-lg border border-light border-opacity-50 overflow-hidden"
-           style="background: rgba(255, 255, 255, 0.95);">
-        <div class="section-content p-5">
-          <div class="section-header text-center mb-5">
-            <div class="section-icon bg-danger bg-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
-                 style="width: 80px; height: 80px;">
-              <i class="bi bi-shield-lock text-white fs-2"></i>
-            </div>
-            <h2 class="fw-bold text-dark mb-3">🔐 Autenticación & Seguridad</h2>
-            <p class="text-muted">Protección robusta de datos</p>
-          </div>
-          
-          <div class="row g-4">
-            <div class="col-md-4">
+            <div class="col-md-6 col-lg-3">
               <div class="tech-card h-100">
-                <div class="tech-icon bg-danger">
-                  <i class="bi bi-key"></i>
+                <div class="tech-icon bg-secondary">
+                  <i class="bi bi-file-earmark-text"></i>
                 </div>
-                <h5>bcryptjs</h5>
-                <p>Encriptación segura de contraseñas con salt rounds configurables</p>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="tech-card h-100">
-                <div class="tech-icon bg-warning">
-                  <i class="bi bi-person-check"></i>
-                </div>
-                <h5>express-session</h5>
-                <p>Manejo seguro de sesiones de usuario con configuración personalizada</p>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="tech-card h-100">
-                <div class="tech-icon bg-success">
-                  <i class="bi bi-database-lock"></i>
-                </div>
-                <h5>connect-mongo</h5>
-                <p>Almacenamiento persistente de sesiones en MongoDB</p>
+                <h5>HTML5</h5>
+                <p>Estándares web modernos con semántica mejorada y accesibilidad</p>
               </div>
             </div>
           </div>
@@ -227,37 +236,45 @@
       </div>
     </div>
 
-    <!-- Sección Gestión de Archivos -->
-    <div class="tech-section mb-5" data-section="files">
-      <div class="section-wrapper backdrop-blur rounded-4 shadow-lg border border-light border-opacity-50 overflow-hidden"
-           style="background: rgba(255, 255, 255, 0.95);">
+    <!-- Sección APIs y Servicios Externos -->
+    <div class="tech-section mb-5" data-section="apis">
+      <div class="section-wrapper backdrop-blur rounded-4 shadow-lg border border-light border-opacity-50 overflow-hidden">
         <div class="section-content p-5">
           <div class="section-header text-center mb-5">
-            <div class="section-icon bg-secondary bg-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
-                 style="width: 80px; height: 80px;">
-              <i class="bi bi-cloud-upload text-white fs-2"></i>
+            <div class="section-icon bg-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
+              <i class="bi bi-cloud text-white fs-2"></i>
             </div>
-            <h2 class="fw-bold text-dark mb-3">📁 Gestión de Archivos</h2>
-            <p class="text-muted">Subida y manejo de imágenes</p>
+            <h2 class="fw-bold text-dark mb-3">🌐 APIs y Servicios Externos</h2>
+            <p class="text-muted">Integración con servicios de terceros</p>
           </div>
           
           <div class="row g-4 justify-content-center">
             <div class="col-md-6">
-              <div class="tech-card h-100">
-                <div class="tech-icon bg-info">
-                  <i class="bi bi-upload"></i>
+              <div class="api-card">
+                <div class="api-icon bg-primary">
+                  <i class="bi bi-robot"></i>
                 </div>
-                <h5>Multer</h5>
-                <p>Middleware para subida de archivos e imágenes con validación y configuración avanzada</p>
+                <h5>Google Gemini AI</h5>
+                <p>Búsqueda inteligente que convierte consultas en lenguaje natural a filtros estructurados para encontrar apartamentos</p>
+                <div class="api-features">
+                  <span class="feature-tag">NLP</span>
+                  <span class="feature-tag">Filtros Inteligentes</span>
+                  <span class="feature-tag">Búsqueda Semántica</span>
+                </div>
               </div>
             </div>
             <div class="col-md-6">
-              <div class="tech-card h-100">
-                <div class="tech-icon bg-secondary">
-                  <i class="bi bi-folder"></i>
+              <div class="api-card">
+                <div class="api-icon bg-success">
+                  <i class="bi bi-arrow-left-right"></i>
                 </div>
-                <h5>Path</h5>
-                <p>Manejo seguro de rutas de archivos multiplataforma con Node.js</p>
+                <h5>Axios HTTP Client</h5>
+                <p>Cliente HTTP para realizar peticiones a APIs externas de forma eficiente y con manejo de errores</p>
+                <div class="api-features">
+                  <span class="feature-tag">Promesas</span>
+                  <span class="feature-tag">Interceptores</span>
+                  <span class="feature-tag">Timeout</span>
+                </div>
               </div>
             </div>
           </div>
@@ -265,18 +282,130 @@
       </div>
     </div>
 
-    <!-- Sección Funcionalidades Clave -->
-    <div class="tech-section mb-5" data-section="features">
-      <div class="section-wrapper backdrop-blur rounded-4 shadow-lg border border-light border-opacity-50 overflow-hidden"
-           style="background: rgba(255, 255, 255, 0.95);">
+    <!-- Sección Seguridad y Autenticación -->
+    <div class="tech-section mb-5" data-section="security">
+      <div class="section-wrapper backdrop-blur rounded-4 shadow-lg border border-light border-opacity-50 overflow-hidden">
         <div class="section-content p-5">
           <div class="section-header text-center mb-5">
-            <div class="section-icon bg-success bg-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
-                 style="width: 80px; height: 80px;">
+            <div class="section-icon bg-danger bg-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
+              <i class="bi bi-shield-lock text-white fs-2"></i>
+            </div>
+            <h2 class="fw-bold text-dark mb-3">🔐 Seguridad y Autenticación</h2>
+            <p class="text-muted">Protección robusta de datos y usuarios</p>
+          </div>
+          
+          <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+              <div class="security-card">
+                <div class="security-icon bg-danger">
+                  <i class="bi bi-key"></i>
+                </div>
+                <h6>bcrypt</h6>
+                <p>Encriptación segura de contraseñas con salt rounds configurables</p>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+              <div class="security-card">
+                <div class="security-icon bg-warning">
+                  <i class="bi bi-person-check"></i>
+                </div>
+                <h6>express-session</h6>
+                <p>Manejo seguro de sesiones con configuración personalizada</p>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+              <div class="security-card">
+                <div class="security-icon bg-success">
+                  <i class="bi bi-database-lock"></i>
+                </div>
+                <h6>connect-mongo</h6>
+                <p>Almacenamiento persistente de sesiones en MongoDB</p>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+              <div class="security-card">
+                <div class="security-icon bg-info">
+                  <i class="bi bi-check-circle"></i>
+                </div>
+                <h6>express-validator</h6>
+                <p>Validación y sanitización de datos de entrada</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección Tipos de Usuario -->
+    <div class="tech-section mb-5" data-section="users">
+      <div class="section-wrapper backdrop-blur rounded-4 shadow-lg border border-light border-opacity-50 overflow-hidden">
+        <div class="section-content p-5">
+          <div class="section-header text-center mb-5">
+            <div class="section-icon bg-secondary bg-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
+              <i class="bi bi-people text-white fs-2"></i>
+            </div>
+            <h2 class="fw-bold text-dark mb-3">👥 Sistema de Usuarios</h2>
+            <p class="text-muted">Roles y permisos diferenciados</p>
+          </div>
+          
+          <div class="row g-4">
+            <div class="col-md-4">
+              <div class="user-card">
+                <div class="user-icon bg-primary">
+                  <i class="bi bi-person"></i>
+                </div>
+                <h5>Usuario Regular</h5>
+                <ul class="user-features">
+                  <li><i class="bi bi-check text-success me-2"></i>Buscar apartamentos</li>
+                  <li><i class="bi bi-check text-success me-2"></i>Realizar reservas</li>
+                  <li><i class="bi bi-check text-success me-2"></i>Gestionar perfil</li>
+                  <li><i class="bi bi-check text-success me-2"></i>Ver mapas interactivos</li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="user-card">
+                <div class="user-icon bg-warning">
+                  <i class="bi bi-person-gear"></i>
+                </div>
+                <h5>Administrador</h5>
+                <ul class="user-features">
+                  <li><i class="bi bi-check text-success me-2"></i>Todas las funciones de usuario</li>
+                  <li><i class="bi bi-check text-success me-2"></i>Crear/editar apartamentos</li>
+                  <li><i class="bi bi-check text-success me-2"></i>Gestionar reservas</li>
+                  <li><i class="bi bi-check text-success me-2"></i>Panel administrativo</li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="user-card">
+                <div class="user-icon bg-danger">
+                  <i class="bi bi-person-badge"></i>
+                </div>
+                <h5>Super Admin</h5>
+                <ul class="user-features">
+                  <li><i class="bi bi-check text-success me-2"></i>Todas las funciones de admin</li>
+                  <li><i class="bi bi-check text-success me-2"></i>Gestionar todos los usuarios</li>
+                  <li><i class="bi bi-check text-success me-2"></i>Eliminar cuentas</li>
+                  <li><i class="bi bi-check text-success me-2"></i>Privilegios del sistema</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección Funcionalidades Principales -->
+    <div class="tech-section mb-5" data-section="features">
+      <div class="section-wrapper backdrop-blur rounded-4 shadow-lg border border-light border-opacity-50 overflow-hidden">
+        <div class="section-content p-5">
+          <div class="section-header text-center mb-5">
+            <div class="section-icon bg-success bg-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
               <i class="bi bi-gear-wide text-white fs-2"></i>
             </div>
-            <h2 class="fw-bold text-dark mb-3">⚡ Funcionalidades Clave</h2>
-            <p class="text-muted">Características principales del sistema</p>
+            <h2 class="fw-bold text-dark mb-3">⚡ Funcionalidades Principales</h2>
+            <p class="text-muted">Características clave del sistema</p>
           </div>
           
           <div class="row g-4">
@@ -286,52 +415,52 @@
                   <i class="bi bi-database-gear"></i>
                 </div>
                 <h6>CRUD Completo</h6>
-                <p>Operaciones completas para apartamentos, usuarios y reservas</p>
-              </div>
-            </div>
-            <div class="col-md-6 col-lg-4">
-              <div class="feature-card">
-                <div class="feature-icon bg-warning">
-                  <i class="bi bi-person-badge"></i>
-                </div>
-                <h6>Sistema de Roles</h6>
-                <p>Autenticación con roles diferenciados (admin/usuario)</p>
+                <p>Operaciones completas para apartamentos, usuarios y reservas con validación</p>
               </div>
             </div>
             <div class="col-md-6 col-lg-4">
               <div class="feature-card">
                 <div class="feature-icon bg-info">
-                  <i class="bi bi-images"></i>
+                  <i class="bi bi-robot"></i>
                 </div>
-                <h6>Subida de Imágenes</h6>
-                <p>Gestión completa de imágenes para apartamentos</p>
+                <h6>Búsqueda IA</h6>
+                <p>Consultas en lenguaje natural convertidas a filtros estructurados</p>
               </div>
             </div>
             <div class="col-md-6 col-lg-4">
               <div class="feature-card">
                 <div class="feature-icon bg-success">
-                  <i class="bi bi-graph-up"></i>
+                  <i class="bi bi-geo-alt"></i>
                 </div>
-                <h6>Panel Administrativo</h6>
-                <p>Estadísticas y métricas en tiempo real</p>
+                <h6>Mapas Interactivos</h6>
+                <p>Visualización geográfica con marcadores y navegación por ubicación</p>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+              <div class="feature-card">
+                <div class="feature-icon bg-warning">
+                  <i class="bi bi-calendar-check"></i>
+                </div>
+                <h6>Sistema de Reservas</h6>
+                <p>Gestión completa de reservas con estados y notificaciones</p>
               </div>
             </div>
             <div class="col-md-6 col-lg-4">
               <div class="feature-card">
                 <div class="feature-icon bg-danger">
-                  <i class="bi bi-calendar-check"></i>
+                  <i class="bi bi-images"></i>
                 </div>
-                <h6>Gestión de Reservas</h6>
-                <p>Control de estados de pago y disponibilidad</p>
+                <h6>Gestión de Imágenes</h6>
+                <p>Subida múltiple de imágenes con validación y optimización</p>
               </div>
             </div>
             <div class="col-md-6 col-lg-4">
               <div class="feature-card">
                 <div class="feature-icon bg-secondary">
-                  <i class="bi bi-phone"></i>
+                  <i class="bi bi-graph-up"></i>
                 </div>
-                <h6>Interfaz Responsive</h6>
-                <p>Diseño adaptativo con efectos visuales modernos</p>
+                <h6>Dashboard Avanzado</h6>
+                <p>Estadísticas, métricas y herramientas administrativas</p>
               </div>
             </div>
           </div>
@@ -339,17 +468,84 @@
       </div>
     </div>
 
-    <!-- Sección Arquitectura -->
-    <div class="tech-section mb-5" data-section="architecture">
-      <div class="section-wrapper backdrop-blur rounded-4 shadow-lg border border-light border-opacity-50 overflow-hidden"
-           style="background: rgba(255, 255, 255, 0.95);">
+    <!-- Sección Estructura de Base de Datos -->
+    <div class="tech-section mb-5" data-section="database">
+      <div class="section-wrapper backdrop-blur rounded-4 shadow-lg border border-light border-opacity-50 overflow-hidden">
         <div class="section-content p-5">
           <div class="section-header text-center mb-5">
-            <div class="section-icon bg-dark bg-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
-                 style="width: 80px; height: 80px;">
+            <div class="section-icon bg-dark bg-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
+              <i class="bi bi-database text-white fs-2"></i>
+            </div>
+            <h2 class="fw-bold text-dark mb-3">🗄️ Estructura de Base de Datos</h2>
+            <p class="text-muted">Colecciones MongoDB optimizadas</p>
+          </div>
+          
+          <div class="row g-4">
+            <div class="col-md-4">
+              <div class="db-card">
+                <div class="db-icon bg-primary">
+                  <i class="bi bi-person-circle"></i>
+                </div>
+                <h5>Users Collection</h5>
+                <div class="db-fields">
+                  <span class="field-tag">name</span>
+                  <span class="field-tag">email</span>
+                  <span class="field-tag">password</span>
+                  <span class="field-tag">role</span>
+                  <span class="field-tag">isSuperAdmin</span>
+                  <span class="field-tag">bio</span>
+                  <span class="field-tag">avatar</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="db-card">
+                <div class="db-icon bg-success">
+                  <i class="bi bi-building"></i>
+                </div>
+                <h5>Apartments Collection</h5>
+                <div class="db-fields">
+                  <span class="field-tag">name</span>
+                  <span class="field-tag">description</span>
+                  <span class="field-tag">location</span>
+                  <span class="field-tag">price</span>
+                  <span class="field-tag">services</span>
+                  <span class="field-tag">images</span>
+                  <span class="field-tag">active</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="db-card">
+                <div class="db-icon bg-warning">
+                  <i class="bi bi-calendar-event"></i>
+                </div>
+                <h5>Reservations Collection</h5>
+                <div class="db-fields">
+                  <span class="field-tag">apartment</span>
+                  <span class="field-tag">user</span>
+                  <span class="field-tag">guestName</span>
+                  <span class="field-tag">startDate</span>
+                  <span class="field-tag">endDate</span>
+                  <span class="field-tag">status</span>
+                  <span class="field-tag">paid</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección Arquitectura del Proyecto -->
+    <div class="tech-section mb-5" data-section="architecture">
+      <div class="section-wrapper backdrop-blur rounded-4 shadow-lg border border-light border-opacity-50 overflow-hidden">
+        <div class="section-content p-5">
+          <div class="section-header text-center mb-5">
+            <div class="section-icon bg-info bg-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
               <i class="bi bi-diagram-3 text-white fs-2"></i>
             </div>
-            <h2 class="fw-bold text-dark mb-3">🏗️ Arquitectura</h2>
+            <h2 class="fw-bold text-dark mb-3">🏗️ Arquitectura del Proyecto</h2>
             <p class="text-muted">Estructura y patrones de diseño</p>
           </div>
           
@@ -358,90 +554,28 @@
               <div class="arch-card">
                 <div class="arch-icon bg-primary">MVC</div>
                 <h6>Patrón MVC</h6>
-                <p>Model-View-Controller para separación de responsabilidades</p>
+                <p>Model-View-Controller para separación clara de responsabilidades</p>
               </div>
             </div>
             <div class="col-md-6 col-lg-3">
               <div class="arch-card">
-                <div class="arch-icon bg-success">API</div>
-                <h6>API REST</h6>
-                <p>Endpoints RESTful para operaciones CRUD</p>
+                <div class="arch-icon bg-success">REST</div>
+                <h6>API RESTful</h6>
+                <p>Endpoints estructurados siguiendo principios REST</p>
               </div>
             </div>
             <div class="col-md-6 col-lg-3">
               <div class="arch-card">
                 <div class="arch-icon bg-warning">MW</div>
                 <h6>Middleware</h6>
-                <p>Middleware customizado para autenticación</p>
+                <p>Capas de middleware para autenticación y validación</p>
               </div>
             </div>
             <div class="col-md-6 col-lg-3">
               <div class="arch-card">
                 <div class="arch-icon bg-info">MOD</div>
                 <h6>Modularización</h6>
-                <p>CSS y JavaScript organizados por vista</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Sección Características Modernas -->
-    <div class="tech-section mb-5" data-section="modern">
-      <div class="section-wrapper backdrop-blur rounded-4 shadow-lg border border-light border-opacity-50 overflow-hidden"
-           style="background: rgba(255, 255, 255, 0.95);">
-        <div class="section-content p-5">
-          <div class="section-header text-center mb-5">
-            <div class="section-icon bg-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
-                 style="width: 80px; height: 80px; background: linear-gradient(135deg, #667eea, #764ba2);">
-              <i class="bi bi-stars text-white fs-2"></i>
-            </div>
-            <h2 class="fw-bold text-dark mb-3">✨ Características Modernas</h2>
-            <p class="text-muted">Efectos visuales y experiencia de usuario</p>
-          </div>
-          
-          <div class="row g-4">
-            <div class="col-md-6 col-lg-4">
-              <div class="modern-card">
-                <div class="modern-icon">🎭</div>
-                <h6>Hero Sections Animadas</h6>
-                <p>Secciones principales con partículas y efectos de parallax</p>
-              </div>
-            </div>
-            <div class="col-md-6 col-lg-4">
-              <div class="modern-card">
-                <div class="modern-icon">💎</div>
-                <h6>Efectos Glassmorphism</h6>
-                <p>Diseño moderno con transparencias y desenfoque</p>
-              </div>
-            </div>
-            <div class="col-md-6 col-lg-4">
-              <div class="modern-card">
-                <div class="modern-icon">🎬</div>
-                <h6>Animaciones CSS</h6>
-                <p>Keyframes personalizados y transiciones suaves</p>
-              </div>
-            </div>
-            <div class="col-md-6 col-lg-4">
-              <div class="modern-card">
-                <div class="modern-icon">👆</div>
-                <h6>Interfaz Intuitiva</h6>
-                <p>Feedback visual y experiencia de usuario optimizada</p>
-              </div>
-            </div>
-            <div class="col-md-6 col-lg-4">
-              <div class="modern-card">
-                <div class="modern-icon">🎠</div>
-                <h6>Carruseles Modernos</h6>
-                <p>Paginación avanzada y navegación fluida</p>
-              </div>
-            </div>
-            <div class="col-md-6 col-lg-4">
-              <div class="modern-card">
-                <div class="modern-icon">📱</div>
-                <h6>Responsive Design</h6>
-                <p>Adaptación perfecta a todos los dispositivos</p>
+                <p>Código organizado en módulos reutilizables</p>
               </div>
             </div>
           </div>
@@ -451,23 +585,48 @@
 
     <!-- Conclusión -->
     <div class="conclusion-section">
-      <div class="conclusion-wrapper backdrop-blur rounded-4 shadow-lg border border-light border-opacity-50 overflow-hidden text-center p-5"
-           style="background: rgba(255, 255, 255, 0.95);">
-        <div class="conclusion-icon bg-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-4"
-             style="width: 100px; height: 100px; background: linear-gradient(135deg, #667eea, #764ba2);">
+      <div class="conclusion-wrapper backdrop-blur rounded-4 shadow-lg border border-light border-opacity-50 overflow-hidden text-center p-5">
+        <div class="conclusion-icon bg-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-4">
           <i class="bi bi-rocket-takeoff text-white fs-1"></i>
         </div>
-        <h2 class="fw-bold text-dark mb-3">Proyecto Full-Stack Moderno</h2>
+        <h2 class="fw-bold text-dark mb-3">BravaBook MVC - Plataforma Completa</h2>
         <p class="lead text-muted mb-4">
-          Este proyecto representa una aplicación web completa para gestión de alquileres vacacionales, 
-          implementando las mejores prácticas de desarrollo web con tecnologías modernas y un diseño 
-          centrado en la experiencia del usuario.
+          Sistema integral de alquiler vacacional que combina tecnologías modernas, 
+          inteligencia artificial y una experiencia de usuario para la gestión de apartamentos turísticos.
         </p>
-        <div class="d-flex justify-content-center gap-3 flex-wrap">
-          <span class="badge bg-primary px-3 py-2 fs-6">Full-Stack</span>
-          <span class="badge bg-success px-3 py-2 fs-6">Responsive</span>
-          <span class="badge bg-info px-3 py-2 fs-6">Moderno</span>
-          <span class="badge bg-warning px-3 py-2 fs-6">Escalable</span>
+        <div class="d-flex justify-content-center gap-3 flex-wrap mb-4">
+          <span class="badge bg-primary px-3 py-2 fs-6">Node.js + MongoDB</span>
+          <span class="badge bg-success px-3 py-2 fs-6">IA Integrada</span>
+          <span class="badge bg-info px-3 py-2 fs-6">Mapas Interactivos</span>
+          <span class="badge bg-warning px-3 py-2 fs-6">Sistema de Roles</span>
+          <span class="badge bg-danger px-3 py-2 fs-6">Seguridad Avanzada</span>
+        </div>
+        
+        <div class="project-stats row g-3 mt-4">
+          <div class="col-md-3">
+            <div class="stat-box">
+              <h4 class="text-primary mb-1">15+</h4>
+              <small class="text-muted">Tecnologías</small>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stat-box">
+              <h4 class="text-success mb-1">3</h4>
+              <small class="text-muted">Tipos de Usuario</small>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stat-box">
+              <h4 class="text-info mb-1">MVC</h4>
+              <small class="text-muted">Arquitectura</small>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stat-box">
+              <h4 class="text-warning mb-1">100%</h4>
+              <small class="text-muted">Responsive</small>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -475,11 +634,8 @@
   </div>
 </div>
 
-  </div>
-</div>
-
-<!-- JavaScript específico para aboutUs -->
-<script src="/js/aboutUs.js"></script>
+<!-- Script específico de la página about -->
+<script src="/js/about.js"></script>
 
 <!-- Incluye el pie de página desde un archivo parcial -->
 <%- include("partials/footer") %>
