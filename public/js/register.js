@@ -2,15 +2,20 @@
 function updateProgressBar() {
   const nameField = document.getElementById('name');
   const emailField = document.getElementById('email');
+  const roleField = document.getElementById('role');
   const passwordField = document.getElementById('password');
   let completedFields = 0;
-  const totalFields = 3;
+  const totalFields = 4;
   
   if (nameField && nameField.value.trim()) {
     completedFields++;
   }
   
   if (emailField && emailField.value.trim() && emailField.checkValidity()) {
+    completedFields++;
+  }
+  
+  if (roleField && roleField.value.trim()) {
     completedFields++;
   }
   

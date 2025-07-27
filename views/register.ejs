@@ -122,6 +122,31 @@
                     <div class="invalid-feedback">Por favor, introduce un email válido.</div>
                   </div>
                 </div>
+                
+                <!-- Campo para el tipo de usuario -->
+                <div class="mb-4">
+                  <div class="form-floating">
+                    <select name="role" id="role" class="form-select form-select-lg" required>
+                      <option value="">Selecciona el tipo de cuenta</option>
+                      <option value="user">Usuario estándar</option>
+                      <option value="admin">Administrador de apartamentos</option>
+                    </select>
+                    <label for="role">
+                      <i class="bi bi-person-badge me-2"></i>Tipo de Usuario
+                    </label>
+                    <div class="invalid-feedback">Por favor, selecciona el tipo de cuenta.</div>
+                  </div>
+                  
+                  <!-- Información adicional sobre los tipos de usuario -->
+                  <div class="mt-2">
+                    <small class="text-muted">
+                      <i class="bi bi-info-circle me-1"></i>
+                      <strong>Usuario estándar:</strong> Puedes buscar y reservar apartamentos.
+                      <br>
+                      <strong>Administrador:</strong> Puedes agregar y gestionar tus propios apartamentos.
+                    </small>
+                  </div>
+                </div>
               </div>
               
               <!-- Sección de Seguridad -->

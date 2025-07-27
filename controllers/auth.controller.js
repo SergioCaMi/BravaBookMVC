@@ -6,7 +6,7 @@ import Reservation from "../models/reservation.model.js";
 import axios from "axios";
 import { validationResult } from 'express-validator';
 
-/    const apartments = await Apartment.find(query).sort({ price: sortvalue }).populate("createdBy"); --- Gestión de Usuario ---
+// --- Gestión de Usuario ---
 
 // Registro de un nuevo usuario
 export const register = async (req, res) => {
@@ -21,7 +21,14 @@ export const register = async (req, res) => {
       return res.redirect("/register");
     }
 
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
+    
+    // Debug: Ver qué datos llegan del formulario
+    console.log("=== DEBUG REGISTRO ===");
+    console.log("Datos completos del formulario:", req.body);
+    console.log("Role recibido:", role);
+    console.log("Tipo de role:", typeof role);
+    console.log("======================");
 
     // Verifica si el correo ya está en uso
     const existingUser = await User.findOne({ email });
@@ -30,17 +37,30 @@ export const register = async (req, res) => {
       return res.redirect("/register");
     }
 
-    // Asigna rol de 'admin' al primer usuario
-    const firstUser = await User.countDocuments();
+    // Asignar rol directamente sin validación adicional por ahora para debug
+    const finalRole = role || 'user';
+    console.log("Role final asignado:", finalRole);
+
     const user = new User({
       name: name.trim(),
       email: email.toLowerCase().trim(),
       password,
-      role: firstUser === 0 ? "admin" : "user",
+      role: finalRole,
+    });
+
+    console.log("Usuario antes de guardar:", {
+      name: user.name,
+      email: user.email,
+      role: user.role
     });
 
     await user.save();
-    console.log("Usuario guardado:", user);
+    console.log("Usuario guardado:", {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role
+    });
     req.session.userId = user._id;
     req.flash("success_msg", "Nuevo usuario añadido con éxito.");
     res.redirect("/dashboard");
@@ -83,21 +103,48 @@ export const logout = (req, res) => {
 
 // Dashboard de usuario
 export const dashboard = async (req, res) => {
-  console.log("Dashboard");
-  const user = await User.findById(req.session.userId);
-  const reservations = await Reservation.find({
-    user: req.session.userId,
-  })
-    .populate("apartment")
-    .limit(10); // Limita a 10 reservas
-  const apartments = await Apartment.find({
-    createdBy: req.session.userId,
-  }).limit(50); // Limita a 50 apartamentos
+  console.log("Dashboard");
+  const user = await User.findById(req.session.userId);
+  
+  let reservations;
+  if (user.role === 'admin') {
+    // Para admins: mostrar sus reservas + reservas recibidas en sus apartamentos
+    const userApartments = await Apartment.find({
+      createdBy: req.session.userId,
+    }).select('_id');
+    
+    const apartmentIds = userApartments.map(apt => apt._id);
+    
+    reservations = await Reservation.find({
+      $or: [
+        { user: req.session.userId }, // Reservas hechas por el admin
+        { apartment: { $in: apartmentIds } } // Reservas recibidas en apartamentos del admin
+      ]
+    })
+      .populate("apartment")
+      .populate("user")
+      .limit(20);
+  } else {
+    // Para usuarios normales: solo sus reservas
+    reservations = await Reservation.find({
+      user: req.session.userId,
+    })
+      .populate("apartment")
+      .limit(10);
+  }
+  
+  const apartments = await Apartment.find({
+    createdBy: req.session.userId,
+  }).limit(50);
 
-  res.render("dashboard", { title: "home", user, reservations, apartments });
-};
-
-// Obtener página de Contacto
+  res.render("dashboard", { 
+    title: "home", 
+    user, 
+    reservations, 
+    apartments,
+    currentUser: user 
+  });
+};// Obtener página de Contacto
 export const getContactUs = async (req, res) => {
   res.render("contactUs", { title: "contact" });
 };

@@ -64,7 +64,8 @@ export const validateUserRegistration = [
     .withMessage('La contraseña debe contener al menos una mayúscula, un número y un símbolo especial'),
 
   body('role')
-    .optional()
+    .notEmpty()
+    .withMessage('El tipo de usuario es obligatorio')
     .isIn(['user', 'admin'])
     .withMessage('El rol debe ser "user" o "admin"'),
 
