@@ -416,6 +416,7 @@ export const searchApartments = async (req, res) => {
   const escapedQuery = userQuery.replace(/["\\]/g, "\\$&");
 
   try {
+    console.log("🔍 Búsqueda IA iniciada:", userQuery);
 
     // 1. Envía la consulta mejorada a la API de Gemini
     const geminiResponse = await axios.post(
@@ -485,11 +486,14 @@ Frase: "${escapedQuery}"`,
       .replace(/[\u0000-\u001F\u007F-\u009F]/g, '')
       .trim();
 
+    console.log("📡 Respuesta limpia:", raw);
 
     let filters;
     try {
       filters = JSON.parse(raw);
+      console.log("✅ Filtros generados:", JSON.stringify(filters, null, 2));
     } catch (parseError) {
+      console.log("⚠️ Error parsing JSON, usando búsqueda por texto fallback");
       const keywordRegex = new RegExp(userQuery.split(' ').join('|'), "i");
       const apartments = await Apartment.find({
         active: true,
@@ -518,22 +522,27 @@ Frase: "${escapedQuery}"`,
         { "location.province.nm": { $regex: new RegExp(filters.location, "i") } },
         { "location.municipality.nm": { $regex: new RegExp(filters.location, "i") } }
       ];
+      console.log("📍 Filtro ubicación (provincia Y municipio):", filters.location);
     }
 
     // Capacidad y características
     if (filters.maxGuests) {
       mongoQuery.maxGuests = { $gte: filters.maxGuests };
+      console.log("👥 Filtro huéspedes:", filters.maxGuests);
     }
     if (filters.rooms) {
       mongoQuery.rooms = { $gte: filters.rooms };
+      console.log("🛏️ Filtro habitaciones:", filters.rooms);
     }
     if (filters.bathrooms) {
       mongoQuery.bathrooms = { $gte: filters.bathrooms };
+      console.log("🚿 Filtro baños:", filters.bathrooms);
     }
 
     // Metros cuadrados mejorados
     if (filters.squareMeters) {
       mongoQuery.squareMeters = filters.squareMeters;
+      console.log("📐 Filtro metros cuadrados:", filters.squareMeters);
     }
 
     // Precio
@@ -541,12 +550,14 @@ Frase: "${escapedQuery}"`,
       mongoQuery.price = {};
       if (filters.minPrice) mongoQuery.price.$gte = filters.minPrice;
       if (filters.maxPrice) mongoQuery.price.$lte = filters.maxPrice;
+      console.log("💰 Filtro precio:", mongoQuery.price);
     }
 
     // Servicios del modelo
     if (filters.services && Array.isArray(filters.services)) {
       for (const service of filters.services) {
         mongoQuery[`services.${service}`] = true;
+        console.log("🔧 Filtro servicio del modelo:", service);
       }
     }
 
@@ -559,6 +570,7 @@ Frase: "${escapedQuery}"`,
           { description: { $regex: new RegExp(keyword, "i") } },
           { title: { $regex: new RegExp(keyword, "i") } }
         );
+        console.log("🔍 Keyword para descripción:", keyword);
       }
     }
 
@@ -568,64 +580,87 @@ Frase: "${escapedQuery}"`,
         { description: { $regex: /lujoso|luxury|premium|exclusivo|high-end/i } },
         { title: { $regex: /lujoso|luxury|premium|exclusivo|high-end/i } }
       );
+      console.log("✨ Filtro lujoso aplicado");
     }
 
     // Búsqueda por nombre/título del apartamento
     // Limpiar consulta eliminando comillas y símbolos
-    const titleSearchWords = userQuery
+    let titleSearchWords = userQuery
       .replace(/[^\w\s]/g, "") // elimina comillas y símbolos
       .split(/\s+/)
       .filter(word => word.length > 2 && !["con", "en", "de", "del", "la", "el", "una", "un", "y", "o", "busco", "buscar", "quiero", "necesito", "apartamento", "piso", "casa"].includes(word.toLowerCase()));
     
+    // Si hay filtro de ubicación de Gemini, remover esa palabra de la búsqueda de títulos
+    if (filters.location) {
+      titleSearchWords = titleSearchWords.filter(word => 
+        word.toLowerCase() !== filters.location.toLowerCase()
+      );
+      console.log("🏷️ Palabras para título (sin ubicación):", titleSearchWords);
+    } else {
+      console.log("🏷️ Palabras para título:", titleSearchWords);
+    }
+    
     // Detectar si está buscando un apartamento específico (con números o nombres propios)
     const hasNumbers = /\d+/.test(userQuery);
     const hasSpecificWords = titleSearchWords.some(word => 
-      /^[A-Z]/.test(word) || // Palabra que empieza con mayúscula
       /\d+/.test(word) ||    // Contiene números
       word.toLowerCase().includes('apartment') ||
       word.toLowerCase().includes('villa') ||
       word.toLowerCase().includes('estudio')
     );
     
+    // Solo ejecutar búsqueda específica si NO hay filtros de ubicación de Gemini
+    // y si realmente parece una búsqueda de apartamento específico con números
+    if (!filters.location && titleSearchWords.length >= 2 && hasNumbers && hasSpecificWords) {
+      console.log("🎯 Búsqueda MUY ESPECÍFICA de apartamento detectada - solo título");
+      
+      const exactTitleRegex = new RegExp(`\\b${titleSearchWords.join('.*')}\\b`, "i");
+      
+      const specificResults = await Apartment.find({
+        active: true,
+        title: { $regex: exactTitleRegex }
+      }).populate("createdBy");
+      
+      if (specificResults.length > 0) {
+        console.log("🎯 Resultado específico hallado:", specificResults.map(a => a.title));
+        return res.render("seeApartments.ejs", {
+          title: `${specificResults.length} resultado${specificResults.length !== 1 ? "s" : ""} para "${userQuery}"`,
+          apartments: specificResults,
+          searchQuery: userQuery,
+          isSearchResult: true
+        });
+      } else {
+        console.log("❌ Búsqueda específica no encontró nada. No se muestran resultados genéricos.");
+        return res.render("seeApartments.ejs", {
+          title: `0 resultados para "${userQuery}"`,
+          apartments: [],
+          searchQuery: userQuery,
+          isSearchResult: true
+        });
+      }
+    }
+    
+    // Búsqueda normal en títulos (solo si no es búsqueda específica)
     if (titleSearchWords.length > 0 && (hasNumbers || hasSpecificWords)) {
       // Búsqueda exacta para apartamentos específicos
       const exactTitleRegex = new RegExp(titleSearchWords.join('.*'), "i");
       descriptionConditions.push(
         { title: { $regex: exactTitleRegex } }
       );
+      console.log("🎯 Búsqueda ESPECÍFICA en título con palabras:", titleSearchWords);
+      console.log("🔍 Regex generado:", exactTitleRegex);
       
-      // Si parece una búsqueda muy específica, solo buscar en título
-      if (titleSearchWords.length >= 2 && hasNumbers) {
-        
-        const exactTitleRegex = new RegExp(`\\b${titleSearchWords.join('.*')}\\b`, "i");
-        
-        const specificResults = await Apartment.find({
-          active: true,
-          title: { $regex: exactTitleRegex }
-        }).populate("createdBy");
-        
-        if (specificResults.length > 0) {
-          return res.render("seeApartments.ejs", {
-            title: `${specificResults.length} resultado${specificResults.length !== 1 ? "s" : ""} para "${userQuery}"`,
-            apartments: specificResults,
-            searchQuery: userQuery,
-            isSearchResult: true
-          });
-        } else {
-          return res.render("seeApartments.ejs", {
-            title: `0 resultados para "${userQuery}"`,
-            apartments: [],
-            searchQuery: userQuery,
-            isSearchResult: true
-          });
-        }
-      }
     } else if (titleSearchWords.length > 0) {
-      // Búsqueda general en título
-      const titleRegex = new RegExp(titleSearchWords.join('|'), "i");
-      descriptionConditions.push(
-        { title: { $regex: titleRegex } }
-      );
+      // Búsqueda general en título - SOLO si no hay filtro de ubicación
+      if (!filters.location) {
+        const titleRegex = new RegExp(titleSearchWords.join('|'), "i");
+        descriptionConditions.push(
+          { title: { $regex: titleRegex } }
+        );
+        console.log("🏷️ Búsqueda GENERAL en título con palabras:", titleSearchWords);
+      } else {
+        console.log("🚫 Omitiendo búsqueda en título porque hay filtro de ubicación");
+      }
     }
 
     // Combina condiciones de descripción con ubicación si ambas existen
@@ -643,10 +678,23 @@ Frase: "${escapedQuery}"`,
       }
     }
 
+    console.log("🛠️ Query MongoDB final:", JSON.stringify(mongoQuery, null, 2));
 
     // 4. Ejecuta la búsqueda
     const apartments = await Apartment.find(mongoQuery).sort({ price: 1 }).populate("createdBy");
     
+    console.log(`📊 Apartamentos encontrados: ${apartments.length}`);
+    
+    // Debug: mostrar algunos apartamentos encontrados
+    if (apartments.length > 0) {
+      console.log("🏠 Primeros resultados:", apartments.slice(0, 3).map(apt => ({
+        title: apt.title,
+        provincia: apt.location?.province?.nm,
+        municipio: apt.location?.municipality?.nm,
+        precio: apt.price,
+        metros: apt.squareMeters
+      })));
+    }
     
     // 5. Renderiza los resultados
     res.render("seeApartments.ejs", { 
@@ -658,9 +706,10 @@ Frase: "${escapedQuery}"`,
     });
 
   } catch (err) {
+    console.error("💥 Error en búsqueda IA:", err.message);
     
     if (err.response?.status === 429) {
-      req.flash("error", "Límite de IA alcanzado. Inténtalo más tarde.");
+      req.flash("error", "🚫 Límite de IA alcanzado. Inténtalo más tarde.");
     } else {
       req.flash("error", "Error en la búsqueda inteligente. Inténtalo de nuevo.");
     }
