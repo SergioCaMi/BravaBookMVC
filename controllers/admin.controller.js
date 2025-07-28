@@ -6,9 +6,7 @@ import path from "path";
 import { validationResult } from 'express-validator';
 
 
-// *************************** createdBy: req.session.userId, ***************************
-
-//  Gestión de Usuarios 
+//  ********** Gestión de Usuarios **********  
 
 /**
  * Renderiza el dashboard del administrador con información del usuario, reservas y apartamentos.
@@ -55,18 +53,16 @@ export const dashboard = async (req, res) => {
 };
 
 /**
- * Muestra el formulario para editar el perfil de un usuario (admin).
+ * Muestra el formulario para editar el perfil de un usuario.
  * @param {object} req - Objeto de solicitud de Express.
  * @param {object} res - Objeto de respuesta de Express.
  */
 export const getEditProfile = async (req, res) => {
-  const { id } = req.params; 
-  console.log(`Accediendo a editar perfil con ID (actualmente no usado): ${id}`);
-  res.render("aboutUs", { title: "about", error: undefined }); // Esto parece incorrecto, debería ser 'editProfile'
+  res.render("editProfile", { title: "home"});
 };
 
 /**
- * Actualiza el perfil de un usuario (admin). Maneja la subida y eliminación de avatares.
+ * Actualiza el perfil de un usuario.  
  * @param {object} req - Objeto de solicitud de Express.
  * @param {object} res - Objeto de respuesta de Express.
  */
@@ -80,10 +76,10 @@ export const postUpdateProfile = async (req, res) => {
     }
 
     const updates = { name, email, bio };
-    const currentUser = await User.findById(req.session.userId); // Obtener el usuario actual para verificar el avatar
+    const currentUser = await User.findById(req.session.userId); 
 
-    if (req.file) { // Si se subió un nuevo archivo de avatar
-      // Elimina el avatar anterior si no es el predeterminado
+    if (req.file) { // Si se ha subido un archivo
+      // Elimina el avatar anterior 
       if (currentUser.avatar && currentUser.avatar !== "default.jpg") {
         const oldAvatarPath = path.join(
           process.cwd(),
@@ -103,10 +99,10 @@ export const postUpdateProfile = async (req, res) => {
           }
         }
       }
-      updates.avatar = req.file.filename; // Asigna el nuevo nombre de archivo del avatar
+      updates.avatar = req.file.filename;
     }
 
-    await User.findByIdAndUpdate(req.session.userId, updates); // Actualiza el usuario en la base de datos
+    await User.findByIdAndUpdate(req.session.userId, updates); 
 
     req.flash("success_msg", "Perfil actualizado exitosamente.");
     res.redirect("/admin/dashboard");
@@ -127,8 +123,8 @@ export const postUpdateProfile = async (req, res) => {
  */
 export const getUsers = async (req, res) => {
   try {
-    const users = await User.find({}).sort({ name: 1 }); // Obtiene todos los usuarios, ordenados por nombre
-    const currentUser = await User.findById(req.session.userId); // Obtiene el usuario actual
+    const users = await User.find({}).sort({ name: 1 }); 
+    const currentUser = await User.findById(req.session.userId); 
     res.render("users.ejs", { title: "admin", error: undefined, users, currentUser });
   } catch (error) {
     console.error("Error al obtener usuarios:", error);
@@ -146,9 +142,7 @@ export const getUsers = async (req, res) => {
  */
 export const postDeleteUser = async (req, res) => {
   const { id } = req.params;
-
   try {
-    // Evita que un usuario se elimine a sí mismo (asumiendo req.user es el usuario logueado)
     if (id !== req.user._id.toString()) {
       const deletedUser = await User.findByIdAndDelete(id);
       if (deletedUser) {
@@ -182,19 +176,17 @@ export const postToggleUserRole = async (req, res) => {
       return res.redirect("/admin/users");
     }
 
-    // Evita que un usuario cambie su propio rol
     if (id === req.session.userId) {
       req.flash("error_msg", "No puedes cambiar tu propio rol.");
       return res.redirect("/admin/users");
     }
 
-    // Alterna el rol
     const newRole = user.role === 'admin' ? 'user' : 'admin';
     user.role = newRole;
     await user.save();
 
     const roleText = newRole === 'admin' ? 'Administrador' : 'Usuario';
-    req.flash("success_msg", `Rol de "${user.name}" cambiado a ${roleText} satisfactoriamente. 🔄`);
+    req.flash("success_msg", `Rol de "${user.name}" cambiado a ${roleText} satisfactoriamente.`);
     return res.redirect("/admin/users");
   } catch (error) {
     console.error("Error al cambiar el rol del usuario:", error);
@@ -205,15 +197,12 @@ export const postToggleUserRole = async (req, res) => {
 
 export const getAdminPanel = async (req, res) => {
     const currentUser = await User.findById(req.session.userId);
-    
-    // Solo apartamentos creados por el usuario actual
     const apartments = await Apartment.find({
       createdBy: req.session.userId
     }).populate("createdBy");
     
     const users = await User.find({});
     
-    // Solo reservas relacionadas con los apartamentos del usuario actual
     const apartmentIds = apartments.map(apt => apt._id);
     const reservations = await Reservation.find({
       $or: [
@@ -254,13 +243,13 @@ export const getNewApartment = async (req, res) => {
 };
 
 /**
- * Función auxiliar para mover archivos. Maneja movimientos dentro del mismo dispositivo o copia + eliminación entre diferentes.
+ * Función auxiliar para mover archivos. 
  * @param {string} oldPath - Ruta original del archivo.
- * @param {string} newPath - Nueva ruta de destino del archivo.
+ * @param {string} newPath - Nueva ruta del archivo.
  */
 async function moveFile(oldPath, newPath) {
   try {
-    await fs.rename(oldPath, newPath); // Intenta renombrar (mover) el archivo
+    await fs.rename(oldPath, newPath); // Intenta renombrar el archivo
     console.log(`Archivo movido de ${oldPath} a ${newPath}`);
   } catch (err) {
     if (err.code === "EXDEV") { // Error si las rutas están en diferentes sistemas de archivos
@@ -268,13 +257,13 @@ async function moveFile(oldPath, newPath) {
       await fs.unlink(oldPath); // Elimina el original
       console.log(`Archivo copiado y eliminado original de ${oldPath} a ${newPath}`);
     } else {
-      throw err; // Re-lanza otros errores
+      throw err; // Relanza otros errores
     }
   }
 }
 
 /**
- * Procesa la creación de un nuevo apartamento, incluyendo la subida de imágenes.
+ * Procesa la creación de un nuevo apartamento.
  * @param {object} req - Objeto de solicitud de Express.
  * @param {object} res - Objeto de respuesta de Express.
  */
@@ -284,7 +273,7 @@ export const postNewApartment = async (req, res) => {
   console.log("Método:", req.method);
   console.log("Datos recibidos para nuevo apartamento (req.body):", req.body);
   // req.files contendrá los archivos subidos a través de Multer.
-  // req.body.newPhotos contendrá los datos del formulario, incluyendo descripciones y URLs.
+  // req.body.newPhotos contendrá los datos del formulario (incluyendo descripciones y URLs).
   console.log("Archivos temporales recibidos por Multer (req.files):", req.files);
 
   // Verificar errores de validación
@@ -300,7 +289,7 @@ export const postNewApartment = async (req, res) => {
   console.log("=== VALIDACIÓN PASADA, PROCESANDO APARTAMENTO ===");
 
   const tempUploadDir = req.tempUploadDir; // Directorio temporal de Multer
-  let newApartment = null; // Se inicializa para limpieza en el 'finally'
+  let newApartment = null; 
 
   try {
     const {
@@ -311,22 +300,17 @@ export const postNewApartment = async (req, res) => {
       price,
       maxGuests,
       squareMeters,
-      mainPhotoIndex, // Este campo ahora puede ser 'new_0', 'new_1', etc.
+      mainPhotoIndex, 
     } = req.body;
 
-    // `req.body.newPhotos` será un objeto donde las claves son los índices
-    // del array en el frontend, y los valores son los objetos de foto.
-    // Ej: { '0': { uploadType: 'file', description: '...' }, '1': { uploadType: 'url', url: '...', description: '...' } }
     const newPhotosData = req.body.newPhotos || {};
 
-    const photosToSave = []; // Array para almacenar las URLs de las fotos finales
+    const photosToSave = [];
 
-    // Parsing y filtrado de reglas
     const rules = Array.isArray(req.body.rules)
       ? req.body.rules.map((r) => r.trim()).filter((r) => r.length > 0)
       : [];
 
-    // Conversión de servicios a booleano
     const services = {
       airConditioning: req.body.services?.airConditioning === "on",
       heating: req.body.services?.heating === "on",
@@ -336,7 +320,6 @@ export const postNewApartment = async (req, res) => {
       internet: req.body.services?.internet === "on",
     };
 
-    // Parsing y manejo de la localización
     const location = {
       province: {
         id: req.body.location?.province?.id
@@ -360,7 +343,6 @@ export const postNewApartment = async (req, res) => {
       },
     };
 
-    // Parsing de camas por habitación
     let bedsPerRoom = [];
     if (Array.isArray(req.body.bedsPerRoom)) {
       bedsPerRoom = req.body.bedsPerRoom
@@ -368,7 +350,6 @@ export const postNewApartment = async (req, res) => {
         .filter((num) => !isNaN(num) && num >= 0);
     }
 
-    // Crea una nueva instancia de Apartamento (sin fotos iniciales, se añadirán después)
     newApartment = new Apartment({
       title,
       description,
@@ -383,18 +364,18 @@ export const postNewApartment = async (req, res) => {
       services,
       location,
       active: true,
-      createdBy: req.session.userId, // Asigna el usuario logueado como creador
+      createdBy: req.session.userId, // Asignamos el usuario logueado como creador
     });
 
-    await newApartment.save(); // Guarda el apartamento para obtener un ID
+    await newApartment.save(); // Guardamos el apartamento para obtener un ID
 
     const finalApartmentPhotoDir = path.join(
       "public",
       "uploads",
       "apartments",
-      newApartment._id.toString() // Usa el ID del apartamento para la carpeta
+      newApartment._id.toString() // Usamos el ID del apartamento para la carpeta
     );
-    await fs.mkdir(finalApartmentPhotoDir, { recursive: true }); // Crea la carpeta del apartamento si no existe
+    await fs.mkdir(finalApartmentPhotoDir, { recursive: true }); // Creamos la carpeta del apartamento si no existe
 
     // 1. Procesar fotos subidas por archivo (a través de Multer)
     if (req.files && req.files.length > 0) {
@@ -402,10 +383,10 @@ export const postNewApartment = async (req, res) => {
         const file = req.files[i];
         // El 'originalname' de Multer contiene el nombre original del archivo.
         // El 'filename' de Multer contiene el nombre que Multer le dio en el directorio temporal.
-        const originalIndex = parseInt(file.fieldname.match(/\[(\d+)\]/)[1], 10); // Extrae el índice del campo de Multer, ej: newPhotos[0][file] -> 0
+        const originalIndex = parseInt(file.fieldname.match(/\[(\d+)\]/)[1], 10); 
 
         const oldFilePath = file.path;
-        const newFileName = file.filename; // Multer ya debería haberle dado un nombre único
+        const newFileName = file.filename; 
         const newFilePath = path.join(finalApartmentPhotoDir, newFileName);
         const publicUrl = `/uploads/apartments/${newApartment._id.toString()}/${newFileName}`;
 
@@ -422,13 +403,12 @@ export const postNewApartment = async (req, res) => {
           });
         } catch (moveErr) {
           console.error(`Error al mover el archivo ${file.filename}:`, moveErr);
-          // Opcional: manejar el error, quizás eliminando el archivo ya creado o notificando al usuario
         }
       }
     }
 
     // 2. Procesar fotos proporcionadas por URL
-    // Recorremos los datos de `newPhotosData` enviados desde el frontend.
+    // Recorremos los datos de `newPhotosData` enviados desde el form.
     for (const index in newPhotosData) {
         const photoData = newPhotosData[index];
 
@@ -441,20 +421,16 @@ export const postNewApartment = async (req, res) => {
                 isMain: isMainPhoto,
             });
         }
-        // Nota: Las fotos de tipo 'file' ya se han procesado en el bloque anterior `req.files`.
-        // Evitamos duplicar la lógica para las subidas de archivos aquí.
     }
 
 
-    // Ordena las fotos para que la principal quede al principio
-    // Esto es opcional, pero ayuda a la consistencia
+    // Ordenamos las fotos para que la principal quede al principio
     photosToSave.sort((a, b) => {
         if (a.isMain && !b.isMain) return -1;
         if (!a.isMain && b.isMain) return 1;
         return 0;
     });
 
-    // Actualiza el apartamento con las URLs de las fotos finales
     newApartment.photos = photosToSave;
     await newApartment.save();
 
@@ -463,9 +439,9 @@ export const postNewApartment = async (req, res) => {
   } catch (error) {
     console.error("Error al crear el apartamento:", error.message);
     req.flash("error_msg", "Hubo un error al crear el apartamento. Por favor, inténtalo de nuevo.");
-    res.redirect("/admin/apartment/new"); // Redirige de vuelta al formulario de creación
+    res.redirect("/admin/apartment/new"); 
   } finally {
-    // Limpieza: Elimina la carpeta temporal de Multer
+    // Elimina la carpeta temporal de Multer
     if (tempUploadDir) {
       try {
         await fs.rm(tempUploadDir, { recursive: true, force: true });
@@ -480,8 +456,10 @@ export const postNewApartment = async (req, res) => {
     }
   }
 };
+
+
 /**
- * Obtiene y muestra el formulario para editar un apartamento existente.
+ * Mostramos el formulario para editar un apartamento.
  * @param {object} req - Objeto de solicitud de Express.
  * @param {object} res - Objeto de respuesta de Express.
  */
@@ -509,15 +487,14 @@ export const getApartmentEdit = async (req, res) => {
 };
 
 /**
- * Actualiza un apartamento existente, incluyendo la gestión de fotos.
+ * Actualiza un apartamento
  * @param {object} req - Objeto de solicitud de Express.
  * @param {object} res - Objeto de respuesta de Express.
  */
 export const putApartmentEdit = async (req, res) => {
   const { id } = req.params;
-  const tempUploadDir = req.tempUploadDir; // Directorio temporal de Multer
+  const tempUploadDir = req.tempUploadDir;
 
-  // Verificar errores de validación
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const errorMessages = errors.array().map(error => error.msg);
@@ -526,7 +503,6 @@ export const putApartmentEdit = async (req, res) => {
   }
 
   try {
-    // Solo permite editar apartamentos creados por el usuario actual
     const apartment = await Apartment.findOne({
       _id: id,
       createdBy: req.session.userId
@@ -548,7 +524,7 @@ export const putApartmentEdit = async (req, res) => {
       mainPhotoIndex,
       deletedPhotoIndexes = [],
       existingPhotos = [],
-      newPhotos = [], // Asegurarse de que sea un array
+      newPhotos = [], 
     } = req.body;
 
     // Función auxiliar para parsear números de forma segura
@@ -563,27 +539,23 @@ export const putApartmentEdit = async (req, res) => {
     const maxGuests = parseNumber(maxGuestsStr, 1);
     const squareMeters = parseNumber(squareMetersStr, 0);
 
-    // Validaciones básicas de números
+    // Validaciones de números
     if (rooms < 1 || maxGuests < 1) {
       req.flash("error_msg", "El número de habitaciones y el máximo de huéspedes deben ser al menos 1.");
       return res.redirect(`/admin/apartment/edit/${id}`);
     }
 
-    // Parsing y filtrado de reglas
     const rules = Array.isArray(req.body.rules)
       ? req.body.rules.map((r) => r.trim()).filter((r) => r.length > 0)
       : [];
 
-    //  Procesamiento de Fotos 
     let updatedPhotos = [];
     const indexesToDelete = Array.isArray(deletedPhotoIndexes)
       ? deletedPhotoIndexes.map(Number)
-      : [Number(deletedPhotoIndexes)]; // Convierte a array si es un solo índice
+      : [Number(deletedPhotoIndexes)]; 
 
-    // Filtra fotos existentes que no estén marcadas para eliminación
     apartment.photos.forEach((photo, index) => {
       if (!indexesToDelete.includes(index)) {
-        // Busca la descripción de la foto existente en el formulario
         const correspondingExistingPhoto = Array.isArray(existingPhotos) ? existingPhotos.find((ep, epIndex) => epIndex === index) : undefined;
         updatedPhotos.push({
           ...photo,
@@ -591,11 +563,10 @@ export const putApartmentEdit = async (req, res) => {
           isMain: String(index) === String(mainPhotoIndex),
         });
       } else {
-        // Eliminar físicamente el archivo del disco si es una foto local
         if (photo.url.startsWith("/uploads/apartments/")) {
           const filePath = path.join(process.cwd(), "public", photo.url);
           fs.unlink(filePath).catch(err => {
-            if (err.code !== 'ENOENT') { // Ignorar error si el archivo no existe
+            if (err.code !== 'ENOENT') { 
               console.error(`Error al eliminar foto del disco ${filePath}:`, err);
             }
           });
@@ -603,13 +574,12 @@ export const putApartmentEdit = async (req, res) => {
       }
     });
 
-    // Procesa nuevas fotos (archivos subidos y URLs)
     let filePhotosIndex = 0;
     const uploadedFiles = req.files && req.files.apartmentPhotos ? req.files.apartmentPhotos : [];
-    const photosToProcess = Array.isArray(newPhotos) ? newPhotos : []; // Asegura que newPhotos es un array
+    const photosToProcess = Array.isArray(newPhotos) ? newPhotos : []; 
 
     const finalApartmentPhotoDir = path.join("public", "uploads", "apartments", id);
-    await fs.mkdir(finalApartmentPhotoDir, { recursive: true }); // Asegura que el directorio del apartamento exista
+    await fs.mkdir(finalApartmentPhotoDir, { recursive: true }); 
 
     for (let i = 0; i < photosToProcess.length; i++) {
       const newPhotoData = photosToProcess[i];
@@ -631,10 +601,10 @@ export const putApartmentEdit = async (req, res) => {
         photoUrl = `/uploads/apartments/${id}/${file.filename}`;
         photoType = 'local';
         try {
-          await moveFile(oldFilePath, newFilePath); // Mueve el archivo subido a la ubicación final
+          await moveFile(oldFilePath, newFilePath); 
         } catch (moveErr) {
           console.error(`Error al mover nuevo archivo ${file.filename}:`, moveErr);
-          photoUrl = ''; // Si falla el movimiento, no lo añadas a las fotos
+          photoUrl = ''; 
         }
         filePhotosIndex++;
       }
@@ -643,18 +613,16 @@ export const putApartmentEdit = async (req, res) => {
         updatedPhotos.push({
           url: photoUrl,
           description: newPhotoData.description || "",
-          isMain: `new_${i}` === String(mainPhotoIndex), // Usar `new_${i}` para identificar las nuevas fotos
+          isMain: `new_${i}` === String(mainPhotoIndex), 
           type: photoType
         });
       }
     }
 
-    // Asegurar que al menos una foto sea principal si hay fotos
     if (updatedPhotos.length > 0 && !updatedPhotos.some(p => p.isMain)) {
       updatedPhotos[0].isMain = true;
     }
 
-    // Conversión de servicios a booleano
     const services = {
       airConditioning: req.body.services?.airConditioning === "on",
       heating: req.body.services?.heating === "on",
@@ -664,7 +632,6 @@ export const putApartmentEdit = async (req, res) => {
       internet: req.body.services?.internet === "on",
     };
 
-    // Parsing y manejo de la localización
     const location = {
       province: {
         id: req.body.location?.province?.id
@@ -688,16 +655,14 @@ export const putApartmentEdit = async (req, res) => {
       },
     };
 
-    // Parsing de camas por habitación
     let bedsPerRoom = [];
     if (Array.isArray(req.body.bedsPerRoom)) {
       bedsPerRoom = req.body.bedsPerRoom
         .map((num) => parseNumber(num, 0))
         .filter((num) => !isNaN(num) && num >= 0)
-        .slice(0, rooms); // Asegura que el número de camas no exceda el número de habitaciones
+        .slice(0, rooms); 
     }
 
-    // Determina si el apartamento está activo
     let active = false;
     if (typeof req.body.active === "string") {
       active = req.body.active === "on" || req.body.active === "true";
@@ -705,7 +670,6 @@ export const putApartmentEdit = async (req, res) => {
       active = req.body.active;
     }
 
-    // Objeto con los datos a actualizar
     const updateApartmentData = {
       title,
       description,
@@ -720,12 +684,12 @@ export const putApartmentEdit = async (req, res) => {
       services,
       location,
       active,
-      updatedAt: new Date(), // Actualiza la fecha de modificación
+      updatedAt: new Date(), 
     };
 
     const result = await Apartment.findByIdAndUpdate(id, updateApartmentData, {
-      new: true, // Devuelve el documento modificado
-      runValidators: true, // Ejecuta las validaciones del esquema
+      new: true, 
+      runValidators: true, 
     });
 
     if (!result) {
@@ -739,9 +703,8 @@ export const putApartmentEdit = async (req, res) => {
   } catch (error) {
     console.error("Error al editar el apartamento:", error.message);
     req.flash("error_msg", `Hubo un error al editar el apartamento: ${error.message}`);
-    res.redirect(`/admin/apartment/edit/${id}`); // Redirige de vuelta al formulario de edición
+    res.redirect(`/admin/apartment/edit/${id}`); 
   } finally {
-    // Limpieza: Elimina la carpeta temporal de Multer
     if (tempUploadDir) {
       try {
         await fs.rm(tempUploadDir, { recursive: true, force: true });
@@ -758,7 +721,7 @@ export const putApartmentEdit = async (req, res) => {
 };
 
 /**
- * Desactiva (elimina lógicamente) un apartamento por su ID.
+ * Activa/Desactiva un apartamento
  * @param {object} req - Objeto de solicitud de Express.
  * @param {object} res - Objeto de respuesta de Express.
  */
@@ -766,60 +729,31 @@ export const postDeleteApartment = async (req, res) => {
   const { id } = req.params;
 
   try {
-    // Solo permite eliminar apartamentos creados por el usuario actual
     const apartment = await Apartment.findOne({
       _id: id,
       createdBy: req.session.userId
     }).populate("createdBy");
     
     if (!apartment) {
-      req.flash("error_msg", "Apartamento no encontrado o no tienes permisos para eliminarlo.");
-      return res.redirect("/seeApartments"); // Redirecciona a la lista de apartamentos públicos
-    }
-    
-    apartment.active = false; // Desactiva el apartamento en lugar de eliminarlo físicamente
-    await apartment.save();
-    req.flash("success_msg", "Apartamento eliminado satisfactoriamente. ");
-    return res.redirect("/");
-  } catch (error) {
-    console.error("Error al eliminar apartamento:", error);
-    req.flash("error_msg", "Error al eliminar el apartamento.");
-    return res.redirect("/");
-  }
-};
-
-/**
- * Activa un apartamento por su ID.
- * @param {object} req - Objeto de solicitud de Express.
- * @param {object} res - Objeto de respuesta de Express.
- */
-export const postActiveApartment = async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    // Solo permite activar apartamentos creados por el usuario actual
-    const apartment = await Apartment.findOne({
-      _id: id,
-      createdBy: req.session.userId
-    });
-    
-    if (!apartment) {
-      req.flash("error_msg", "Apartamento no encontrado o no tienes permisos para activarlo.");
+      req.flash("error_msg", "Apartamento no encontrado o no tienes permisos para modificarlo.");
       return res.redirect("/seeApartments");
     }
-    apartment.active = true; // Activa el apartamento
+    
+    apartment.active = !apartment.active;
     await apartment.save();
-    req.flash("success_msg", "Apartamento activado satisfactoriamente.");
+    
+    const action = apartment.active ? "activado" : "desactivado";
+    req.flash("success_msg", `Apartamento ${action} satisfactoriamente.`);
     return res.redirect("/seeApartments");
   } catch (error) {
-    console.error("Error al activar el apartamento:", error);
-    req.flash("error_msg", "Error al activar el apartamento.");
+    console.error("Error al modificar el estado del apartamento:", error);
+    req.flash("error_msg", "Error al modificar el estado del apartamento.");
     return res.redirect("/seeApartments");
   }
 };
 
 
-//  Gestión de Reservas 
+//  ********** Gestión de Reservas  **********  
 
 /**
  * Obtiene y muestra una lista de todas las reservas.
@@ -828,19 +762,17 @@ export const postActiveApartment = async (req, res) => {
  */
 export const getReservations = async (req, res) => {
   try {
-    // Obtener apartamentos del usuario actual
     const myApartments = await Apartment.find({
       createdBy: req.session.userId
     });
     const apartmentIds = myApartments.map(apt => apt._id);
     
-    // Solo obtener reservas recibidas en apartamentos del usuario actual
     const reservations = await Reservation.find({
-      apartment: { $in: apartmentIds } // Solo reservas en apartamentos del usuario
+      apartment: { $in: apartmentIds } 
     })
       .populate("apartment")
       .populate("user")
-      .sort({ endDate: 1 }); // Ordena por fecha de fin ascendente
+      .sort({ endDate: 1 }); 
       
     res.render("reservations.ejs", {
       title: "admin",
@@ -870,7 +802,7 @@ export const postCancelReservation = async (req, res) => {
       return res.redirect("/admin/reservations");
     }
     
-    // Verificar permisos: debe ser una reserva en un apartamento del usuario
+    // debe ser una reserva en un apartamento del usuario
     const isMyApartment = reservation.apartment && reservation.apartment.createdBy.toString() === req.session.userId;
     
     if (!isMyApartment) {
@@ -878,9 +810,9 @@ export const postCancelReservation = async (req, res) => {
       return res.redirect("/admin/reservations");
     }
     
-    reservation.status = "cancelled"; // Cambia el estado a "cancelled"
+    reservation.status = "cancelled"; 
     await reservation.save();
-    req.flash("success_msg", "Reserva cancelada satisfactoriamente. ❌");
+    req.flash("success_msg", "Reserva cancelada satisfactoriamente.");
     return res.redirect("/admin/reservations");
   } catch (error) {
     console.error("Error al cancelar la reserva:", error);
@@ -904,7 +836,7 @@ export const postConfirmReservation = async (req, res) => {
       return res.redirect("/admin/reservations");
     }
     
-    // Verificar permisos: debe ser una reserva en un apartamento del usuario
+    // debe ser una reserva en un apartamento del usuario
     const isMyApartment = reservation.apartment && reservation.apartment.createdBy.toString() === req.session.userId;
     
     if (!isMyApartment) {
@@ -912,7 +844,7 @@ export const postConfirmReservation = async (req, res) => {
       return res.redirect("/admin/reservations");
     }
     
-    reservation.status = "confirmed"; // Cambia el estado a "confirmed"
+    reservation.status = "confirmed"; 
     await reservation.save();
     req.flash("success_msg", "Reserva confirmada satisfactoriamente. ✅");
     return res.redirect("/admin/reservations");
@@ -938,7 +870,7 @@ export const postMarkPaidReservation = async (req, res) => {
       return res.redirect("/admin/reservations");
     }
     
-    // Verificar permisos: debe ser una reserva en un apartamento del usuario
+    //  debe ser una reserva en un apartamento del usuario
     const isMyApartment = reservation.apartment && reservation.apartment.createdBy.toString() === req.session.userId;
     
     if (!isMyApartment) {
@@ -946,7 +878,7 @@ export const postMarkPaidReservation = async (req, res) => {
       return res.redirect("/admin/reservations");
     }
     
-    reservation.paid = true; // Marca la reserva como pagada
+    reservation.paid = true; 
     await reservation.save();
     req.flash("success_msg", "Reserva marcada como pagada satisfactoriamente. 💰");
     return res.redirect("/admin/reservations");
@@ -972,7 +904,7 @@ export const postDeleteReservation = async (req, res) => {
       return res.redirect("/admin/reservations");
     }
     
-    // Verificar permisos: debe ser una reserva en un apartamento del usuario
+    // debe ser una reserva en un apartamento del usuario
     const isMyApartment = reservation.apartment && reservation.apartment.createdBy.toString() === req.session.userId;
     
     if (!isMyApartment) {
@@ -981,7 +913,7 @@ export const postDeleteReservation = async (req, res) => {
     }
     
     await Reservation.findByIdAndDelete(id);
-    req.flash("success_msg", "Reserva eliminada satisfactoriamente. 🗑️");
+    req.flash("success_msg", "Reserva eliminada satisfactoriamente.");
     return res.redirect("/admin/reservations");
   } catch (error) {
     console.error("Error al eliminar la reserva:", error);
@@ -998,14 +930,13 @@ export const postDeleteReservation = async (req, res) => {
 export const getReservationEdit = async (req, res) => {
   const { id } = req.params;
   try {
-    // Verificar que la reserva sea en un apartamento del usuario
     const reservation = await Reservation.findById(id).populate("apartment");
     if (!reservation) {
       req.flash("error_msg", "La reserva no se ha encontrado.");
       return res.redirect("/admin/reservations");
     }
     
-    // Verificar permisos: debe ser una reserva en un apartamento del usuario
+    // debe ser una reserva en un apartamento del usuario
     const isMyApartment = reservation.apartment && reservation.apartment.createdBy.toString() === req.session.userId;
     
     if (!isMyApartment) {
@@ -1044,7 +975,7 @@ export const putReservationEdit = async (req, res) => {
 
   if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
     req.flash("error_msg", "Fechas no válidas proporcionadas.");
-    return res.redirect(`/admin/reservation/edit/${id}`); // Vuelve al formulario de edición
+    return res.redirect(`/admin/reservation/edit/${id}`); 
   }
 
   try {
@@ -1054,16 +985,14 @@ export const putReservationEdit = async (req, res) => {
       return res.redirect("/admin/reservations");
     }
 
-    // Comprueba solapamientos con otras reservas confirmadas para el mismo apartamento, excluyendo la actual
+    // Comprueba solapamientos de reservas para el mismo apartamento, excluyendo la actual
     const conflictingReservations = await Reservation.find({
       apartment: apartmentId,
-      status: "confirmed",
-      _id: { $ne: id }, // Excluye la reserva que estamos editando
+      _id: { $ne: id }, 
       $and: [{ endDate: { $gt: startDate } }, { startDate: { $lt: endDate } }],
     });
 
     if (conflictingReservations.length === 0) {
-      // No hay conflictos, procede con la actualización
       await Reservation.findByIdAndUpdate(
         id,
         {
@@ -1071,12 +1000,11 @@ export const putReservationEdit = async (req, res) => {
           guestEmail,
           startDate,
           endDate,
-          // No se actualiza 'user' o 'apartment' si no se proporcionan, o si la lógica lo requiere
         },
         { new: true, runValidators: true }
       );
       req.flash("success_msg", "Reserva actualizada con éxito. ✔️");
-      res.redirect("/admin/reservations"); // Redirige a la lista de reservas
+      res.redirect("/admin/reservations"); 
     } else {
       req.flash("error_msg", "Fechas no disponibles: hay otra reserva confirmada que se solapa con este período.");
       res.redirect(`/admin/reservation/edit/${id}`);
@@ -1095,7 +1023,6 @@ export const putReservationEdit = async (req, res) => {
 
 export const getAllApartments = async (req, res) => {
   try {
-    // Solo apartamentos creados por el usuario actual
     const apartments = await Apartment.find({ 
       active: true,
       createdBy: req.session.userId 

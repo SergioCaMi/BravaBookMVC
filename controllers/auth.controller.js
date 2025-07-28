@@ -6,13 +6,15 @@ import Reservation from "../models/reservation.model.js";
 import axios from "axios";
 import { validationResult } from 'express-validator';
 
-// --- Gestión de Usuario ---
+// ********** Gestión de Usuario **********
 
-// Registro de un nuevo usuario
+/**
+Registra un nuevo usuario en el sistema con validación de datos y verificación de roles.
+@param {object} req - Objeto de solicitud de Express.
+@param {object} res - Objeto de respuesta de Express.
+*/
 export const register = async (req, res) => {
   try {
-    console.log("Register");
-    
     // Verificar errores de validación
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -22,15 +24,7 @@ export const register = async (req, res) => {
     }
 
     const { name, email, password, role } = req.body;
-    
-    // Debug: Ver qué datos llegan del formulario
-    console.log("=== DEBUG REGISTRO ===");
-    console.log("Datos completos del formulario:", req.body);
-    console.log("Role recibido:", role);
-    console.log("Tipo de role:", typeof role);
-    console.log("======================");
 
-    // Verifica si el correo ya está en uso
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       req.flash("error_msg", "El correo electrónico ya está en uso.");
@@ -43,9 +37,6 @@ export const register = async (req, res) => {
     // Verificar si ya existe un super administrador
     const existingSuperAdmin = await User.findOne({ isSuperAdmin: true });
     const isFirstAdmin = finalRole === 'admin' && !existingSuperAdmin;
-    
-    console.log("Role final asignado:", finalRole);
-    console.log("¿Es el primer admin?:", isFirstAdmin);
 
     const user = new User({
       name: name.trim(),
@@ -55,20 +46,7 @@ export const register = async (req, res) => {
       isSuperAdmin: isFirstAdmin,
     });
 
-    console.log("Usuario antes de guardar:", {
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      isSuperAdmin: user.isSuperAdmin
-    });
-
     await user.save();
-    console.log("Usuario guardado:", {
-      id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role
-    });
     req.session.userId = user._id;
     req.flash("success_msg", "Nuevo usuario añadido con éxito.");
     res.redirect("/dashboard");
@@ -81,10 +59,13 @@ export const register = async (req, res) => {
   }
 };
 
-// Inicio de sesión
+/**
+
+Autentica a un usuario en el sistema verificando sus credenciales y estableciendo la sesión.
+@param {object} req - Objeto de solicitud de Express.
+@param {object} res - Objeto de respuesta de Express.
+*/
 export const login = async (req, res) => {
-  console.log("Login");
-  
   // Verificar errores de validación
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -101,22 +82,32 @@ export const login = async (req, res) => {
   }
 
   req.session.userId = user._id;
-  console.log(user.name);
   res.redirect("/dashboard");
-};// Cierre de sesión
-export const logout = (req, res) => {
-  console.log("LogOut");
-  req.session.destroy(() => res.redirect("/"));
 };
 
-// Dashboard de usuario
+/**
+
+Cierra la sesión del usuario actual y redirige a la página principal.
+@param {object} req - Objeto de solicitud de Express.
+@param {object} res - Objeto de respuesta de Express.
+*/
+export const logout = (req, res) => {
+  req.session.destroy(() => res.redirect("/"));
+};
+
+
+/**
+
+Renderiza el dashboard del usuario con información personal, reservas y apartamentos según su rol.
+@param {object} req - Objeto de solicitud de Express.
+@param {object} res - Objeto de respuesta de Express.
+*/
 export const dashboard = async (req, res) => {
-  console.log("Dashboard");
   const user = await User.findById(req.session.userId);
   
   let reservations;
   if (user.role === 'admin') {
-    // Para admins: mostrar sus reservas + reservas recibidas en sus apartamentos
+    // Para admins mostramos sus reservas y reservas recibidas en sus apartamentos
     const userApartments = await Apartment.find({
       createdBy: req.session.userId,
     }).select('_id');
@@ -133,7 +124,7 @@ export const dashboard = async (req, res) => {
       .populate("user")
       .limit(20);
   } else {
-    // Para usuarios normales: solo sus reservas
+    // Para usuarios normales solo sus reservas
     reservations = await Reservation.find({
       user: req.session.userId,
     })
@@ -153,68 +144,95 @@ export const dashboard = async (req, res) => {
     currentUser: user,
     isSuperAdmin: user.isSuperAdmin || false
   });
-};// Obtener página de Contacto
+};
+
+/**
+
+Renderiza la página de contacto del sistema.
+@param {object} req - Objeto de solicitud de Express.
+@param {object} res - Objeto de respuesta de Express.
+*/
 export const getContactUs = async (req, res) => {
-  res.render("contactUs", { title: "contact" });
+  res.render("contactUs", { title: "contact" });
 };
 
-// Obtener página "Acerca de nosotros"
+
+/**
+
+Renderiza la página de Acerca de... del sistema.
+@param {object} req - Objeto de solicitud de Express.
+@param {object} res - Objeto de respuesta de Express.
+*/
 export const getAboutUs = async (req, res) => {
-  res.render("aboutUs", { title: "about" });
+  res.render("aboutUs", { title: "about" });
 };
 
-// Mostrar formulario de edición de perfil
+/**
+
+Renderiza la página de edición de perfil del usuario actual.
+@param {object} req - Objeto de solicitud de Express.
+@param {object} res - Objeto de respuesta de Express.
+*/
 export const getEditProfile = async (req, res) => {
-  try {
-    const user = await User.findById(req.session.userId);
-    if (!user) {
-      return res.redirect("/login");
-    }
-    res.status(200).render("editProfile.ejs", { title: "home", user });
-  } catch (err) {
-    req.flash("error_msg", "Error interno del servidor.");
-    return res.redirect("/");
-  }
+  try {
+    const user = await User.findById(req.session.userId);
+    if (!user) {
+      return res.redirect("/login");
+    }
+    res.status(200).render("editProfile.ejs", { title: "home", user });
+  } catch (err) {
+    req.flash("error_msg", "Error interno del servidor.");
+    return res.redirect("/");
+  }
 };
 
-// Actualizar perfil de usuario
+/**
+
+Actualiza la información del perfil del usuario actual incluyendo nombre, email, bio y avatar.
+@param {object} req - Objeto de solicitud de Express.
+@param {object} res - Objeto de respuesta de Express.
+*/
 export const postUpdateProfile = async (req, res) => {
-  try {
-    const { name, email, bio } = req.body;
+  try {
+    const { name, email, bio } = req.body;
 
-    if (!name || !email) {
-      req.flash(
-        "error_msg",
-        "Nombre de usuario y correo electrónico son oobligatorios"
-      );
-      return res.redirect("/profile/edit");
-    }
+    if (!name || !email) {
+      req.flash(
+        "error_msg",
+        "Nombre de usuario y correo electrónico son obligatorios"
+      );
+      return res.redirect("/profile/edit");
+    }
 
-    const updates = { name, email, bio };
+    const updates = { name, email, bio };
 
-    if (req.file) { // Si hay un archivo (avatar) subido
-      const userEmail = email;
-      const userBaseName = userEmail.split("@")[0];
-      const avatarPath = path.join("usuarios", userBaseName, "avatar.jpg"); // Ruta para guardar el avatar
-      updates.avatar = avatarPath;
-    }
+    if (req.file) { // Si hay un archivo (avatar) subido
+      const userEmail = email;
+      const userBaseName = userEmail.split("@")[0];
+      const avatarPath = path.join("usuarios", userBaseName, "avatar.jpg"); 
+      updates.avatar = avatarPath;
+    }
 
-    await User.findByIdAndUpdate(req.session.userId, updates); // Actualiza el usuario
-
-    res.redirect("/dashboard");
-  } catch (err) {
-    console.error("Error al actualizar perfil:", err);
-    res.status(500).render("editProfile", {
-      title: "admin",
-      user: req.user, // Asume que req.user está disponible (desde `res.locals.currentUser` quizás)
-      error: "Hubo un error al guardar los cambios.",
-    });
-  }
+    await User.findByIdAndUpdate(req.session.userId, updates); 
+    res.redirect("/dashboard");
+  } catch (err) {
+    console.error("Error al actualizar perfil:", err);
+    res.status(500).render("editProfile", {
+      title: "admin",
+      user: req.user, 
+      error: "Hubo un error al guardar los cambios.",
+    });
+  }
 };
 
-// --- Gestión de Apartamentos ---
+// ********** Gestión de Apartamentos **********
 
-// Obtener todos los apartamentos para la página principal
+/**
+
+Obtiene y renderiza todos los apartamentos activos del sistema.
+@param {object} req - Objeto de solicitud de Express.
+@param {object} res - Objeto de respuesta de Express.
+*/
 export const getAllApartments = async (req, res) => {
   try {
     const apartments = await Apartment.find({ active: true }).populate("createdBy");
@@ -222,16 +240,28 @@ export const getAllApartments = async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
-};// Mostrar mapa con apartamentos
+};
+
+/**
+Renderiza el mapa con la ubicación de todos los apartamentos activos del sistema.
+@param {object} req - Objeto de solicitud de Express.
+@param {object} res - Objeto de respuesta de Express.
+*/
 export const getMap = async (req, res) => {
   try {
-    const apartments = await Apartment.find({ active: true }).populate("createdBy"); // Recupera apartamentos activos
-    res.render("map", { title: "home", apartments }); // Renderiza la vista del mapa
+    const apartments = await Apartment.find({ active: true }).populate("createdBy"); 
+    res.render("map", { title: "home", apartments }); 
   } catch (error) {
     console.error("Error al recuperar los apartamentos:", error);
     res.status(500).send("Error al cargar los datos de los apartamentos");
   }
-};// Ver lista de apartamentos (admin vs. usuario)
+};
+
+/**
+Renderiza la lista de apartamentos según el rol del usuario (propios para admin, activos para usuarios).
+@param {object} req - Objeto de solicitud de Express.
+@param {object} res - Objeto de respuesta de Express.
+*/
 export const getSeeApartments = async (req, res) => {
   let apartments;
   try {
@@ -241,9 +271,9 @@ export const getSeeApartments = async (req, res) => {
         createdBy: req.session.userId 
       }).populate("createdBy");
     } else {
-      apartments = await Apartment.find({ active: true }).populate("createdBy"); // Usuario solo ve activos
+      apartments = await Apartment.find({ active: true }).populate("createdBy"); 
+      // Usuario solo ve activos
     }
-    console.log(apartments.length);
     res.render("seeApartments", {
       title: "home",
       apartments,
@@ -251,137 +281,148 @@ export const getSeeApartments = async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
-};// Búsqueda de apartamentos (con filtros y fechas)
+};
+
+/**
+Busca y filtra apartamentos según múltiples criterios incluyendo ubicación, precios, servicios y disponibilidad.
+@param {object} req - Objeto de solicitud de Express.
+@param {object} res - Objeto de respuesta de Express.
+*/
 export const getApartmentSearch = async (req, res) => {
-  console.log("Query recibida:", req.query);
-  req.session.lastSearch = req.query; // Guarda la última búsqueda en sesión
-  const {
-    sortPrice,
-    minPrice,
-    maxPrice,
-    maxGuests,
-    squareMeters,
-    "rules[]": rules, // Recoge reglas como array
-    "bedsPerRoom[]": bedsPerRoom, // Recoge camas por habitación como array
-    "services.airConditioning": airConditioning,
-    "services.heating": heating,
-    "services.accessibility": accessibility,
-    "services.television": television,
-    "services.kitchen": kitchen,
-    "services.internet": internet,
-    dateRange,
-  } = req.query;
+  req.session.lastSearch = req.query; // Guarda la última búsqueda en sesión
+  const {
+    sortPrice,
+    minPrice,
+    maxPrice,
+    maxGuests,
+    squareMeters,
+    "rules[]": rules, 
+    "bedsPerRoom[]": bedsPerRoom,
+    "services.airConditioning": airConditioning,
+    "services.heating": heating,
+    "services.accessibility": accessibility,
+    "services.television": television,
+    "services.kitchen": kitchen,
+    "services.internet": internet,
+    dateRange,
+  } = req.query;
 
-  const query = { active: true }; // Siempre busca apartamentos activos
-  const provinceName = req.query.province?.nm?.trim();
-  const cityName = req.query.municipality?.nm?.trim();
+  const query = { active: true }; 
+  const provinceName = req.query.province?.nm?.trim();
+  const cityName = req.query.municipality?.nm?.trim();
 
-  // Filtro por provincia
-  if (provinceName) {
-    query["location.province.nm"] = {
-      $regex: provinceName,
-      $options: "i", // Búsqueda insensible a mayúsculas/minúsculas
-    };
-  }
-  // Filtro por ciudad/municipio
-  if (cityName) {
-    query["location.municipality.nm"] = {
-      $regex: cityName,
-      $options: "i",
-    };
-  }
+  // Filtro por provincia
+  if (provinceName) {
+    query["location.province.nm"] = {
+      $regex: provinceName,
+      $options: "i", 
+    };
+  }
+  // Filtro por ciudad/municipio
+  if (cityName) {
+    query["location.municipality.nm"] = {
+      $regex: cityName,
+      $options: "i",
+    };
+  }
 
-  // Filtro por rango de precio
-  if (minPrice) {
-    query.price = { ...query.price };
-    if (!isNaN(Number(minPrice))) query.price.$gte = Number(minPrice);
-  }
-  if (maxPrice) {
-    query.price = { ...query.price };
-    if (!isNaN(Number(maxPrice))) query.price.$lte = Number(maxPrice);
-  }
+  // Filtro por rango de precio
+  if (minPrice) {
+    query.price = { ...query.price };
+    if (!isNaN(Number(minPrice))) query.price.$gte = Number(minPrice);
+  }
+  if (maxPrice) {
+    query.price = { ...query.price };
+    if (!isNaN(Number(maxPrice))) query.price.$lte = Number(maxPrice);
+  }
 
-  // Filtro por número máximo de huéspedes
-  if (maxGuests && !isNaN(Number(maxGuests))) {
-    query.maxGuests = { $lte: Number(maxGuests) };
-  }
+  // Filtro por número máximo de huéspedes
+  if (maxGuests && !isNaN(Number(maxGuests))) {
+    query.maxGuests = { $lte: Number(maxGuests) };
+  }
 
-  // Filtro por metros cuadrados mínimos
-  if (squareMeters && !isNaN(Number(squareMeters))) {
-    query.squareMeters = { $gte: Number(squareMeters) };
-  }
+  // Filtro por metros cuadrados mínimos
+  if (squareMeters && !isNaN(Number(squareMeters))) {
+    query.squareMeters = { $gte: Number(squareMeters) };
+  }
 
-  // Filtro por servicios
-  const services = {};
-  if (airConditioning === "on") services["services.airConditioning"] = true;
-  if (heating === "on") services["services.heating"] = true;
-  if (accessibility === "on") services["services.accessibility"] = true;
-  if (television === "on") services["services.television"] = true;
-  if (kitchen === "on") services["services.kitchen"] = true;
-  if (internet === "on") services["services.internet"] = true;
-  Object.assign(query, services); // Añade los servicios a la consulta principal
+  // Filtro por servicios
+  if (airConditioning === "on") {
+    query["services.airConditioning"] = true;
+  }
+  if (heating === "on") {
+    query["services.heating"] = true;
+  }
+  if (accessibility === "on") {
+    query["services.accessibility"] = true;
+  }
+  if (television === "on") {
+    query["services.television"] = true;
+  }
+  if (kitchen === "on") {
+    query["services.kitchen"] = true;
+  }
+  if (internet === "on") {
+    query["services.internet"] = true;
+  }
+  
+  // Filtrar por disponibilidad de fechas
+  const [start, end] = dateRange.split(" - ");
+  const startDate = new Date(start);
+  const endDate = new Date(end);
 
-  // Filtrar por disponibilidad de fechas
-  const [start, end] = dateRange.split(" - ");
-  const startDate = new Date(start);
-  const endDate = new Date(end);
+  startDate.setDate(startDate.getDate() + 1); // Ajuste para solapar fechas
 
-  startDate.setDate(startDate.getDate() + 1); // Ajuste para solapar fechas
-  console.log("Start Date:", startDate);
-  console.log("End Date:", endDate);
+  startDate.setHours(0, 0, 0, 0); 
+  endDate.setHours(0, 0, 0, 0); 
+  let reservedApartmentIds = [];
 
-  startDate.setHours(0, 0, 0, 0); // Normaliza a inicio del día
-  endDate.setHours(0, 0, 0, 0); // Normaliza a inicio del día
+  if (!isNaN(startDate.getTime()) || !isNaN(endDate.getTime())) {
+    const reservationsDates = await Reservation.find({
+      $and: [
+        { startDate: { $lt: endDate } }, 
+        { endDate: { $gte: startDate } }, 
+        { status: "confirmed" },
+      ],
+    });
 
-  let reservedApartmentIds = [];
+    reservedApartmentIds = reservationsDates.map((r) => r.apartment); // IDs de apartamentos reservados
 
-  if (!isNaN(startDate.getTime()) || !isNaN(endDate.getTime())) {
-    const reservationsDates = await Reservation.find({
-      $and: [
-        { startDate: { $lt: endDate } }, // La reserva termina después de que mi búsqueda empieza
-        { endDate: { $gte: startDate } }, // La reserva empieza antes de que mi búsqueda termine
-        { status: "confirmed" },
-      ],
-    });
+    if (reservedApartmentIds.length > 0) {
+      query._id = { $nin: reservedApartmentIds }; // Excluye los apartamentos reservados
+    }
+  } else {
+    throw new Error("Fechas inválidas proporcionadas.");
+  }
 
-    reservedApartmentIds = reservationsDates.map((r) => r.apartment); // IDs de apartamentos reservados
-
-    if (reservedApartmentIds.length > 0) {
-      query._id = { $nin: reservedApartmentIds }; // Excluye los apartamentos reservados
-    }
-  } else {
-    console.log("Fechas inválidas");
-    throw new Error("Fechas inválidas proporcionadas.");
-  }
-
-  // Ordenar resultados
-  let sortvalue = 0;
-  if (+sortPrice >= 0) sortvalue = 1;
-  if (+sortPrice < 0) sortvalue = -1;
-  try {
-    const apartments = await Apartment.find(query).sort({ price: sortvalue });
-    console.log(apartments._id); // Esto imprimirá 'undefined' si 'apartments' es un array
-    res.render("partials/seeApartments.ejs", {
-      title: "home",
-      apartments,
-    });
-  } catch (err) {
-    console.error("Error al buscar apartamentos:", err);
-    res.status(500).render("error", {
-      message: "Error al realizar la búsqueda de apartamentos",
-      status: 500,
-    });
-  }
+  // Ordenar resultados
+  let sortvalue = 0;
+  if (+sortPrice >= 0) sortvalue = 1;
+  if (+sortPrice < 0) sortvalue = -1;
+  try {
+    const apartments = await Apartment.find(query).sort({ price: sortvalue });
+    res.render("partials/seeApartments.ejs", {
+      title: "home",
+      apartments,
+    });
+  } catch (err) {
+    console.error("Error al buscar apartamentos:", err);
+    res.status(500).render("error", {
+      message: "Error al realizar la búsqueda de apartamentos",
+      status: 500,
+    });
+  }
 };
 
 // Buscar apartamentos usando IA (Gemini)
 export const searchApartments = async (req, res) => {
-  const userQuery = req.body.query;
+  const userQuery = req.body.query || "";
+  const escapedQuery = userQuery.replace(/["\\]/g, "\\$&");
 
   try {
-    console.log("Búsqueda IA iniciada:", userQuery);
+    console.log("🔍 Búsqueda IA iniciada:", userQuery);
 
-    // 1. Envía la consulta a la API de Gemini
+    // 1. Envía la consulta mejorada a la API de Gemini
     const geminiResponse = await axios.post(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
@@ -389,17 +430,41 @@ export const searchApartments = async (req, res) => {
           {
             parts: [
               {
-                text: `Convierte esta frase en un JSON con filtros para apartamentos: "${userQuery}". 
-                
-                Campos disponibles: province, municipality, services, minPrice, maxPrice, rooms, bathrooms, maxGuests.
-                
-                Para servicios usa: wifi, parking, pool, gym, terrace, airConditioning, heating, kitchen, laundry, tv, security.
-                
-                Ejemplos:
-                - "piso en Madrid con piscina máximo 800€" → {"province": "Madrid", "services": {"pool": true}, "maxPrice": 800}
-                - "apartamento Barcelona 2 habitaciones" → {"municipality": "Barcelona", "rooms": 2}
-                
-                Devuelve SOLO el objeto JSON, sin texto adicional.`,
+                text: `Convierte esta frase del usuario en un JSON de filtros para buscar apartamentos.
+
+Campos posibles:
+- location (string): Busca tanto en provincia como municipio
+- minPrice (number)
+- maxPrice (number) 
+- services (array de strings): ["airConditioning", "heating", "accessibility", "television", "kitchen", "internet"]
+- rooms (number)
+- bathrooms (number)
+- maxGuests (number)
+- squareMeters (object con $gte o $lte)
+- keywords (array): para buscar servicios adicionales en descripción
+- size (string): "grande", "pequeño", "lujoso"
+
+Traducciones y sinónimos:
+- "Barcelona", "Madrid", etc → location: "Barcelona" (busca en provincia Y municipio)
+- "grande", "amplio" → squareMeters: {"$gte": 120}
+- "pequeño", "acogedor" → squareMeters: {"$lte": 50}
+- "lujoso", "luxury" → services: ["airConditioning", "heating", "television", "kitchen", "internet"], size: "lujoso"
+- "barato" → maxPrice: 50
+- "tele", "tv", "televisión" → services: ["television"]
+- "wifi", "internet" → services: ["internet"]
+- "aire", "ac", "climatizado" → services: ["airConditioning"]
+- "cocina", "kitchen" → services: ["kitchen"]
+- "calefacción", "heating" → services: ["heating"]
+- "piscina", "pool", "gimnasio", "gym", "parking", "garaje" → keywords: ["piscina", "gimnasio", "parking"]
+
+Ejemplos:
+"apartamento lujoso en Barcelona" → {"location": "Barcelona", "services": ["airConditioning", "heating", "television", "kitchen", "internet"], "size": "lujoso"}
+"piso grande con piscina en Madrid máximo 800€" → {"location": "Madrid", "squareMeters": {"$gte": 120}, "maxPrice": 800, "keywords": ["piscina"]}
+"apartamento pequeño con wifi" → {"squareMeters": {"$lte": 50}, "services": ["internet"]}
+
+Devuelve SOLO el objeto JSON válido, sin texto adicional.
+
+Frase: "${escapedQuery}"`,
               },
             ],
           },
@@ -411,84 +476,149 @@ export const searchApartments = async (req, res) => {
     );
 
     // 2. Procesa la respuesta de Gemini
-    let raw = geminiResponse.data.candidates[0].content.parts[0].text;
-    let cleanJson = raw.trim();
-
+    let raw = geminiResponse.data.candidates[0].content.parts[0].text.trim();
+    
     // Limpia el formato de código si existe
-    if (cleanJson.startsWith("```")) {
-      cleanJson = cleanJson.replace(/```json|```/g, "").trim();
+    if (raw.startsWith("```")) {
+      raw = raw.replace(/```json|```/g, "").trim();
     }
+    
+    // Limpia comas extra y caracteres problemáticos
+    raw = raw
+      .replace(/,\s*}/g, '}')
+      .replace(/,\s*]/g, ']')
+      .replace(/[\u0000-\u001F\u007F-\u009F]/g, '')
+      .trim();
+
+    console.log("📡 Respuesta limpia:", raw);
 
     let filters;
     try {
-      filters = JSON.parse(cleanJson);
-      console.log("✅ Filtros generados:", filters);
+      filters = JSON.parse(raw);
+      console.log("✅ Filtros generados:", JSON.stringify(filters, null, 2));
     } catch (parseError) {
-      // Si no puede parsear JSON, hace búsqueda por texto
-      console.log("⚠️ Búsqueda por texto fallback");
+      console.log("⚠️ Error parsing JSON, usando búsqueda por texto fallback");
+      const keywordRegex = new RegExp(userQuery.split(' ').join('|'), "i");
       const apartments = await Apartment.find({
         active: true,
         $or: [
-          { "location.province.nm": { $regex: new RegExp(userQuery, "i") } },
-          { "location.municipality.nm": { $regex: new RegExp(userQuery, "i") } },
-          { name: { $regex: new RegExp(userQuery, "i") } },
-          { description: { $regex: new RegExp(userQuery, "i") } }
+          { "location.province.nm": { $regex: keywordRegex } },
+          { "location.municipality.nm": { $regex: keywordRegex } },
+          { title: { $regex: keywordRegex } },
+          { description: { $regex: keywordRegex } }
         ]
-      });
+      }).populate("createdBy");
+      
       return res.render("seeApartments.ejs", { 
-        title: `Resultados para "${userQuery}"`, 
+        title: `${apartments.length} resultados para "${userQuery}"`, 
         apartments,
         searchQuery: userQuery,
         isSearchResult: true
       });
     }
 
-    // 3. Construye la consulta MongoDB
-    const query = { active: true };
+    // 3. Construye la consulta MongoDB mejorada
+    const mongoQuery = { active: true };
 
-    // Ubicación
-    if (filters.province || filters.municipality) {
-      const locationConditions = [];
-      if (filters.province) {
-        locationConditions.push({
-          "location.province.nm": { $regex: new RegExp(filters.province, "i") }
-        });
-      }
-      if (filters.municipality) {
-        locationConditions.push({
-          "location.municipality.nm": { $regex: new RegExp(filters.municipality, "i") }
-        });
-      }
-      query.$or = locationConditions;
+    // Ubicación mejorada - busca en provincia Y municipio
+    if (filters.location) {
+      mongoQuery.$or = [
+        { "location.province.nm": { $regex: new RegExp(filters.location, "i") } },
+        { "location.municipality.nm": { $regex: new RegExp(filters.location, "i") } }
+      ];
+      console.log("📍 Filtro ubicación (provincia Y municipio):", filters.location);
     }
 
-    // Capacidad
-    if (filters.maxGuests) query.maxGuests = { $gte: filters.maxGuests };
-    if (filters.rooms) query.rooms = { $gte: filters.rooms };
-    if (filters.bathrooms) query.bathrooms = { $gte: filters.bathrooms };
+    // Capacidad y características
+    if (filters.maxGuests) {
+      mongoQuery.maxGuests = { $gte: filters.maxGuests };
+      console.log("👥 Filtro huéspedes:", filters.maxGuests);
+    }
+    if (filters.rooms) {
+      mongoQuery.rooms = { $gte: filters.rooms };
+      console.log("🛏️ Filtro habitaciones:", filters.rooms);
+    }
+    if (filters.bathrooms) {
+      mongoQuery.bathrooms = { $gte: filters.bathrooms };
+      console.log("🚿 Filtro baños:", filters.bathrooms);
+    }
+
+    // Metros cuadrados mejorados
+    if (filters.squareMeters) {
+      mongoQuery.squareMeters = filters.squareMeters;
+      console.log("📐 Filtro metros cuadrados:", filters.squareMeters);
+    }
 
     // Precio
     if (filters.minPrice || filters.maxPrice) {
-      query.price = {};
-      if (filters.minPrice) query.price.$gte = filters.minPrice;
-      if (filters.maxPrice) query.price.$lte = filters.maxPrice;
+      mongoQuery.price = {};
+      if (filters.minPrice) mongoQuery.price.$gte = filters.minPrice;
+      if (filters.maxPrice) mongoQuery.price.$lte = filters.maxPrice;
+      console.log("💰 Filtro precio:", mongoQuery.price);
     }
 
-    // Servicios
-    if (filters.services) {
-      for (const [service, required] of Object.entries(filters.services)) {
-        if (required === true) {
-          query[`services.${service}`] = true;
-        }
+    // Servicios del modelo
+    if (filters.services && Array.isArray(filters.services)) {
+      for (const service of filters.services) {
+        mongoQuery[`services.${service}`] = true;
+        console.log("🔧 Filtro servicio del modelo:", service);
       }
     }
 
-    console.log("🔍 Consulta MongoDB:", query);
+    // Keywords para búsqueda en descripción (servicios adicionales)
+    let descriptionConditions = [];
+    
+    if (filters.keywords && Array.isArray(filters.keywords)) {
+      for (const keyword of filters.keywords) {
+        descriptionConditions.push(
+          { description: { $regex: new RegExp(keyword, "i") } },
+          { title: { $regex: new RegExp(keyword, "i") } }
+        );
+        console.log("🔍 Keyword para descripción:", keyword);
+      }
+    }
+
+    // Filtros especiales para "lujoso"
+    if (filters.size === "lujoso") {
+      descriptionConditions.push(
+        { description: { $regex: /lujoso|luxury|premium|exclusivo|high-end/i } },
+        { title: { $regex: /lujoso|luxury|premium|exclusivo|high-end/i } }
+      );
+      console.log("✨ Filtro lujoso aplicado");
+    }
+
+    // Combina condiciones de descripción con ubicación si ambas existen
+    if (descriptionConditions.length > 0) {
+      if (mongoQuery.$or) {
+        // Si ya hay condiciones de ubicación, las combinamos
+        mongoQuery.$and = [
+          { $or: mongoQuery.$or }, // Condiciones de ubicación
+          { $or: descriptionConditions } // Condiciones de descripción
+        ];
+        delete mongoQuery.$or;
+      } else {
+        // Si no hay condiciones de ubicación, solo descripción
+        mongoQuery.$or = descriptionConditions;
+      }
+    }
+
+    console.log("�️ Query MongoDB final:", JSON.stringify(mongoQuery, null, 2));
 
     // 4. Ejecuta la búsqueda
-    const apartments = await Apartment.find(query).sort({ price: 1 }).populate("createdBy");
+    const apartments = await Apartment.find(mongoQuery).sort({ price: 1 }).populate("createdBy");
     
-    console.log(`✅ Encontrados ${apartments.length} apartamentos`);
+    console.log(`📊 Apartamentos encontrados: ${apartments.length}`);
+    
+    // Debug: mostrar algunos apartamentos encontrados
+    if (apartments.length > 0) {
+      console.log("🏠 Primeros resultados:", apartments.slice(0, 3).map(apt => ({
+        title: apt.title,
+        provincia: apt.location?.province?.nm,
+        municipio: apt.location?.municipality?.nm,
+        precio: apt.price,
+        metros: apt.squareMeters
+      })));
+    }
 
     // 5. Renderiza los resultados
     res.render("seeApartments.ejs", { 
@@ -500,8 +630,7 @@ export const searchApartments = async (req, res) => {
     });
 
   } catch (err) {
-    // Manejo de errores
-    console.error("❌ Error en búsqueda IA:", err.message);
+    console.error("💥 Error en búsqueda IA:", err.message);
     
     if (err.response?.status === 429) {
       req.flash("error", "🚫 Límite de IA alcanzado. Inténtalo más tarde.");
@@ -511,113 +640,118 @@ export const searchApartments = async (req, res) => {
     
     res.redirect("/");
   }
-};// --- Gestión de Reservas ---
+};
+// ********** Gestión de Reservas **********
 
-// Crear una nueva reserva
+/**
+
+Crea una nueva reserva para un apartamento verificando disponibilidad de fechas y confirmando el pago.
+@param {object} req - Objeto de solicitud de Express.
+@param {object} res - Objeto de respuesta de Express.
+*/
 export const postNewReservation = async (req, res) => {
-  const { apartmentId, guestName, guestEmail, dateRange } = req.body;
-  const [start, end] = dateRange.split(" - ");
-  const startDate = new Date(start);
-  const endDate = new Date(end);
+  const { apartmentId, guestName, guestEmail, dateRange } = req.body;
+  const [start, end] = dateRange.split(" - ");
+  const startDate = new Date(start);
+  const endDate = new Date(end);
 
-  if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-    console.log("fecha no disponible");
-    req.flash("error_msg", "Fechas no disponibles.");
-    res.redirect("/reservations/new-reservation"); // Redirige a la misma página
-  }
+  if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+    req.flash("error_msg", "Fechas no disponibles.");
+    res.redirect("/reservations/new-reservation"); 
+  }
 
-  const status = "confirmed";
-  const paid = true;
-  try {
-    // Busca reservas existentes que se solapen y estén confirmadas
-    const dataReservations = await Reservation.find({
-      apartment: apartmentId,
-      status: "confirmed",
-      $and: [{ endDate: { $gt: startDate } }, { startDate: { $lt: endDate } }],
-    });
+  const status = "confirmed";
+  const paid = true;
+  try {
+    const dataReservations = await Reservation.find({
+      apartment: apartmentId,
+      $and: [{ endDate: { $gt: startDate } }, { startDate: { $lt: endDate } }],
+    });
 
-    console.log("dataReservations:", dataReservations);
+    if (dataReservations.length === 0) { 
+      const newReservation = new Reservation({
+        apartment: apartmentId,
+        user: req.session.userId,
+        guestName,
+        guestEmail,
+        startDate,
+        endDate,
+        status,
+        paid,
+      });
 
-    if (dataReservations.length === 0) { // Si no hay solapamientos, crea la reserva
-      console.log("creamos el objeto");
-      const newReservation = new Reservation({
-        apartment: apartmentId,
-        user: req.session.userId,
-        guestName,
-        guestEmail,
-        startDate,
-        endDate,
-        status,
-        paid,
-      });
-      console.log("objeto creado:", newReservation);
-
-      await newReservation.save();
-      console.log("Objeto guardado");
-      req.flash("success_msg", "Reserva realizada con éxito.");
-      res.redirect("/"); // Redirige a la página principal
-    } else {
-      req.flash("error_msg", "Fechas no disponibles");
-      res.redirect(`/apartments/${apartmentId}#reservation`); // Vuelve a la página del apartamento
-    }
-  } catch (err) {
-    req.flash(
-      "error_msg",
-      "Fallo en la realización de la reserva. Lo comunicaremos a nuestro departamento técnico."
-    );
-    res.redirect(`/apartments/${apartmentId}#reservation`);
-  }
+      await newReservation.save();
+      req.flash("success_msg", "Reserva realizada con éxito.");
+      res.redirect("/"); 
+    } else {
+      req.flash("error_msg", "Fechas no disponibles");
+      res.redirect(`/apartments/${apartmentId}#reservation`); 
+    }
+  } catch (err) {
+    req.flash(
+      "error_msg",
+      "Fallo en la realización de la reserva. Lo comunicaremos a nuestro departamento técnico."
+    );
+    res.redirect(`/apartments/${apartmentId}#reservation`);
+  }
 };
 
+// ********** Rutas con ID (Detalles) **********
 
-// --- Rutas con ID (Detalles) ---
+/**
 
-// Obtener detalles de apartamento por ID
+Obtiene y renderiza los detalles de un apartamento específico por su ID junto con sus reservas.
+@param {object} req - Objeto de solicitud de Express.
+@param {object} res - Objeto de respuesta de Express.
+*/
 export const getApartmentById = async (req, res) => {
-  const { id } = req.params;
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).render("error", {
-      message: "ID inválido",
-      status: 400,
-    });
-  }
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).render("error", {
+      message: "ID inválido",
+      status: 400,
+    });
+  }
 
-  try {
-    const apartments = await Apartment.findById(id); // Busca el apartamento
-    const reservations = await Reservation.find({ apartment: apartments }); // Busca reservas para ese apartamento
-    res.render("detailApartment.ejs", {
-      title: "home",
-      error: undefined,
-      apartments,
-      reservations,
-    });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+  try {
+    const apartments = await Apartment.findById(id); 
+    const reservations = await Reservation.find({ apartment: apartments }); 
+    res.render("detailApartment.ejs", {
+      title: "home",
+      error: undefined,
+      apartments,
+      reservations,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };
 
-// Obtener reservas de un usuario por ID (de reserva)
-export const getReservationsById = async (req, res) => {
-  const { id } = req.params;
-  console.log(id); // Log del ID de la reserva (aunque no se usa para filtrar)
-  if (!mongoose.Types.ObjectId.isValid(id)) { // Valida si es un ID de MongoDB válido
-    return res.status(400).render("error", {
-      message: "ID inválido",
-      status: 400,
-    });
-  }
+/**
 
-  try {
-    // Busca todas las reservas del usuario actual, no por el ID de la ruta
-    const reservations = await Reservation.find({
-      user: req.session.userId,
-    }).populate("apartment"); // Popula los detalles del apartamento
-    res.render("userReservations.ejs", {
-      title: "home",
-      error: undefined,
-      reservations,
-    });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+Obtiene y renderiza todas las reservas del usuario actual por su ID de sesión.
+@param {object} req - Objeto de solicitud de Express.
+@param {object} res - Objeto de respuesta de Express.
+*/
+export const getReservationsById = async (req, res) => {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) { 
+    return res.status(400).render("error", {
+      message: "ID inválido",
+      status: 400,
+    });
+  }
+
+  try {
+    const reservations = await Reservation.find({
+      user: req.session.userId,
+    }).populate("apartment"); 
+    res.render("userReservations.ejs", {
+      title: "home",
+      error: undefined,
+      reservations,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };

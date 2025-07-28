@@ -155,7 +155,7 @@
                         <i class="bi bi-trash3 me-1"></i>Eliminar
                       </button>
                       <% } else { %>
-                      <form action="/admin/apartments/active/<%= apartment._id %>" method="POST" class="flex-fill">
+                      <form action="/admin/apartments/delete/<%= apartment._id %>" method="POST" class="flex-fill">
                         <button type="submit" class="btn btn-success btn-sm w-100 rounded-pill transition-all hover-lift" data-bs-toggle="tooltip" title="Activar apartamento">
                           <i class="bi bi-check-circle me-1"></i>Activar
                         </button>
@@ -204,29 +204,29 @@
       <div class="modal fade" id="deleteModal-<%= apartment._id %>" tabindex="-1" aria-labelledby="deleteModalLabel-<%= apartment._id %>" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
-            <div class="modal-header bg-danger bg-gradient text-white border-0">
+            <div class="modal-header bg-warning bg-gradient text-dark border-0">
               <h5 class="modal-title fw-bold" id="deleteModalLabel-<%= apartment._id %>">
-                <i class="bi bi-exclamation-triangle me-2"></i>Confirmar Eliminación
+                <i class="bi bi-exclamation-triangle me-2"></i>Confirmar Acción
               </h5>
-              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <div class="modal-body p-4">
               <div class="text-center mb-3">
-                <i class="bi bi-trash3 text-danger" style="font-size: 3rem"></i>
+                <i class="bi bi-toggle-off text-warning" style="font-size: 3rem"></i>
               </div>
               <p class="text-center mb-0">
-                ¿Estás seguro de que deseas eliminar
-                <strong class="text-danger">"<%= apartment.title %>"</strong>?
+                ¿Estás seguro de que deseas desactivar
+                <strong class="text-warning">"<%= apartment.title %>"</strong>?
               </p>
-              <p class="text-center text-muted small mt-2">Esta acción no se puede deshacer.</p>
+              <p class="text-center text-muted small mt-2">El apartamento se ocultará de la búsqueda pública, pero podrás reactivarlo posteriormente.</p>
             </div>
             <div class="modal-footer border-0 p-4 pt-0">
               <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">
                 <i class="bi bi-x-circle me-1"></i>Cancelar
               </button>
               <form action="/admin/apartments/delete/<%= apartment._id %>" method="POST" class="d-inline delete-form">
-                <button type="submit" class="btn btn-danger rounded-pill px-4">
-                  <i class="bi bi-trash3 me-1"></i>Sí, Eliminar
+                <button type="submit" class="btn btn-warning rounded-pill px-4">
+                  <i class="bi bi-toggle-off me-1"></i>Sí, Desactivar
                 </button>
               </form>
             </div>
