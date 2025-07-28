@@ -3,7 +3,7 @@ import * as apiController from '../controllers/api.controller.js';
 
 const router = express.Router();
 
-// --- Rutas de la API ---
+// ********** Rutas de la API **********
 
 // Endpoint raíz de la API (para obtener todos los apartamentos en formato JSON)
 router.get('/', apiController.getApi);
