@@ -1,10 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
-  // Contador de caracteres para el mensaje
   const messageField = document.getElementById('message');
   const messageCharCount = document.getElementById('messageCharCount');
   
   if (messageField && messageCharCount) {
-    // Inicializar contador
     messageCharCount.textContent = messageField.value.length;
     
     messageField.addEventListener('input', function() {
@@ -55,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const form = document.getElementById('contactForm');
   if (form) {
     form.addEventListener('submit', function(e) {
-      e.preventDefault(); // Prevenir envío real
+      e.preventDefault(); 
       
       if (!form.checkValidity()) {
         e.stopPropagation();

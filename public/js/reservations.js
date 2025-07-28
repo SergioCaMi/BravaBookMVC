@@ -1,21 +1,15 @@
-// ========== RESERVATIONS.JS - FUNCIONALIDAD ESPECÍFICA PARA VISTA DE RESERVAS ==========
 
 document.addEventListener('DOMContentLoaded', function() {
   // Inicializar tooltips de Bootstrap
   initializeTooltips();
-  
   // Animación de números en estadísticas
   animateStatNumbers();
-  
   // Efectos de hover mejorados para filas de tabla
   enhanceTableRowEffects();
-  
   // Inicializar efectos de partículas
   initializeParticleEffects();
-  
   // Configurar eventos de modales
   setupModalEvents();
-  
   // Configurar carrusel de reservations si existe
   setupReservationsCarousel();
 });
@@ -87,7 +81,6 @@ function enhanceTableRowEffects() {
       this.style.transform = 'translateY(0) scale(1)';
     });
     
-    // Efecto de click suave
     row.addEventListener('mousedown', function() {
       this.style.transform = 'translateY(-1px) scale(0.99)';
     });
@@ -108,7 +101,6 @@ function initializeParticleEffects() {
   
   if (particles.length === 0) return;
   
-  // Efecto parallax suave para las partículas
   document.addEventListener('mousemove', function(e) {
     const x = e.clientX / window.innerWidth;
     const y = e.clientY / window.innerHeight;
@@ -123,7 +115,6 @@ function initializeParticleEffects() {
     });
   });
   
-  // Resetear partículas cuando el mouse sale de la ventana
   document.addEventListener('mouseleave', function() {
     particles.forEach(particle => {
       particle.style.transform = 'translate(0px, 0px)';
@@ -138,7 +129,6 @@ function initializeParticleEffects() {
  * Configura eventos específicos para modales
  */
 function setupModalEvents() {
-  // Eventos para modales de eliminación
   const deleteModals = document.querySelectorAll('[id^="deleteReservationModal-"]');
   deleteModals.forEach(modal => {
     modal.addEventListener('show.bs.modal', function() {
@@ -178,18 +168,14 @@ function setupReservationsCarousel() {
   const carousel = document.querySelector('#reservationsCarousel');
   if (!carousel) return;
   
-  // Configurar indicadores modernos
   const indicators = document.querySelectorAll('.carousel-indicator-modern');
   
   indicators.forEach(indicator => {
     indicator.addEventListener('click', function() {
-      // Remover clase active de todos los indicadores
       indicators.forEach(ind => ind.classList.remove('active'));
-      // Añadir clase active al indicador clickeado
       this.classList.add('active');
     });
     
-    // Efectos de hover mejorados
     indicator.addEventListener('mouseenter', function() {
       if (!this.classList.contains('active')) {
         this.style.transform = 'scale(1.1)';
@@ -353,18 +339,15 @@ window.ReservationsStats = ReservationsStats;
 
 // Eventos de ventana
 window.addEventListener('resize', function() {
-  // Reajustar efectos responsive si es necesario
   const isMobile = window.innerWidth <= 768;
   
   if (isMobile) {
-    // Ajustes para móvil
     const actionButtons = document.querySelectorAll('.action-buttons');
     actionButtons.forEach(group => {
       group.style.flexDirection = 'column';
       group.style.gap = '0.25rem';
     });
   } else {
-    // Ajustes para desktop
     const actionButtons = document.querySelectorAll('.action-buttons');
     actionButtons.forEach(group => {
       group.style.flexDirection = 'row';

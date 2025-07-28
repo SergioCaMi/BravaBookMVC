@@ -1,9 +1,4 @@
-/**
- * Sistema de paginación personalizada para carruseles
- * Compatible con users.ejs, reservations.ejs y seeApartments.ejs
- */
 
-// Variables globales para el estado de la paginación
 let currentPageIndex = 0;
 let totalPages = 0;
 let carouselId = '';
@@ -17,16 +12,12 @@ function initializeCarouselPagination(id = 'usersCarousel', total = 1) {
   carouselId = id;
   totalPages = total;
   currentPageIndex = 0;
-  
   // Configurar los event listeners para los botones de paginación
   setupPaginationListeners();
-  
   // Configurar listeners para eventos de Bootstrap Carousel
   setupCarouselListeners();
-  
   // Actualizar estado inicial
   updatePaginationState();
-  
   // Inicializar componentes Bootstrap
   reinitializeBootstrapComponents();
 }
@@ -36,23 +27,18 @@ function initializeCarouselPagination(id = 'usersCarousel', total = 1) {
  * Se puede llamar desde cualquier script que modifique el DOM
  */
 function reinitializeAllComponents() {
-  // Detectar automáticamente el carrusel presente en la página
   const carousels = ['usersCarousel', 'reservationsCarousel', 'apartmentsCarousel'];
-  
   for (let carouselIdToCheck of carousels) {
     const carousel = document.getElementById(carouselIdToCheck);
     if (carousel) {
       // Obtener el número total de páginas
       const totalPagesElement = document.getElementById('totalPagesCount');
       const total = totalPagesElement ? parseInt(totalPagesElement.textContent) : 1;
-      
       // Inicializar la paginación para este carrusel
       initializeCarouselPagination(carouselIdToCheck, total);
       break;
     }
   }
-  
-  // Reinicializar componentes Bootstrap independientemente
   reinitializeBootstrapComponents();
 }
 
@@ -128,7 +114,7 @@ function reinitializeBootstrapComponents() {
         }
       });
 
-      // Reinicializar modales - CRUCIAL para que funcionen los botones
+      // Reinicializar modales 
       const modalTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="modal"]'));
       modalTriggerList.forEach(function (modalTriggerEl) {
         // Verificar que el modal target existe en el DOM
@@ -138,7 +124,6 @@ function reinitializeBootstrapComponents() {
           modalTriggerEl.removeEventListener('click', handleModalClick);
           // Agregar event listener actualizado
           modalTriggerEl.addEventListener('click', handleModalClick);
-          
           // También forzar la inicialización de Bootstrap
           const targetModal = document.querySelector(targetSelector);
           if (targetModal && !bootstrap.Modal.getInstance(targetModal)) {
@@ -172,17 +157,14 @@ function handleModalClick(event) {
     if (targetModal) {
       console.log('Modal found, showing:', targetModal);
       
-      // Asegurar que el modal tenga una instancia de Bootstrap
       let modal = bootstrap.Modal.getInstance(targetModal);
       if (!modal) {
         modal = new bootstrap.Modal(targetModal);
       }
       
-      // Mostrar el modal
       modal.show();
     } else {
       console.error('Modal not found:', targetSelector);
-      // Debug: mostrar todos los modales disponibles
       const allModals = document.querySelectorAll('.modal');
       console.log('Available modals:', Array.from(allModals).map(m => m.id));
     }
@@ -220,7 +202,6 @@ function setupDOMObserver() {
     }
   });
   
-  // Observar cambios en todo el documento
   observer.observe(document.body, {
     childList: true,
     subtree: true
@@ -239,7 +220,6 @@ function navigateToPage(pageIndex) {
   const carousel = document.getElementById(carouselId);
   if (!carousel) return;
   
-  // Usar Bootstrap carousel para navegar
   const bsCarousel = bootstrap.Carousel.getInstance(carousel) || new bootstrap.Carousel(carousel);
   bsCarousel.to(pageIndex);
 }
@@ -311,7 +291,6 @@ function updatePaginationInfo() {
  * @returns {number} Número de elementos por página
  */
 function getItemsPerPage() {
-  // Detectar el tipo de vista basado en el ID del carrusel
   switch (carouselId) {
     case 'usersCarousel':
     case 'reservationsCarousel':
@@ -328,13 +307,11 @@ function getItemsPerPage() {
  * @returns {number} Número total de elementos
  */
 function getTotalItems() {
-  // Intentar obtener el total desde elementos en la página
   const totalElement = document.querySelector('[data-total-items]');
   if (totalElement) {
     return parseInt(totalElement.dataset.totalItems);
   }
   
-  // Fallback: calcular basado en las páginas y elementos por página
   return totalPages * getItemsPerPage();
 }
 
@@ -354,7 +331,6 @@ function reinitializePagination(newCarouselId, newTotalPages) {
  */
 function setupKeyboardNavigation() {
   document.addEventListener('keydown', function(event) {
-    // Solo activar si no hay inputs enfocados
     if (document.activeElement.tagName === 'INPUT' || 
         document.activeElement.tagName === 'TEXTAREA') {
       return;
@@ -381,7 +357,7 @@ function setupKeyboardNavigation() {
   });
 }
 
-// Exportar funciones para uso global
+// Exportar funciones 
 window.initializeCarouselPagination = initializeCarouselPagination;
 window.reinitializePagination = reinitializePagination;
 window.navigateToPage = navigateToPage;
@@ -391,12 +367,8 @@ window.reinitializeBootstrapComponents = reinitializeBootstrapComponents;
 
 // Auto-inicializar en páginas compatibles
 document.addEventListener('DOMContentLoaded', function() {
-  // Pequeño delay para asegurar que Bootstrap esté completamente cargado
+  // Pequeño delay para asegurar que Bootstrap esté cargado
   setTimeout(() => {
-    // Usar la función global de reinicialización
     reinitializeAllComponents();
-    
-    // Opcional: activar navegación por teclado
-    // setupKeyboardNavigation();
   }, 500);
 });

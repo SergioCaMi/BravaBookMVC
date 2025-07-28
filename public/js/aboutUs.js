@@ -1,6 +1,5 @@
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Inicializar todas las funcionalidades
   initScrollAnimations()
   initParticleEffects()
   initCardInteractions()

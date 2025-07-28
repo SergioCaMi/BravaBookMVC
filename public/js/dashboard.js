@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Filtrar filas según el tipo de reserva
     rows.forEach(row => {
-      const reservationType = row.dataset.type; // 'made' o 'received'
+      const reservationType = row.dataset.type; 
       
       if (filter === reservationType) {
         row.style.display = '';

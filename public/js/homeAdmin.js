@@ -26,7 +26,6 @@ function updateHiddenFields() {
     }
 }
 
-// Inicializar tooltips
 var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
 var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
     return new bootstrap.Tooltip(tooltipTriggerEl);
@@ -53,7 +52,7 @@ $(document).ready(function () {
             },
             startDate: moment(),
             endDate: moment().add(1, "days"),
-            autoUpdateInput: false, // Importante para que no muestre "Invalid date" inicialmente
+            autoUpdateInput: false, 
             ranges: {
                 'Hoy': [moment(), moment()],
                 'Mañana': [moment().add(1, "days"), moment().add(1, "days")],
@@ -61,17 +60,15 @@ $(document).ready(function () {
                 'Este mes': [moment().startOf('month'), moment().endOf('month')],
                 'Próximo mes': [moment().add(1, 'month').startOf('month'), moment().add(1, 'month').endOf('month')]
             },
-            alwaysShowCalendars: true, // Siempre muestra los calendarios
+            alwaysShowCalendars: true,
         },
         function (start, end, label) {
             $("#startDate").val(start.format("YYYY-MM-DD"));
             $("#endDate").val(end.format("YYYY-MM-DD"));
-            // Actualiza el campo visible con las fechas seleccionadas
             $("#dateRange").val(start.format("YYYY-MM-DD") + ' - ' + end.format("YYYY-MM-DD"));
         }
     );
 
-    // Si el campo de fecha está vacío al cargar, no mostrar "Invalid date"
     if (!$("#startDate").val() || !$("#endDate").val()) {
          $("#dateRange").val('');
     }
@@ -82,15 +79,12 @@ $(document).ready(function () {
         $(this).val(picker.startDate.format("YYYY-MM-DD") + ' - ' + picker.endDate.format("YYYY-MM-DD"));
     });
 
-    // Limpiar el campo de fecha al cancelar o al cargar si no hay fechas previas
     $("#dateRange").on('cancel.daterangepicker', function(ev, picker) {
         $(this).val('');
         $("#startDate").val('');
         $("#endDate").val('');
     });
 
-    // Este código es para asegurar que si ya hay fechas en los hidden inputs (por un envío previo del formulario),
-    // el daterangepicker las muestre.
     const initialStartDate = $("#startDate").val();
     const initialEndDate = $("#endDate").val();
     if (initialStartDate && initialEndDate) {

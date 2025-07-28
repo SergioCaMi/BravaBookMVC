@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
     const navbar = document.getElementById('mainNavbar');
-    // Efecto de scroll en el navbar
     window.addEventListener('scroll', function() {
         if (window.scrollY > 50) {
             navbar.classList.add('scrolled');
@@ -8,7 +7,6 @@ document.addEventListener('DOMContentLoaded', function() {
             navbar.classList.remove('scrolled');
         }
     });
-    // Cerrar dropdown al hacer click fuera
     document.addEventListener('click', function(event) {
         const dropdowns = document.querySelectorAll('.dropdown-menu.show');
         dropdowns.forEach(dropdown => {
@@ -18,11 +16,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-    // Animación suave para los enlaces
     const navLinks = document.querySelectorAll('.nav-link');
     navLinks.forEach(link => {
         link.addEventListener('click', function(e) {
-            // Añadir efecto de ripple
             const ripple = document.createElement('span');
             ripple.classList.add('ripple');
             this.appendChild(ripple);

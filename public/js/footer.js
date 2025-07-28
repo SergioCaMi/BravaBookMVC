@@ -1,11 +1,9 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Inicializar tooltips
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
     
-    // Efecto de newsletter
     const newsletterForm = document.querySelector('.newsletter-form');
     if (newsletterForm) {
         newsletterForm.addEventListener('submit', function(e) {
@@ -27,7 +25,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Animación de números en las estadísticas
     const observerOptions = {
         threshold: 0.5,
         rootMargin: '0px 0px -100px 0px'
@@ -65,5 +62,4 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         requestAnimationFrame(update);
     }
-    // Efecto parallax eliminado para sticky footer real
 });

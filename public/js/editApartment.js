@@ -1,7 +1,3 @@
-// --- editApartment.js ---
-console.log("¡editApartment.js cargado y ejecutándose!");
-
-// Función autoejecutable para aplicar la validación de Bootstrap a todos los formularios.
 (function () {
     var forms = document.querySelectorAll(".needs-validation");
     Array.prototype.slice.call(forms).forEach(function (form) {
@@ -19,10 +15,7 @@ console.log("¡editApartment.js cargado y ejecutándose!");
     });
 })();
 
-// Variable global para llevar la cuenta de cuántos campos de foto se han añadido.
 let photoCount = 0;
-
-// Espera a que el DOM esté completamente cargado para inicializar.
 document.addEventListener("DOMContentLoaded", function() {
     const existingPhotos = document.querySelectorAll('#existingPhotosContainer .photo-fieldset-existing');
     photoCount = existingPhotos.length;
@@ -33,12 +26,9 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     generateBedInputs();
 
-    // --- ¡IMPORTANTE! INVOCAR LA FUNCIÓN DE INICIALIZACIÓN DE UBICACIÓN AQUÍ ---
-    // Esta línea asegura que initializeLocationSelectors se ejecute al cargar la página
     initializeLocationSelectors();
 });
 
-// --- Tus funciones originales (generateBedInputs, addRuleInput, addNewPhotoField, etc.) ---
 
 function generateBedInputs() {
     const roomCount = parseInt(document.getElementById("rooms").value) || 0;
@@ -239,24 +229,15 @@ document.addEventListener('click', function(event) {
     }
 });
 
-// --- FUNCIÓN ADICIONAL: Cargar y pre-seleccionar municipios ---
 function loadMunicipalitiesAndPreselect() {
     const provinceSelect = document.getElementById("provinceSelect");
     const municipalitySelect = document.getElementById("municipalitySelect");
 
-    // Estas variables globales `provinces` y `cities` provienen de `municipiAndProvince.js`.
-    // La función `initializeLocationSelectors` ya se encarga de esperar que estén cargadas.
     const preselectedProvinceId = provinceSelect.dataset.selected;
     const preselectedMunicipalityId = municipalitySelect.dataset.selected;
-
-    // Si hay una provincia pre-seleccionada desde el EJS
     if (preselectedProvinceId) {
-        // Establecer el valor de la provincia en el select
         provinceSelect.value = preselectedProvinceId;
-
-        // Limpiar y rellenar el select de municipios con las opciones correctas
-        municipalitySelect.innerHTML = '<option value="">-- Selecciona un municipio --</option>'; // Opción por defecto
-
+        municipalitySelect.innerHTML = '<option value="">-- Selecciona un municipio --</option>'; 
         const filteredCities = cities.filter(city =>
             String(city.id).startsWith(String(preselectedProvinceId))
         );
@@ -268,25 +249,17 @@ function loadMunicipalitiesAndPreselect() {
             option.textContent = city.nm;
             municipalitySelect.appendChild(option);
         });
-
-        // Si hay un municipio pre-seleccionado, establecer su valor en el select
         if (preselectedMunicipalityId) {
-            // Usamos un pequeño setTimeout para asegurar que las opciones del municipio se hayan renderizado
             setTimeout(() => {
                 municipalitySelect.value = preselectedMunicipalityId;
             }, 0);
         }
-
-        // Actualizar los inputs ocultos de ID y nombre de provincia y municipio.
-        // Esto es vital para que se envíen los valores correctos si el usuario no interactúa con los selects.
         const selectedProvince = provinces.find(p => String(p.id) === String(preselectedProvinceId));
         const selectedCity = cities.find(c => String(c.id) === String(preselectedMunicipalityId));
-
         const provinceIdInput = document.getElementById("provinceIdInput");
         const provinceNameInput = document.getElementById("provinceNameInput");
         const municipalityIdInput = document.getElementById("municipalityIdInput");
         const municipalityNameInput = document.getElementById("municipalityNameInput");
-
         if (provinceIdInput) {
             provinceIdInput.value = selectedProvince?.id || "";
         }
@@ -302,26 +275,20 @@ function loadMunicipalitiesAndPreselect() {
     }
 }
 
-// Función que coordina la carga inicial de selectores de ubicación.
-// Espera a que las variables globales `provinces` y `cities` estén disponibles.
 function initializeLocationSelectors() {
     const checkAndLoad = () => {
-        // Verificamos si las variables globales 'provinces' y 'cities' (de municipiAndProvince.js)
-        // están cargadas y contienen datos.
         if (typeof provinces !== 'undefined' && provinces.length > 0 && typeof cities !== 'undefined' && cities.length > 0) {
             console.log('✅ Datos de provincias y municipios cargados. Iniciando preselección.');
             loadMunicipalitiesAndPreselect();
         } else {
             console.log('⏳ Esperando datos de provincias y municipios de municipiAndProvince.js...');
-            // Reintentamos después de un corto tiempo si los datos aún no están listos
             setTimeout(checkAndLoad, 50);
         }
     };
-    checkAndLoad(); // Iniciamos la verificación
+    checkAndLoad(); 
 }
 
 
-// --- Manejo del Submit del Formulario (Datos de Ubicación y Validación Final) ---
 document
     .getElementById("apartmentForm")
     .addEventListener("submit", function (event) {
@@ -335,7 +302,7 @@ document
         // Nos aseguramos de que `provinces` y `cities` estén disponibles antes de usarlas
         if (typeof provinces === 'undefined' || typeof cities === 'undefined' || provinces.length === 0 || cities.length === 0) {
             console.error('❌ ERROR: Datos de provincias o municipios no cargados. Asegúrate que `municipiAndProvince.js` se cargue correctamente antes de `editApartment.js`.');
-            event.preventDefault(); // Prevenimos el envío si los datos no están
+            event.preventDefault(); 
             event.stopPropagation();
             return;
         }
@@ -344,7 +311,7 @@ document
         console.log('Estado de la variable global cities:', cities);
 
         const selectedProvince = provinces.find(
-            (p) => String(p.id) === String(provinceSelect.value) // Aseguramos comparación de strings
+            (p) => String(p.id) === String(provinceSelect.value) 
         );
         const selectedCity = cities.find(
                 (c) => String(c.id) === String(municipalitySelect.value) && String(c.id).startsWith(String(provinceSelect.value))
@@ -358,7 +325,6 @@ document
         const municipalityIdInput = document.getElementById("municipalityIdInput");
         const municipalityNameInput = document.getElementById("municipalityNameInput");
 
-        // Asignar los valores a los campos ocultos para el envío al servidor
         if (provinceIdInput) {
             provinceIdInput.value = selectedProvince?.id || "";
             console.log('provinceIdInput.value asignado a:', provinceIdInput.value);
@@ -376,7 +342,6 @@ document
             console.log('municipalityNameInput.value asignado a:', municipalityNameInput.value);
         }
 
-        // --- Validación de Fotos Final (Tu código original) ---
         const existingPhotosCount = document.querySelectorAll('#existingPhotosContainer .photo-fieldset-existing').length;
         const newPhotosCount = document.querySelectorAll('#newPhotosContainer .photo-fieldset-new').length;
         const errorFotoElement = document.querySelector('.errorFoto');
@@ -397,19 +362,15 @@ document
             const urlInput = document.getElementById(`newApartmentPhotoUrl_${index}`);
 
             if (uploadTypeFile && uploadTypeFile.checked) {
-                // Validación para archivos: Multer y el backend se encargarán de esto.
             } else if (uploadTypeUrl && uploadTypeUrl.checked) {
                 if (urlInput) {
-                    // Validación para URLs: se recomienda realizar una validación más robusta en el backend.
                 }
             }
         });
     }, false);
 
-// ========== FUNCIONALIDADES EXTRAÍDAS DE EDITAPARTMENT.EJS ==========
 
 document.addEventListener('DOMContentLoaded', function() {
-  // Actualizar barra de progreso
   function updateProgressBar() {
     const sections = document.querySelectorAll('.form-section');
     const totalSections = sections.length;
@@ -482,4 +443,3 @@ function addRuleInput() {
   container.appendChild(div);
 }
 
-// ========== FIN FUNCIONALIDADES EXTRAÍDAS ==========

@@ -73,25 +73,26 @@ document.addEventListener("DOMContentLoaded", () => {
       if (errorFotoElement) errorFotoElement.style.display = "inline";
       isValid = false;
     } else {
-      // Si hay campos de foto, ocultar el mensaje de error si estaba visible
       if (errorFotoElement) errorFotoElement.style.display = "none";
       // Asegurarse de que el input oculto de validación esté en 'true'
       if (photoClickedInput) photoClickedInput.value = "true";
     }
 
-    // Si la validación falla, prevenir el envío del formulario
+
+    if (errorFotoElement && totalPhotoFields > 0) {
+      errorFotoElement.style.display = "none";
+    }
+
     if (!isValid) {
       e.preventDefault();
       e.stopPropagation();
     }
 
-    // Añade clases de Bootstrap para mostrar la retroalimentación de validación
+    // Añade clases de Bootstrap para la validación
     form.classList.add("was-validated");
   });
 
 
-  // Asegurarse de que el formulario tenga enctype="multipart/form-data" si no lo tiene (redundante si ya está en HTML)
-  // const form = document.getElementById('apartmentForm'); // Ya está definido arriba
   if (form && !form.enctype) {
     form.enctype = 'multipart/form-data';
   }
@@ -103,23 +104,14 @@ document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("click", function(event) {
     if (event.target.classList.contains("remove-new-photo-field")) {
       event.target.closest(".photo-fieldset").remove();
-      // Opcional: Reajustar photoCount si se reordenan o se usan índices específicos,
-      // pero para "nuevas fotos" con nombres de array, no es estrictamente necesario.
-      // Aquí, solo eliminamos el elemento del DOM.
     }
   });
 
 
-  // Asegurarse de que el contador photoCount se inicialice correctamente.
-  // En la creación, siempre empezamos en 0 si no hay fotos precargadas.
-  //let photoCount = 0; // Esta línea debería estar fuera del DOMContentLoaded o ser global.
-  // Mover `photoCount` fuera de `DOMContentLoaded` o declararla sin `let` aquí
-  // si ya está declarada globalmente arriba, para que `addNewPhotoField` pueda acceder.
 });
 
 
 // ********** Funciones Globales para añadir elementos dinámicamente **********
-// Declarar photoCount globalmente para que todas las funciones puedan acceder a ella.
 let photoCount = 0;
 
 /**
@@ -128,13 +120,13 @@ let photoCount = 0;
 function addNewPhotoField() {
     const photoClickedInput = document.getElementById("photoButtonClicked");
     if (photoClickedInput) {
-        photoClickedInput.value = "true"; // Indica que se ha intentado añadir una foto
+        photoClickedInput.value = "true"; 
     }
 
     const container = document.getElementById("photosContainer");
     const fieldset = document.createElement("fieldset");
-    fieldset.className = "photo-fieldset border p-3 mb-3 rounded"; // Añadimos estilos para mejor visualización
-    fieldset.id = `newPhotoFieldset_${photoCount}`; // Añadimos un ID para fácil referencia
+    fieldset.className = "photo-fieldset border p-3 mb-3 rounded"; 
+    fieldset.id = `newPhotoFieldset_${photoCount}`; 
 
     fieldset.innerHTML = `
         <legend class="h6">Foto ${photoCount + 1}</legend>
@@ -208,23 +200,21 @@ function toggleNewPhotoInput(index, type) {
     if (type === 'file') {
         fileInputContainer.style.display = 'block';
         urlInputContainer.style.display = 'none';
-        urlInput.value = ''; // Limpiar el valor de la URL cuando se cambia a archivo
-        fileInput.required = true; // Hacer requerido el input de archivo
-        urlInput.required = false; // Quitar el requerido del input de URL
-    } else { // type === 'url'
+        urlInput.value = ''; 
+        fileInput.required = true; 
+        urlInput.required = false; 
+    } else { 
         fileInputContainer.style.display = 'none';
         urlInputContainer.style.display = 'block';
-        // No limpiar el valor del archivo cuando se cambia a URL, ya que Multer lo ignorará si no se usa.
-        // Pero el input de archivo no se "limpia" de la misma manera que un input de texto/url.
-        fileInput.value = ''; // Esto sí limpia el archivo seleccionado
-        fileInput.required = false; // Quitar el requerido del input de archivo
-        urlInput.required = true; // Hacer requerido el input de URL
+        fileInput.value = ''; 
+        fileInput.required = false; 
+        urlInput.required = true; 
     }
 }
 
 
 // ********** Función para añadir reglas **********
-let ruleCount = 0; // Se inicializa globalmente o al cargar el DOM
+let ruleCount = 0; 
 
 function addRuleField() {
   const container = document.getElementById("rulesContainer");
@@ -239,10 +229,10 @@ function addRuleField() {
 
   const input = document.createElement("input");
   input.type = "text";
-  input.name = `rules[${ruleCount}]`; // Usar índice para el nombre para que el servidor lo reciba como un array
+  input.name = `rules[${ruleCount}]`; 
   input.placeholder = "Ej: CheckOut antes de las 12am.";
   input.className = "form-control";
-  input.required = true; // Campo requerido
+  input.required = true; 
 
   group.appendChild(label);
   group.appendChild(input);

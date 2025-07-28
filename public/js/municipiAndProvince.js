@@ -1,11 +1,9 @@
-let provinces = []; // Array global para almacenar los datos de las provincias.
-let cities = [];    // Array global para almacenar los datos de las ciudades/municipios.
+let provinces = []; 
+let cities = [];    
 
-// Se ejecuta cuando el contenido del DOM ha sido completamente cargado.
 window.addEventListener("DOMContentLoaded", async () => {
     console.log("=== municipiAndProvince.js iniciado ===");
     
-    // Realiza peticiones asíncronas para obtener los datos de 'province.json' y 'city.json'
     const [provinceRes, cityRes] = await Promise.all([
         fetch("/data/province.json"),
         fetch("/data/city.json"),
@@ -17,7 +15,6 @@ window.addEventListener("DOMContentLoaded", async () => {
     console.log("Provincias cargadas:", provinces.length);
     console.log("Ciudades cargadas:", cities.length);
 
-    // Ordena el array de provincias alfabéticamente por su nombre (`nm`).
     provinces.sort((a, b) => a.nm.localeCompare(b.nm));
 
     const provinceSelect = document.getElementById("provinceSelect");
@@ -25,7 +22,6 @@ window.addEventListener("DOMContentLoaded", async () => {
     const provinceSelectMobile = document.getElementById("provinceSelectMobile");
     const municipalitySelectMobile = document.getElementById("municipalitySelectMobile");
 
-    // Verificar que al menos uno de los elementos existe
     if (!provinceSelect && !provinceSelectMobile) {
         console.error("No se encontraron los elementos select de provincia");
         return;
@@ -36,7 +32,6 @@ window.addEventListener("DOMContentLoaded", async () => {
     const municipalityIdInput = document.getElementById("municipalityIdInput");
     const municipalityNameInput = document.getElementById("municipalityNameInput");
 
-    // Inputs móviles
     const provinceIdInputMobile = document.getElementById("provinceIdInputMobile");
     const provinceNameInputMobile = document.getElementById("provinceNameInputMobile");
     const municipalityIdInputMobile = document.getElementById("municipalityIdInputMobile");
@@ -55,20 +50,18 @@ window.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
-    // Rellenar provincias en ambos selects
     fillProvinces(provinceSelect);
     fillProvinces(provinceSelectMobile);
 
-    // Obtener valores preseleccionados (solo para el formulario desktop si existe)
     const preselectedProvinceId = provinceSelect ? provinceSelect.dataset.selected : null;
     const preselectedMunicipalityId = municipalitySelect ? municipalitySelect.dataset.selected : null;
 
     console.log("Provincia preseleccionada:", preselectedProvinceId, typeof preselectedProvinceId);
     console.log("Municipio preseleccionado:", preselectedMunicipalityId, typeof preselectedMunicipalityId);
 
-    // Si hay provincia preseleccionada, establecerla (solo para desktop)
+    // Si hay provincia preseleccionada, establecerla 
     if (preselectedProvinceId && preselectedProvinceId !== '' && provinceSelect) {
-        // Convertir a string y agregar cero si es necesario para que coincida con el formato del JSON
+        // Convertir a string y agregar cero si es necesario para que coincida con el formato del JSON 01 en lugar de 1. Daba errores al cargar en editApartment.ejs
         let provinceIdToFind = String(preselectedProvinceId);
         if (provinceIdToFind.length === 1) {
             provinceIdToFind = '0' + provinceIdToFind;
@@ -146,15 +139,12 @@ window.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
-    // Agregar event listeners para elementos desktop
     addProvinceListener(provinceSelect, municipalitySelect, provinceIdInput, provinceNameInput, municipalityIdInput, municipalityNameInput);
     addMunicipalityListener(municipalitySelect, municipalityIdInput, municipalityNameInput);
 
-    // Agregar event listeners para elementos móviles
     addProvinceListener(provinceSelectMobile, municipalitySelectMobile, provinceIdInputMobile, provinceNameInputMobile, municipalityIdInputMobile, municipalityNameInputMobile);
     addMunicipalityListener(municipalitySelectMobile, municipalityIdInputMobile, municipalityNameInputMobile);
 
-    // Función para cargar municipios
     function loadMunicipalities(provinceId, municipalitySelectElement, municipalityIdInputElement, municipalityNameInputElement, preselectedMunicipalityId = null) {
         console.log("=== CARGANDO MUNICIPIOS ===");
         console.log("Provincia ID:", provinceId, typeof provinceId);
@@ -196,7 +186,7 @@ window.addEventListener("DOMContentLoaded", async () => {
             
             if (matchingCity) {
                 municipalitySelectElement.value = matchingCity.id;
-                if (municipalityIdInputElement) municipalityIdInputElement.value = preselectedMunicipalityId; // Guardar el ID original
+                if (municipalityIdInputElement) municipalityIdInputElement.value = preselectedMunicipalityId; 
                 if (municipalityNameInputElement) municipalityNameInputElement.value = matchingCity.nm;
                 console.log("Municipio establecido:", matchingCity.id, matchingCity.nm);
             } else {

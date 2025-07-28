@@ -1,4 +1,3 @@
-// Actualizar barra de progreso
 function updateProgressBar() {
   const nameField = document.getElementById('name');
   const emailField = document.getElementById('email');
@@ -30,7 +29,7 @@ function updateProgressBar() {
   }
 }
 
-// Actualizar indicador de fortaleza de contraseña
+// Actualizar indicador de seguridad de contraseña
 function updatePasswordStrength(password) {
   const strengthFill = document.querySelector('.strength-fill');
   const strengthText = document.querySelector('.strength-text');
