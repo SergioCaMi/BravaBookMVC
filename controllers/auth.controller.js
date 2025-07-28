@@ -446,17 +446,24 @@ Traducciones y sinónimos:
 - "pequeño", "acogedor" → squareMeters: {"$lte": 50}
 - "lujoso", "luxury" → services: ["airConditioning", "heating", "television", "kitchen", "internet"], size: "lujoso"
 - "barato" → maxPrice: 50
-- "tele", "tv", "televisión" → services: ["television"]
-- "wifi", "internet" → services: ["internet"]
-- "aire", "ac", "climatizado" → services: ["airConditioning"]
-- "cocina", "kitchen" → services: ["kitchen"]
-- "calefacción", "heating" → services: ["heating"]
+- "tele", "tv", "televisión", "television" → services: ["television"]
+- "wifi", "internet", "red", "conexión" → services: ["internet"]
+- "aire", "ac", "climatizado", "aire acondicionado" → services: ["airConditioning"]
+- "cocina", "kitchen", "cocineta" → services: ["kitchen"]
+- "calefacción", "heating", "calor" → services: ["heating"]
+- "accesible", "accesibilidad", "discapacidad" → services: ["accessibility"]
 - "piscina", "pool", "gimnasio", "gym", "parking", "garaje" → keywords: ["piscina", "gimnasio", "parking"]
+
+IMPORTANTE para servicios:
+- Siempre que veas "wifi", "internet", "red" o "conexión" → DEBE incluir services: ["internet"]
+- Cuando haya servicios, SIEMPRE incluir el array services en el JSON
 
 Ejemplos:
 "apartamento lujoso en Barcelona" → {"location": "Barcelona", "services": ["airConditioning", "heating", "television", "kitchen", "internet"], "size": "lujoso"}
 "piso grande con piscina en Madrid máximo 800€" → {"location": "Madrid", "squareMeters": {"$gte": 120}, "maxPrice": 800, "keywords": ["piscina"]}
 "apartamento pequeño con wifi" → {"squareMeters": {"$lte": 50}, "services": ["internet"]}
+"apartamentos con wifi" → {"services": ["internet"]}
+"pisos con internet" → {"services": ["internet"]}
 
 Devuelve SOLO el objeto JSON válido, sin texto adicional.
 
@@ -559,6 +566,37 @@ Frase: "${escapedQuery}"`,
         mongoQuery[`services.${service}`] = true;
         console.log("🔧 Filtro servicio del modelo:", service);
       }
+    } else {
+      // Fallback: detectar servicios manualmente si Gemini no los detectó
+      const userQueryLower = userQuery.toLowerCase();
+      const manualServices = [];
+      
+      if (userQueryLower.includes('wifi') || userQueryLower.includes('internet') || userQueryLower.includes('red') || userQueryLower.includes('conexión')) {
+        manualServices.push('internet');
+      }
+      if (userQueryLower.includes('aire') || userQueryLower.includes('climatizado') || userQueryLower.includes('ac')) {
+        manualServices.push('airConditioning');
+      }
+      if (userQueryLower.includes('calefacción') || userQueryLower.includes('calor') || userQueryLower.includes('heating')) {
+        manualServices.push('heating');
+      }
+      if (userQueryLower.includes('televisión') || userQueryLower.includes('tv') || userQueryLower.includes('tele')) {
+        manualServices.push('television');
+      }
+      if (userQueryLower.includes('cocina') || userQueryLower.includes('kitchen')) {
+        manualServices.push('kitchen');
+      }
+      if (userQueryLower.includes('accesible') || userQueryLower.includes('accesibilidad')) {
+        manualServices.push('accessibility');
+      }
+      
+      if (manualServices.length > 0) {
+        console.log("🔧 Servicios detectados manualmente (fallback):", manualServices);
+        for (const service of manualServices) {
+          mongoQuery[`services.${service}`] = true;
+          console.log("🔧 Aplicando filtro servicio manual:", service);
+        }
+      }
     }
 
     // Keywords para búsqueda en descripción (servicios adicionales)
@@ -584,20 +622,26 @@ Frase: "${escapedQuery}"`,
     }
 
     // Búsqueda por nombre/título del apartamento
-    // Limpiar consulta eliminando comillas y símbolos
-    let titleSearchWords = userQuery
-      .replace(/[^\w\s]/g, "") // elimina comillas y símbolos
-      .split(/\s+/)
-      .filter(word => word.length > 2 && !["con", "en", "de", "del", "la", "el", "una", "un", "y", "o", "busco", "buscar", "quiero", "necesito", "apartamento", "piso", "casa"].includes(word.toLowerCase()));
+    // SOLO buscar en títulos cuando se pida explícitamente un apartamento por nombre
+    // Detectar patrones como: "apartamento llamado X", "apartamento nombre X", "busco el apartamento X"
+    const isNameSearch = /(?:llamado|nombre|busco el apartamento|apartamento\s+[A-Z])/i.test(userQuery);
     
-    // Si hay filtro de ubicación de Gemini, remover esa palabra de la búsqueda de títulos
-    if (filters.location) {
-      titleSearchWords = titleSearchWords.filter(word => 
-        word.toLowerCase() !== filters.location.toLowerCase()
-      );
-      console.log("🏷️ Palabras para título (sin ubicación):", titleSearchWords);
+    let titleSearchWords = [];
+    
+    if (isNameSearch) {
+      // Si es búsqueda por nombre, extraer solo las palabras relevantes para nombre
+      titleSearchWords = userQuery
+        .replace(/[^\w\s]/g, "") // elimina comillas y símbolos
+        .split(/\s+/)
+        .filter(word => {
+          const wordLower = word.toLowerCase();
+          return word.length > 2 && 
+                 !["con", "en", "de", "del", "la", "el", "una", "un", "y", "o", "busco", "buscar", "quiero", "necesito", "apartamento", "apartamentos", "piso", "pisos", "casa", "llamado", "nombre"].includes(wordLower) &&
+                 !['wifi', 'internet', 'aire', 'climatizado', 'calefaccion', 'television', 'tv', 'cocina', 'kitchen', 'accesible'].includes(wordLower);
+        });
+      console.log("� Búsqueda POR NOMBRE detectada. Palabras para título:", titleSearchWords);
     } else {
-      console.log("🏷️ Palabras para título:", titleSearchWords);
+      console.log("🚫 NO es búsqueda por nombre. Omitiendo búsqueda en títulos para filtros de servicios/ubicación.");
     }
     
     // Detectar si está buscando un apartamento específico (con números o nombres propios)
@@ -611,7 +655,7 @@ Frase: "${escapedQuery}"`,
     
     // Solo ejecutar búsqueda específica si NO hay filtros de ubicación de Gemini
     // y si realmente parece una búsqueda de apartamento específico con números
-    if (!filters.location && titleSearchWords.length >= 2 && hasNumbers && hasSpecificWords) {
+    if (!filters.location && !filters.services && titleSearchWords.length >= 2 && hasNumbers && hasSpecificWords) {
       console.log("🎯 Búsqueda MUY ESPECÍFICA de apartamento detectada - solo título");
       
       const exactTitleRegex = new RegExp(`\\b${titleSearchWords.join('.*')}\\b`, "i");
@@ -640,26 +684,24 @@ Frase: "${escapedQuery}"`,
       }
     }
     
-    // Búsqueda normal en títulos (solo si no es búsqueda específica)
-    if (titleSearchWords.length > 0 && (hasNumbers || hasSpecificWords)) {
-      // Búsqueda exacta para apartamentos específicos
-      const exactTitleRegex = new RegExp(titleSearchWords.join('.*'), "i");
-      descriptionConditions.push(
-        { title: { $regex: exactTitleRegex } }
-      );
-      console.log("🎯 Búsqueda ESPECÍFICA en título con palabras:", titleSearchWords);
-      console.log("🔍 Regex generado:", exactTitleRegex);
-      
-    } else if (titleSearchWords.length > 0) {
-      // Búsqueda general en título - SOLO si no hay filtro de ubicación
-      if (!filters.location) {
+    // Búsqueda en títulos SOLO para nombres específicos
+    if (isNameSearch && titleSearchWords.length > 0) {
+      if (hasNumbers || hasSpecificWords) {
+        // Búsqueda exacta para apartamentos específicos
+        const exactTitleRegex = new RegExp(titleSearchWords.join('.*'), "i");
+        descriptionConditions.push(
+          { title: { $regex: exactTitleRegex } }
+        );
+        console.log("🎯 Búsqueda ESPECÍFICA por nombre con palabras:", titleSearchWords);
+        console.log("🔍 Regex generado:", exactTitleRegex);
+        
+      } else {
+        // Búsqueda general por nombre
         const titleRegex = new RegExp(titleSearchWords.join('|'), "i");
         descriptionConditions.push(
           { title: { $regex: titleRegex } }
         );
-        console.log("🏷️ Búsqueda GENERAL en título con palabras:", titleSearchWords);
-      } else {
-        console.log("🚫 Omitiendo búsqueda en título porque hay filtro de ubicación");
+        console.log("🏷️ Búsqueda GENERAL por nombre con palabras:", titleSearchWords);
       }
     }
 

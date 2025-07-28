@@ -1,4 +1,3 @@
-// ========== ABOUT PAGE JAVASCRIPT ==========
 
 document.addEventListener("DOMContentLoaded", () => {
   // Inicializar todas las funcionalidades

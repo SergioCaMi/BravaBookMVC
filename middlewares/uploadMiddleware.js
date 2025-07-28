@@ -10,13 +10,11 @@ import User from '../models/user.model.js'; // Importa el modelo de usuario para
 const ensureDirExists = (dirPath) => {
   // Comprueba si el directorio en la ruta especificada no existe.
   if (!fs.existsSync(dirPath)) {
-    // Si no existe, crea el directorio de forma recursiva, lo que significa
-    // que también creará cualquier directorio padre necesario que no exista.
     fs.mkdirSync(dirPath, { recursive: true });
   }
 };
 
-// --- Configuración de Multer para la Subida de Avatares de Usuario ---
+// ********** Configuración de Multer para la Subida de Avatares de Usuario **********
 
 // Configura el almacenamiento en disco para las imágenes de avatar de usuario.
 const storage = multer.diskStorage({
@@ -27,6 +25,7 @@ const storage = multer.diskStorage({
    * @param {object} file - El archivo que se está subiendo.
    * @param {function} cb - La función callback que se usa para indicar el destino.
    */
+
   destination: async (req, file, cb) => {
     try {
       // Busca al usuario en la base de datos utilizando el ID de sesión.
@@ -36,8 +35,6 @@ const storage = multer.diskStorage({
         return cb(new Error('Usuario no encontrado'), null);
       }
 
-      // Extrae la parte inicial del email del usuario para usarla como nombre de carpeta.
-      // Por ejemplo, si el email es 'ejemplo@dominio.com', userBaseName será 'ejemplo'.
       const userBaseName = user.email.split('@')[0];
 
       // Construye la ruta completa donde se guardará la imagen:
@@ -50,11 +47,11 @@ const storage = multer.diskStorage({
       // Llama al callback con 'null' para indicar que no hay error y la ruta de destino.
       cb(null, uploadPath);
     } catch (err) {
-      // En caso de cualquier error durante la búsqueda del usuario o la creación del directorio,
       // pasa el error a Multer.
       cb(err, null);
     }
   },
+  
   /**
    * Define el nombre del archivo guardado.
    * En este caso, todas las imágenes de avatar se guardan con el nombre fijo 'avatar.jpg'.
@@ -68,9 +65,5 @@ const storage = multer.diskStorage({
   }
 });
 
-/**
- * Middleware de Multer configurado con el almacenamiento definido.
- * Este 'upload' se puede usar en rutas para manejar la subida de archivos.
- * Por ejemplo: `router.post('/profile', upload.single('avatar'), ...)`
- */
+
 export const upload = multer({ storage });

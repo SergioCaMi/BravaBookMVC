@@ -8,14 +8,12 @@ import { v4 as uuidv4 } from 'uuid'; // Importa la función v4 de 'uuid' para ge
  * @param {string} dirPath - La ruta del directorio a verificar/crear.
  */
 const ensureDirExists = (dirPath) => {
-  // Comprueba si el directorio no existe.
   if (!fs.existsSync(dirPath)) {
-    // Si no existe, lo crea de forma recursiva (crea directorios anidados si es necesario).
     fs.mkdirSync(dirPath, { recursive: true });
   }
 };
 
-// --- Configuración de Multer para la Edición de Apartamentos ---
+// ********** Configuración de Multer para la Edición de Apartamentos **********
 
 // Configura el almacenamiento en disco para las imágenes de apartamentos existentes (edición).
 const storageApartmentImages = multer.diskStorage({
@@ -28,10 +26,8 @@ const storageApartmentImages = multer.diskStorage({
    */
   destination: async (req, file, cb) => {
     try {
-      // Obtiene el ID del apartamento de los parámetros de la solicitud.
       const apartmentId = req.params.id;
 
-      // Si no se proporciona el ID del apartamento, se produce un error.
       if (!apartmentId) {
         return cb(
           new Error(
@@ -41,7 +37,6 @@ const storageApartmentImages = multer.diskStorage({
         );
       }
 
-      // Construye la ruta de subida final: public/uploads/apartments/[apartmentId]
       const uploadPath = path.join(
         "public",
         "uploads",
@@ -55,7 +50,6 @@ const storageApartmentImages = multer.diskStorage({
       // Confirma la carpeta de destino a Multer.
       cb(null, uploadPath);
     } catch (err) {
-      // Manejo de errores si algo sale mal al determinar la ruta de destino.
       console.error(
         "Error al determinar la carpeta de destino para la imagen del apartamento:",
         err
@@ -63,6 +57,7 @@ const storageApartmentImages = multer.diskStorage({
       cb(err, null); // Pasa el error a Multer.
     }
   },
+
   /**
    * Define el nombre del archivo guardado.
    * Genera un nombre único para evitar colisiones.
@@ -90,7 +85,7 @@ export const uploadApartmentImages = multer({
   storage: storageApartmentImages,
 });
 
-// --- Configuración de Multer para la Creación de Nuevos Apartamentos (Temporal) ---
+// ********** Configuración de Multer para la Creación de Nuevos Apartamentos (Temporal) **********
 
 // Configura el almacenamiento en disco para las imágenes temporales de nuevos apartamentos.
 // Estas imágenes se guardan en una carpeta temporal hasta que el apartamento tiene un ID.
@@ -103,7 +98,6 @@ const storageNewApartmentTempImages = multer.diskStorage({
    * @param {function} cb - La función callback para indicar el destino.
    */
   destination: (req, file, cb) => {
-    // Genera un ID único para esta operación de subida temporal.
     const tempUploadId = uuidv4();
     // Construye la ruta de la carpeta temporal: public/uploads/temp_apartment_creations/[tempUploadId].
     const tempUploadPath = path.join('public', 'uploads', 'temp_apartment_creations', tempUploadId);
@@ -118,6 +112,7 @@ const storageNewApartmentTempImages = multer.diskStorage({
     // Confirma la carpeta de destino a Multer.
     cb(null, tempUploadPath);
   },
+  
   /**
    * Define el nombre del archivo guardado en la carpeta temporal.
    * Genera un nombre único similar al anterior.

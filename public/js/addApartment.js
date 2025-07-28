@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function generateBedInputs() {
     const roomCount = parseInt(roomsInput.value) || 0;
-    bedsContainer.innerHTML = ""; // Limpia los campos anteriores
+    bedsContainer.innerHTML = ""; 
 
     if (roomCount <= 0) return; // No generar campos si no hay habitaciones
 
@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
       input.name = `bedsPerRoom[${i}]`;
       input.min = "0";
       input.value = "1";
-      input.required = true; // Campo requerido
+      input.required = true; 
       input.className = "form-control";
 
       col.appendChild(label);
@@ -48,7 +48,6 @@ document.addEventListener("DOMContentLoaded", () => {
     bedsContainer.appendChild(row);
   }
 
-  // Asocia la función a la entrada de número de habitaciones si los elementos existen
   if (roomsInput && bedsContainer) {
     roomsInput.addEventListener("input", generateBedInputs);
   }
@@ -70,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Verificar si se ha añadido al menos un campo de foto (sea archivo o URL)
     const totalPhotoFields = document.querySelectorAll('.photo-fieldset').length;
 
-    if (totalPhotoFields === 0) { // Si no hay ningún campo de foto añadido
+    if (totalPhotoFields === 0) { 
       if (errorFotoElement) errorFotoElement.style.display = "inline";
       isValid = false;
     } else {

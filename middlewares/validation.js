@@ -25,7 +25,7 @@ export const handleValidationErrors = (req, res, next) => {
   next();
 };
 
-// --- VALIDACIONES PARA USUARIO ---
+// ********** VALIDACIONES PARA USUARIO **********
 
 /**
  * Validaciones para registro de usuario
@@ -98,7 +98,7 @@ export const validateUserUpdate = [
   body("avatar").optional().isURL().withMessage("El avatar debe ser una URL válida"),
 ];
 
-// --- VALIDACIONES PARA APARTAMENTO ---
+// ********** VALIDACIONES PARA APARTAMENTO **********
 
 /**
  * Validaciones para crear/editar apartamento
@@ -152,7 +152,7 @@ export const validateApartment = [
   body("services.internet").optional({ checkFalsy: true }).isIn(["on", "true", true]).withMessage("Internet debe ser verdadero o falso"),
 ];
 
-// --- VALIDACIONES PARA RESERVA ---
+// ********** VALIDACIONES PARA RESERVA **********
 
 /**
  * Validaciones para crear/editar reserva
@@ -262,7 +262,7 @@ export const validateReservation = [
   body("totalPrice").optional().isNumeric().withMessage("El precio total debe ser un número").isFloat({ min: 0 }).withMessage("El precio total debe ser positivo"),
 ];
 
-// --- VALIDACIONES PARA PARÁMETROS ---
+// ********** VALIDACIONES PARA PARÁMETROS **********
 
 /**
  * Validación para IDs de MongoDB
