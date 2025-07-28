@@ -15,8 +15,7 @@ Registra un nuevo usuario en el sistema con validación de datos y verificación
 */
 export const register = async (req, res) => {
   try {
-    // Verificar errores de validación
-    const errors = validationResult(req);
+    // Verificar errores de validacrrors = validationResult(req);
     if (!errors.isEmpty()) {
       const errorMessages = errors.array().map(error => error.msg);
       req.flash("error", errorMessages.join(', '));
@@ -622,110 +621,64 @@ Frase: "${escapedQuery}"`,
     }
 
     // Búsqueda por nombre/título del apartamento
-    // SOLO buscar en títulos cuando se pida explícitamente un apartamento por nombre
-    // Detectar patrones como: "apartamento llamado X", "apartamento nombre X", "busco el apartamento X"
-    const isNameSearch = /(?:llamado|nombre|busco el apartamento|apartamento\s+[A-Z])/i.test(userQuery);
-    
-    let titleSearchWords = [];
+    // SOLO buscar en títulos cuando se use EXPLÍCITAMENTE "llamado" o "nombre"
+    // NO debe activarse para búsquedas por características, ubicación o servicios
+    const isNameSearch = /(?:llamado|nombre)\s+/i.test(userQuery);
     
     if (isNameSearch) {
-      // Si es búsqueda por nombre, extraer solo las palabras relevantes para nombre
-      titleSearchWords = userQuery
-        .replace(/[^\w\s]/g, "") // elimina comillas y símbolos
-        .split(/\s+/)
-        .filter(word => {
-          const wordLower = word.toLowerCase();
-          return word.length > 2 && 
-                 !["con", "en", "de", "del", "la", "el", "una", "un", "y", "o", "busco", "buscar", "quiero", "necesito", "apartamento", "apartamentos", "piso", "pisos", "casa", "llamado", "nombre"].includes(wordLower) &&
-                 !['wifi', 'internet', 'aire', 'climatizado', 'calefaccion', 'television', 'tv', 'cocina', 'kitchen', 'accesible'].includes(wordLower);
-        });
-      console.log("� Búsqueda POR NOMBRE detectada. Palabras para título:", titleSearchWords);
-    } else {
-      console.log("🚫 NO es búsqueda por nombre. Omitiendo búsqueda en títulos para filtros de servicios/ubicación.");
-    }
-    
-    // Detectar si está buscando un apartamento específico (con números o nombres propios)
-    const hasNumbers = /\d+/.test(userQuery);
-    const hasSpecificWords = titleSearchWords.some(word => 
-      /\d+/.test(word) ||    // Contiene números
-      word.toLowerCase().includes('apartment') ||
-      word.toLowerCase().includes('villa') ||
-      word.toLowerCase().includes('estudio')
-    );
-    
-    // Solo ejecutar búsqueda específica si NO hay filtros de ubicación de Gemini
-    // y si realmente parece una búsqueda de apartamento específico con números
-    if (!filters.location && !filters.services && titleSearchWords.length >= 2 && hasNumbers && hasSpecificWords) {
-      console.log("🎯 Búsqueda MUY ESPECÍFICA de apartamento detectada - solo título");
+      console.log("🏷️ Búsqueda POR NOMBRE EXPLÍCITA detectada con 'llamado' o 'nombre'");
       
-      const exactTitleRegex = new RegExp(`\\b${titleSearchWords.join('.*')}\\b`, "i");
-      
-      const specificResults = await Apartment.find({
-        active: true,
-        title: { $regex: exactTitleRegex }
-      }).populate("createdBy");
-      
-      if (specificResults.length > 0) {
-        console.log("🎯 Resultado específico hallado:", specificResults.map(a => a.title));
-        return res.render("seeApartments.ejs", {
-          title: `${specificResults.length} resultado${specificResults.length !== 1 ? "s" : ""} para "${userQuery}"`,
-          apartments: specificResults,
-          searchQuery: userQuery,
-          isSearchResult: true
-        });
-      } else {
-        console.log("❌ Búsqueda específica no encontró nada. No se muestran resultados genéricos.");
-        return res.render("seeApartments.ejs", {
-          title: `0 resultados para "${userQuery}"`,
-          apartments: [],
-          searchQuery: userQuery,
-          isSearchResult: true
-        });
-      }
-    }
-    
-    // Búsqueda en títulos SOLO para nombres específicos
-    if (isNameSearch && titleSearchWords.length > 0) {
-      if (hasNumbers || hasSpecificWords) {
-        // Búsqueda exacta para apartamentos específicos
-        const exactTitleRegex = new RegExp(titleSearchWords.join('.*'), "i");
-        descriptionConditions.push(
-          { title: { $regex: exactTitleRegex } }
-        );
-        console.log("🎯 Búsqueda ESPECÍFICA por nombre con palabras:", titleSearchWords);
-        console.log("🔍 Regex generado:", exactTitleRegex);
+      // Extraer el nombre del apartamento después de "llamado" o "nombre"
+      const nameMatch = userQuery.match(/(?:llamado|nombre)\s+(.+)/i);
+      if (nameMatch) {
+        const apartmentName = nameMatch[1].trim();
+        console.log("🏷️ Nombre del apartamento a buscar:", apartmentName);
         
-      } else {
-        // Búsqueda general por nombre
-        const titleRegex = new RegExp(titleSearchWords.join('|'), "i");
-        descriptionConditions.push(
-          { title: { $regex: titleRegex } }
-        );
-        console.log("🏷️ Búsqueda GENERAL por nombre con palabras:", titleSearchWords);
+        // Añadir búsqueda en título solo para nombres explícitos
+        if (mongoQuery.$or) {
+          mongoQuery.$and = [
+            { $or: mongoQuery.$or }, // Condiciones de ubicación existentes
+            { title: { $regex: new RegExp(apartmentName, "i") } } // Condición de nombre
+          ];
+          delete mongoQuery.$or;
+        } else {
+          mongoQuery.title = { $regex: new RegExp(apartmentName, "i") };
+        }
       }
+    } else {
+      console.log("🚫 NO es búsqueda por nombre. Es búsqueda por características/ubicación/servicios.");
     }
 
-    // Combina condiciones de descripción con ubicación si ambas existen
-    if (descriptionConditions.length > 0) {
-      if (mongoQuery.$or) {
-        // Si ya hay condiciones de ubicación, las combinamos
-        mongoQuery.$and = [
-          { $or: mongoQuery.$or }, // Condiciones de ubicación
-          { $or: descriptionConditions } // Condiciones de descripción
-        ];
-        delete mongoQuery.$or;
-      } else {
-        // Si no hay condiciones de ubicación, solo descripción
-        mongoQuery.$or = descriptionConditions;
-      }
-    }
+        console.log("🛠️ Query MongoDB final:", JSON.stringify(mongoQuery, null, 2));
 
-    console.log("🛠️ Query MongoDB final:", JSON.stringify(mongoQuery, null, 2));
-
-    // 4. Ejecuta la búsqueda
+    // 4. Debug adicional para diagnosticar la búsqueda
+    console.log("🔍 DIAGNÓSTICO DE BÚSQUEDA:");
+    
+    // Verificar si hay apartamentos activos
+    const totalActive = await Apartment.countDocuments({ active: true });
+    console.log("📊 Total apartamentos activos en BD:", totalActive);
+    
+    // Verificar apartamentos con wifi
+    const totalWifi = await Apartment.countDocuments({ 
+      active: true, 
+      'services.internet': true 
+    });
+    console.log("📶 Total apartamentos activos con WiFi:", totalWifi);
+    
+    // Verificar apartamentos en Barcelona
+    const totalBarcelona = await Apartment.countDocuments({
+      active: true,
+      $or: [
+        { "location.province.nm": { $regex: /barcelona/i } },
+        { "location.municipality.nm": { $regex: /barcelona/i } }
+      ]
+    });
+    console.log("🏙️ Total apartamentos activos en Barcelona:", totalBarcelona);
+    
+    // Ejecuta la búsqueda
     const apartments = await Apartment.find(mongoQuery).sort({ price: 1 }).populate("createdBy");
     
-    console.log(`📊 Apartamentos encontrados: ${apartments.length}`);
+    console.log(`📊 Apartamentos encontrados con la query: ${apartments.length}`);
     
     // Debug: mostrar algunos apartamentos encontrados
     if (apartments.length > 0) {
@@ -734,6 +687,20 @@ Frase: "${escapedQuery}"`,
         provincia: apt.location?.province?.nm,
         municipio: apt.location?.municipality?.nm,
         precio: apt.price,
+        metros: apt.squareMeters,
+        wifi: apt.services?.internet,
+        activo: apt.active
+      })));
+    } else {
+      console.log("❌ No se encontraron apartamentos. Verificando si la query es correcta...");
+      
+      // Hacer una búsqueda más simple para diagnosticar
+      const simpleSearch = await Apartment.find({ active: true }).limit(3);
+      console.log("🔧 Muestra de apartamentos en BD:", simpleSearch.map(apt => ({
+        title: apt.title,
+        provincia: apt.location?.province?.nm,
+        municipio: apt.location?.municipality?.nm,
+        wifi: apt.services?.internet,
         metros: apt.squareMeters
       })));
     }
