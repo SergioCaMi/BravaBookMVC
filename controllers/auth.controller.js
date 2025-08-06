@@ -498,9 +498,9 @@ Frase: "${escapedQuery}"`,
     let filters;
     try {
       filters = JSON.parse(raw);
-      console.log("✅ Filtros generados:", JSON.stringify(filters, null, 2));
+      console.log("Filtros generados:", JSON.stringify(filters, null, 2));
     } catch (parseError) {
-      console.log("⚠️ Error parsing JSON, usando búsqueda por texto fallback");
+      console.log("Error parsing JSON, usando búsqueda por texto fallback");
       const keywordRegex = new RegExp(userQuery.split(' ').join('|'), "i");
       const apartments = await Apartment.find({
         active: true,
