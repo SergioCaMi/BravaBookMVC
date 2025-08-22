@@ -79,6 +79,10 @@ web_modules/
 .env.production.local
 .env.local
 
+# Asegúrate de que node_modules y .env no se suban a GitHub
+node_modules/
+.env
+
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 .parcel-cache
