@@ -1,5 +1,36 @@
 <%- include("partials/header") %> <%- include("partials/mensajes") %>
 
+<% if (demoMode) { %>
+<!-- Botón flotante para mostrar credenciales demo -->
+<button type="button" class="btn btn-demo-version position-fixed shadow-lg" data-bs-toggle="modal" data-bs-target="#demoCredentialsModal" 
+        style="bottom: 20px; left: 20px; z-index: 1050; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; border-radius: 50px; padding: 12px 20px; animation: pulse-demo 2s infinite;">
+  <i class="bi bi-info-circle-fill me-2"></i>
+  <span class="fw-bold">Versión de Prueba</span>
+</button>
+
+<style>
+  @keyframes pulse-demo {
+    0%, 100% {
+      box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7);
+    }
+    50% {
+      box-shadow: 0 0 0 10px rgba(102, 126, 234, 0);
+    }
+  }
+  
+  .btn-demo-version {
+    color: white;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-demo-version:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.5) !important;
+    color: white;
+  }
+</style>
+<% } %>
+
 <div id="videoHero" class="video-hero position-relative w-100 overflow-hidden">
   <!-- Video de fondo con efecto zoom -->
   <video class="hero-video position-absolute top-0 start-0 w-100 h-100" autoplay muted loop playsinline preload="auto">
@@ -971,4 +1002,89 @@
 
 <script src="js/municipiAndProvince.js"></script>
 <script src="js/dateRangePicker.js"></script>
+
+<% if (demoMode) { %>
+<!-- Modal de Credenciales Demo -->
+<div class="modal fade" id="demoCredentialsModal" tabindex="-1" aria-labelledby="demoCredentialsModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg">
+      <div class="modal-header bg-gradient text-white border-0" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <h5 class="modal-title fw-bold" id="demoCredentialsModalLabel">
+          <i class="bi bi-info-circle-fill me-2"></i>Modo Demostración
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4">
+        <div class="alert alert-info border-0 mb-4" style="background-color: #e8f4f8;">
+          <i class="bi bi-lightbulb-fill text-info me-2"></i>
+          <strong>¡Bienvenido a BravaBook!</strong> Esta es una versión de demostración para que puedas probar todas las funcionalidades.
+        </div>
+        
+        <h6 class="fw-bold text-dark mb-3">
+          <i class="bi bi-shield-check text-success me-2"></i>Credenciales de SuperAdmin
+        </h6>
+        
+        <div class="credential-box p-3 rounded-3 mb-3" style="background-color: #f8f9fa;">
+          <div class="mb-3">
+            <label class="form-label text-muted small mb-1">Email:</label>
+            <div class="input-group">
+              <input type="text" class="form-control border-0 bg-white" value="<%= demoEmail %>" id="demoEmailInput" readonly>
+              <button class="btn btn-outline-secondary border-0" type="button" onclick="copyToClipboard('demoEmailInput', this)">
+                <i class="bi bi-clipboard"></i>
+              </button>
+            </div>
+          </div>
+          
+          <div>
+            <label class="form-label text-muted small mb-1">Contraseña:</label>
+            <div class="input-group">
+              <input type="text" class="form-control border-0 bg-white" value="<%= demoPassword %>" id="demoPasswordInput" readonly>
+              <button class="btn btn-outline-secondary border-0" type="button" onclick="copyToClipboard('demoPasswordInput', this)">
+                <i class="bi bi-clipboard"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="alert alert-warning border-0 mb-0" style="background-color: #fff3cd;">
+          <small>
+            <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>
+            <strong>Nota:</strong> Como SuperAdmin tendrás acceso completo a todas las funcionalidades del sistema, incluyendo gestión de usuarios, apartamentos y reservas.
+          </small>
+        </div>
+      </div>
+      <div class="modal-footer border-0 bg-light">
+        <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">
+          <i class="bi bi-x-circle me-2"></i>Cerrar
+        </button>
+        <a href="/login" class="btn btn-primary rounded-pill px-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
+          <i class="bi bi-box-arrow-in-right me-2"></i>Ir al Login
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Función para copiar al portapapeles
+  function copyToClipboard(inputId, button) {
+    const input = document.getElementById(inputId);
+    input.select();
+    input.setSelectionRange(0, 99999); // Para móviles
+    
+    navigator.clipboard.writeText(input.value).then(function() {
+      const originalIcon = button.innerHTML;
+      button.innerHTML = '<i class="bi bi-check-lg"></i>';
+      button.classList.add('btn-success');
+      button.classList.remove('btn-outline-secondary');
+      
+      setTimeout(function() {
+        button.innerHTML = originalIcon;
+        button.classList.remove('btn-success');
+        button.classList.add('btn-outline-secondary');
+      }, 2000);
+    });
+  }
+</script>
+<% } %>
 

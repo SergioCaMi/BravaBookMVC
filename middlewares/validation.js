@@ -60,7 +60,7 @@ export const validateUserRegistration = [
   body("password")
     .isLength({ min: 8, max: 16 })
     .withMessage("La contraseña debe tener entre 8 y 16 caracteres")
-    .matches(/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]+$/)
+    .matches(/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&\-_])[A-Za-z\d@$!%*#?&\-_]+$/)
     .withMessage("La contraseña debe contener al menos una mayúscula, un número y un símbolo especial"),
 
   body("role").notEmpty().withMessage("El tipo de usuario es obligatorio").isIn(["user", "admin"]).withMessage('El rol debe ser "user" o "admin"'),

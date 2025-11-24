@@ -228,7 +228,14 @@ Obtiene y renderiza todos los apartamentos activos del sistema.
 export const getAllApartments = async (req, res) => {
   try {
     const apartments = await Apartment.find({ active: true }).populate("createdBy");
-    res.render("home", { title: "home", error: undefined, apartments });
+    res.render("home", { 
+      title: "home", 
+      error: undefined, 
+      apartments,
+      demoMode: process.env.DEMO_MODE === 'true',
+      demoEmail: process.env.DEMO_SUPERADMIN_EMAIL || '',
+      demoPassword: process.env.DEMO_SUPERADMIN_PASSWORD || ''
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

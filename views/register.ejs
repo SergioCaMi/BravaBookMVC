@@ -167,8 +167,8 @@
                   <div class="form-floating position-relative">
                     <input type="password" name="password" id="password" class="form-control form-control-lg"
                            placeholder="Contraseña (8-16 caracteres)"
-                           pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,16}$"
-                           title="Debe tener entre 8 y 16 caracteres, al menos una letra, un número y un símbolo." required>
+                           pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&\-_])[A-Za-z\d@$!%*#?&\-_]{8,16}$"
+                           title="Debe tener entre 8 y 16 caracteres, al menos una mayúscula, un número y un símbolo (@$!%*#?&-_)." required>
                     <label for="password">
                       <i class="bi bi-lock me-2"></i>Contraseña (8-16 caracteres)
                     </label>
@@ -177,7 +177,7 @@
                       <i class="bi bi-eye-slash text-secondary" style="font-size: 1.2rem; cursor: pointer;" 
                          id="togglePassword" title="Mostrar/ocultar contraseña"></i>
                     </div>
-                    <div class="invalid-feedback">Debe tener entre 8 y 16 caracteres, al menos una letra, un número y un símbolo.</div>
+                    <div class="invalid-feedback">Debe tener entre 8 y 16 caracteres, al menos una mayúscula, un número y un símbolo (@$!%*#?&-_).</div>
                   </div>
                   
                   <!-- Indicador de fortaleza de contraseña -->
