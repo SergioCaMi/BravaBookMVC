@@ -393,3 +393,110 @@ body.modal-open .modal {
 body.modal-open .modal-backdrop {
   z-index: 1050 !important;
 }
+
+/* ==================== RESPONSIVE DASHBOARD PARA MÓVILES ==================== */
+
+@media (max-width: 992px) {
+  /* Sidebar colapsable en tablets */
+  .sidebar-container {
+    position: relative;
+    margin-bottom: 2rem;
+  }
+  
+  .modern-nav-link {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Dashboard hero más compacto */
+  .dashboard-hero {
+    min-height: 15vh;
+    padding: 1rem 0;
+  }
+  
+  /* Stats cards en columna */
+  .stat-card {
+    margin-bottom: 1rem;
+  }
+  
+  .stat-card h3 {
+    font-size: 1.3rem !important;
+  }
+  
+  .stat-card p {
+    font-size: 0.85rem;
+  }
+  
+  /* Avatar más pequeño */
+  .user-profile-card img {
+    width: 80px !important;
+    height: 80px !important;
+  }
+  
+  /* Formularios de perfil */
+  .settings-form .form-control,
+  .settings-form .form-select {
+    font-size: 16px;
+  }
+  
+  /* Botones full width en móvil */
+  .settings-form .btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Tablas de reservas responsive */
+  .reservations-table {
+    font-size: 0.8rem;
+  }
+  
+  .reservations-table th,
+  .reservations-table td {
+    padding: 0.5rem;
+  }
+  
+  /* Ocultar columnas no esenciales en móvil */
+  .hide-mobile-column {
+    display: none;
+  }
+}
+
+@media (max-width: 576px) {
+  /* Header de dashboard */
+  .dashboard-header h1 {
+    font-size: 1.5rem !important;
+  }
+  
+  /* Sidebar horizontal en móvil pequeño */
+  .sidebar-nav {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-bottom: 0.5rem;
+  }
+  
+  .modern-nav-link {
+    min-width: auto;
+    flex-shrink: 0;
+    margin-right: 0.5rem;
+  }
+  
+  /* Cards apiladas */
+  .dashboard-card {
+    margin-bottom: 1rem;
+  }
+  
+  /* Avatar edit más compacto */
+  .avatar-container img {
+    width: 60px !important;
+    height: 60px !important;
+  }
+  
+  /* Form labels más pequeños */
+  .form-label {
+    font-size: 0.85rem;
+  }
+}

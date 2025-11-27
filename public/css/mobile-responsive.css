@@ -1,0 +1,401 @@
+/* ==================== MEJORAS RESPONSIVE PARA MÓVILES ==================== */
+/*
+ * Archivo de estilos responsivos para optimizar BravaBook en dispositivos móviles
+ * 
+ * CARACTERÍSTICAS IMPLEMENTADAS:
+ * - Diseño mobile-first para pantallas desde 320px hasta 768px
+ * - Optimización de formularios para prevenir zoom automático en iOS (font-size: 16px)
+ * - Mejora de áreas táctiles (mínimo 44x44px según estándares de accesibilidad)
+ * - Reducción de animaciones complejas para mejor rendimiento
+ * - Ocultar video de fondo en móviles (mejor rendimiento)
+ * - Botón "Versión de Prueba" adaptado (solo icono en pantallas pequeñas)
+ * - Tablas responsivas con scroll horizontal
+ * - Modales optimizados para pantallas pequeñas
+ * - Navegación mejorada con menú colapsable
+ * - Grid adaptativo para apartamentos y cards
+ * - Soporte para modo landscape
+ * - Mejoras específicas para iOS/Safari
+ * 
+ * BREAKPOINTS:
+ * - Mobile: max-width: 576px (pantallas muy pequeñas)
+ * - Tablet: 768px - 992px
+ * - Desktop: > 992px
+ */
+
+/* Ajustes generales para dispositivos móviles */
+@media (max-width: 768px) {
+    /* Mejorar espaciado en móviles */
+    .container, .container-fluid {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    /* Reducir padding de secciones */
+    section, .section {
+        padding: 2rem 0 !important;
+    }
+    
+    /* Títulos más pequeños en móviles */
+    h1, .display-1, .display-2, .display-3 {
+        font-size: 1.8rem !important;
+    }
+    
+    h2, .display-4 {
+        font-size: 1.5rem !important;
+    }
+    
+    h3, .display-5 {
+        font-size: 1.3rem !important;
+    }
+    
+    /* Mejorar legibilidad de texto */
+    p, .lead {
+        font-size: 0.95rem !important;
+    }
+    
+    /* Botones más grandes para facilitar tap */
+    .btn {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.95rem;
+    }
+    
+    .btn-lg {
+        padding: 0.8rem 1.5rem;
+    }
+    
+    /* Cards más compactas */
+    .card {
+        margin-bottom: 1rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    /* Modales de ancho completo en móviles */
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+    
+    /* Mejorar formularios */
+    .form-control, .form-select {
+        font-size: 16px; /* Previene zoom automático en iOS */
+        padding: 0.75rem;
+    }
+    
+    /* Tablas responsivas */
+    .table-responsive {
+        font-size: 0.85rem;
+    }
+    
+    /* Ocultar elementos no esenciales */
+    .hide-mobile {
+        display: none !important;
+    }
+    
+    /* Hero section ajustado */
+    .video-hero {
+        min-height: 85vh !important;
+    }
+    
+    .hero-content-card {
+        padding: 1.5rem !important;
+    }
+    
+    /* Formulario de búsqueda más compacto */
+    .search-form {
+        padding: 1rem !important;
+    }
+    
+    /* Mejoras para carruseles de apartamentos */
+    .apartment-card {
+        margin-bottom: 1rem;
+    }
+    
+    .apartment-card img {
+        height: 200px !important;
+        object-fit: cover;
+    }
+    
+    /* Dashboard responsive */
+    .dashboard-card {
+        margin-bottom: 1.5rem;
+    }
+    
+    /* Ajustar stats cards */
+    .stat-card {
+        padding: 1rem !important;
+    }
+    
+    .stat-card h3 {
+        font-size: 1.5rem !important;
+    }
+    
+    /* Navbar mobile friendly */
+    .navbar-brand img {
+        width: 100px !important;
+        height: auto !important;
+    }
+    
+    .user-avatar img {
+        width: 35px !important;
+        height: 35px !important;
+    }
+    
+    /* Footer compacto */
+    footer {
+        padding: 2rem 0 !important;
+    }
+    
+    .footer-section {
+        margin-bottom: 1.5rem;
+    }
+}
+
+/* Ajustes para pantallas muy pequeñas */
+@media (max-width: 576px) {
+    /* Botón demo solo icono */
+    .btn-demo-version {
+        padding: 10px 12px !important;
+        font-size: 0.9rem !important;
+        bottom: 15px !important;
+        left: 15px !important;
+        border-radius: 30px !important;
+    }
+    
+    .btn-demo-version span {
+        display: none;
+    }
+    
+    .btn-demo-version i {
+        margin-right: 0 !important;
+        font-size: 1.2rem;
+    }
+    
+    /* Reducir padding de containers */
+    .container, .container-fluid {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    
+    /* Badges más pequeños */
+    .badge {
+        font-size: 0.7rem;
+        padding: 0.3em 0.5em;
+    }
+    
+    /* Mejorar navegación */
+    .navbar-nav {
+        padding: 1rem 0;
+    }
+    
+    .navbar-nav .nav-item {
+        margin-bottom: 0.5rem;
+    }
+    
+    .navbar-nav .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Ajustar grid */
+    .row > * {
+        margin-bottom: 0.75rem;
+    }
+    
+    /* Hero más compacto */
+    .video-hero {
+        min-height: 70vh !important;
+    }
+    
+    .hero-title-container h1 {
+        font-size: 1.5rem !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    .hero-title-container p {
+        font-size: 0.9rem !important;
+    }
+    
+    /* Búsqueda apilada verticalmente */
+    .search-form .col-12 {
+        margin-bottom: 0.75rem;
+    }
+    
+    .search-form label {
+        font-size: 0.85rem;
+    }
+    
+    /* Botones de búsqueda full width */
+    .search-buttons .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Modal más pequeño */
+    .modal-header {
+        padding: 1rem;
+    }
+    
+    .modal-body {
+        padding: 1rem;
+    }
+    
+    .modal-title {
+        font-size: 1.1rem;
+    }
+    
+    /* Tablas scroll horizontal */
+    .table {
+        font-size: 0.8rem;
+    }
+    
+    .table th, .table td {
+        padding: 0.5rem;
+    }
+    
+    /* Cards de apartamento más pequeñas */
+    .apartment-card .card-title {
+        font-size: 1rem !important;
+    }
+    
+    .apartment-card .card-text {
+        font-size: 0.85rem !important;
+    }
+    
+    /* Precio destacado */
+    .price-tag {
+        font-size: 1.2rem !important;
+    }
+    
+    /* Iconos de servicios más pequeños */
+    .service-icon {
+        width: 20px !important;
+        height: 20px !important;
+        font-size: 0.7rem !important;
+    }
+}
+
+/* Mejoras para tablets */
+@media (min-width: 768px) and (max-width: 992px) {
+    .container {
+        max-width: 720px;
+    }
+    
+    h1, .display-3 {
+        font-size: 2.2rem !important;
+    }
+    
+    /* Apartamentos en 2 columnas */
+    .apartment-grid .col-lg-4 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+
+/* Landscape mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+    .navbar {
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+    
+    .video-hero {
+        min-height: auto !important;
+        height: auto !important;
+    }
+    
+    .hero-content-card {
+        padding: 1rem !important;
+    }
+    
+    .search-form {
+        padding: 1rem !important;
+    }
+    
+    /* Reducir márgenes verticales */
+    .mb-4, .my-4 {
+        margin-bottom: 1rem !important;
+    }
+    
+    .mt-4, .my-4 {
+        margin-top: 1rem !important;
+    }
+}
+
+/* Mejoras de accesibilidad táctil */
+@media (hover: none) and (pointer: coarse) {
+    /* Aumentar área táctil de enlaces y botones */
+    a, button, .btn {
+        min-height: 44px;
+        padding: 0.5rem 1rem;
+    }
+    
+    /* Mejorar dropdowns */
+    .dropdown-menu {
+        font-size: 1rem;
+    }
+    
+    .dropdown-item {
+        padding: 0.75rem 1rem;
+    }
+    
+    /* Mejorar checkboxes y radios */
+    .form-check-input {
+        width: 1.25rem;
+        height: 1.25rem;
+    }
+    
+    .form-check-label {
+        padding-left: 0.5rem;
+    }
+}
+
+/* Optimizaciones para rendimiento en móviles */
+@media (max-width: 768px) {
+    /* Reducir animaciones complejas */
+    * {
+        animation-duration: 0.3s !important;
+    }
+    
+    /* Simplificar sombras */
+    .shadow-lg {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+    
+    .shadow {
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+    }
+    
+    /* Ocultar videos en móviles para mejor rendimiento */
+    .hero-video {
+        display: none !important;
+    }
+    
+    /* Mostrar imagen de respaldo */
+    .hero-slide {
+        display: block !important;
+        height: 85vh !important;
+    }
+}
+
+/* Mejoras específicas para iOS */
+@supports (-webkit-touch-callout: none) {
+    /* Fix para inputs en iOS */
+    input, select, textarea {
+        font-size: 16px !important;
+    }
+    
+    /* Evitar zoom en doble tap */
+    * {
+        touch-action: manipulation;
+    }
+}
+
+/* Dark mode support para móviles */
+@media (prefers-color-scheme: dark) and (max-width: 768px) {
+    .card, .modal-content {
+        background-color: #1a1a1a;
+        color: #ffffff;
+    }
+}

@@ -172,19 +172,35 @@
 /* Responsive */
 @media (max-width: 768px) {
   .apartment-hero {
-    min-height: 70vh;
+    min-height: 50vh;
+    padding: 1rem 0;
   }
   
   .hero-info h1 {
-    font-size: 2rem !important;
+    font-size: 1.5rem !important;
+  }
+  
+  .hero-info p {
+    font-size: 0.9rem;
   }
   
   .quick-info {
     justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .quick-info-item {
+    font-size: 0.85rem;
+    padding: 0.5rem;
   }
   
   .price-card {
-    margin-top: 2rem;
+    margin-top: 1.5rem;
+    padding: 1rem;
+  }
+  
+  .price-card h3 {
+    font-size: 1.5rem !important;
   }
   
   .back-button-container {
@@ -195,14 +211,73 @@
     left: auto !important;
     transform: none !important;
     margin: 0 !important;
+    z-index: 1000;
   }
   
   .modern-tabs {
     flex-direction: column;
+    overflow-x: auto;
   }
   
   .modern-tabs .nav-link {
     margin: 0.25rem 0;
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+  }
+  
+  /* Galería de imágenes más pequeña */
+  .apartment-gallery img {
+    height: 200px !important;
+  }
+  
+  /* Calendario más compacto */
+  #calendar {
+    font-size: 0.8rem;
+  }
+  
+  /* Servicios en grid más compacto */
+  .services-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.5rem !important;
+  }
+  
+  .service-item {
+    padding: 0.5rem !important;
+    font-size: 0.85rem;
+  }
+  
+  /* Mapa responsive */
+  #map {
+    height: 250px !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .apartment-hero {
+    min-height: 40vh;
+  }
+  
+  .hero-info h1 {
+    font-size: 1.3rem !important;
+  }
+  
+  .price-card h3 {
+    font-size: 1.3rem !important;
+  }
+  
+  .btn-reserve {
+    width: 100%;
+    padding: 1rem;
+  }
+  
+  .modern-tabs .nav-link {
+    width: 100%;
+  }
+  
+  /* Botón volver más pequeño */
+  .back-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
   }
 }
 
